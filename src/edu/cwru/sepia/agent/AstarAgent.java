@@ -295,6 +295,15 @@ public class AstarAgent extends Agent {
      */
     private Stack<MapLocation> AstarSearch(MapLocation start, MapLocation goal, int xExtent, int yExtent, MapLocation enemyFootmanLoc, Set<MapLocation> resourceLocations)
     {
+    	// Add the starting location to the open list and empty the closed list
+    	// While there are still nodes in the open list and the target hasn't been found
+    		// Select the most likely next step based on the heuristic and path cost
+    		// Remove that node from the open list and add it to the closed list
+    		// Look at every neighbor of the step
+    			// Calculate the path cost of reaching the neighbor
+    			// If the cost is less than the cost known for this position, we have found a better path. Remove it from the open or closed lists
+    			// If the location isn't in either the open or closed list, record the costs for location and add it to the open list. Record the path to this node.
+    	
         // return an empty path
         return new Stack<MapLocation>();
     }
