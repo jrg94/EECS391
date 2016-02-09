@@ -319,6 +319,7 @@ public class AstarAgent extends Agent {
      * @return true if the next map location is valid
      */
     public boolean isValidMapLocation(MapLocation current, MapLocation next, int xExtent, int yExtent) {
+    	// Tests grid bounds to determine if the next location is within the grid
     	boolean isOutsideGrid = (next.x < 0) || (next.y < 0) || (next.x >= xExtent) || (next.y >= yExtent);
     	// TODO: Insert condition that covers case where agent is blocked
     	return isOutsideGrid;
