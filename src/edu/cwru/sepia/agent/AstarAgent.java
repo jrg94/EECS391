@@ -298,6 +298,7 @@ public class AstarAgent extends Agent {
     	// Add the starting location to the open list and empty the closed list
     	// While there are still nodes in the open list and the target hasn't been found
     		// Select the most likely next step based on the heuristic and path cost
+    			// Heuristic: D((x1,y1),(x2,y2)) = max(|x2-x1|,|y2-y1|)
     		// Remove that node from the open list and add it to the closed list
     		// Look at every neighbor of the step
     			// Calculate the path cost of reaching the neighbor
