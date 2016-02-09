@@ -295,18 +295,28 @@ public class AstarAgent extends Agent {
      */
     private Stack<MapLocation> AstarSearch(MapLocation start, MapLocation goal, int xExtent, int yExtent, MapLocation enemyFootmanLoc, Set<MapLocation> resourceLocations)
     {
+    	// Declare open and closed lists
+    	ArrayList<MapLocation> openList = new ArrayList<MapLocation>();
+    	Stack<MapLocation> closedList = new Stack<MapLocation>();
+    	
     	// Add the starting location to the open list and empty the closed list
+    	openList.add(goal);
+    	
     	// While there are still nodes in the open list and the target hasn't been found
+    	while (openList.size() > 0) {
     		// Select the most likely next step based on the heuristic and path cost
-    			// Heuristic: D((x1,y1),(x2,y2)) = max(|x2-x1|,|y2-y1|)
+    		// Heuristic: D((x1,y1),(x2,y2)) = max(|x2-x1|,|y2-y1|)
+    		
+    		
     		// Remove that node from the open list and add it to the closed list
     		// Look at every neighbor of the step
     			// Calculate the path cost of reaching the neighbor
     			// If the cost is less than the cost known for this position, we have found a better path. Remove it from the open or closed lists
     			// If the location isn't in either the open or closed list, record the costs for location and add it to the open list. Record the path to this node.
-    	
+    	}
+    		
         // return an empty path
-        return new Stack<MapLocation>();
+        return closedList;
     }
 
     /**
@@ -323,6 +333,40 @@ public class AstarAgent extends Agent {
     	boolean isOutsideGrid = (next.x < 0) || (next.y < 0) || (next.x >= xExtent) || (next.y >= yExtent);
     	// TODO: Insert condition that covers case where agent is blocked
     	return isOutsideGrid;
+    }
+    
+    /**
+     * Returns a list of neighbor map locations
+     * 
+     * @param current
+     * @param xExtent
+     * @param yExtent
+     * @return a list of neighbor map locations
+     */
+    public ArrayList<MapLocation> produceNeighborList(MapLocation current, int xExtent, int yExtent) {
+    	ArrayList<MapLocation> neighbors = new ArrayList<MapLocation>();
+    	
+    	// Iterates through all neighbor nodes
+    	for (int x = -1; x < 2; x++) {
+    		for (int y = -1; y < 2; y++) {
+    			
+    			// We don't want to add the current node to the neighbors list
+    			if (x == current.x && y == current.y) {
+    				continue;
+    			}
+    			
+    			// Compute the location of the current neighbor
+    			int neighborX = current.x + x;
+    			int neighborY = current.y + y;
+    			
+    		}
+    	}
+    	
+    	return neighbors;
+    }
+    
+    public MapLocation findLowestCostNeighbor(MapLocation current, int xExtent, int yExtent) {
+    	for (int x = 0; x < ) 
     }
     
     /**
