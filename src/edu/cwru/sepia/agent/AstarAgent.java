@@ -339,25 +339,67 @@ public class AstarAgent extends Agent {
     	
     	// While there are still nodes in the open list and the target hasn't been found
     	while (openList.size() > 0) {
-    		// Select the most likely next step based on the heuristic and path cost
-    		// Heuristic: D((x1,y1),(x2,y2)) = max(|x2-x1|,|y2-y1|)
     		
+    		// Goal test
+    		Node curr = openList.get(0);
+    		if (curr.loc.x == goal.x && curr.loc.y == goal.y) {
+    			break;
+    		}
     		
-    		// Remove that node from the open list and add it to the closed list
+    		// Move this node from open list to closed list
+    		openList.remove(curr);
+    		closedList.add(curr);
+    		
     		// Look at every neighbor of the step
-    			// Calculate the path cost of reaching the neighbor
+    		ArrayList<MapLocation> neighbors = produceNeighborList(curr.loc, xExtent, yExtent);
+    		for (MapLocation neighbor: neighbors) {
+    			
+    			Node check = new Node(neighbor);
+    			
+    			/*
+    			 * Calculate the path cost of reaching the neighbor
+    			 * Assuming the movement cost is just 1
+    			 */
+    			double checkCost = curr.pathCost + 1;
+    			
     			// If the cost is less than the cost known for this position, we have found a better path. Remove it from the open or closed lists
+    			if (checkCost < check.pathCost) {
+    				if (openList.contains(neighbor)) {
+    					openList.remove(neighbor);
+    				}
+    				if (closedList.contains(neighbor)) {
+    					closedList.remove(neighbor);
+    				}
+    			}
+    			
     			// If the location isn't in either the open or closed list, record the costs for location and add it to the open list. Record the path to this node.
+    			if (!openList.contains(neighbor) && !closedList.contains(neighbor)) {
+    				check.pathCost = checkCost;
+    				check.heuristicCost = computeHeuristicCost();
+    				openList.add(check);
+    				Collections.sort(openList);
+    			}
+    		}
     	}
     	
-    	// Initializes a stack and returns the path on it
+    	/*
+    	 * Initializes a stack and returns the path on it
+    	 * Ignores the start and end nodes as specified in the problem description
+    	 */
     	Stack<MapLocation> path = new Stack<MapLocation>();
+    	/**
+    	 * Pretty sure I have the wrong idea of how the closed list works...
     	for (int i = closedList.size() - 1; i > 0; i--) {
     		path.push(closedList.get(i).loc);
-    	}
+    	}*/
         return path;
     }
 
+	public double computeHeuristicCost() {
+		// TODO: compute this
+		return 0;
+	}
+    
     /**
      * Check if attempted move is valid
      * 
