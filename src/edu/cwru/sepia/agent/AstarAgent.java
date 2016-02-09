@@ -310,6 +310,21 @@ public class AstarAgent extends Agent {
     }
 
     /**
+     * Check if attempted move is valid
+     * 
+     * @param current the location of the agent
+     * @param next the map location that is being tested
+     * @param xExtent Width of map
+     * @param yExtent Height of map
+     * @return true if the next map location is valid
+     */
+    public boolean isValidMapLocation(MapLocation current, MapLocation next, int xExtent, int yExtent) {
+    	boolean isOutsideGrid = (next.x < 0) || (next.y < 0) || (next.x >= xExtent) || (next.y >= yExtent);
+    	// TODO: Insert condition that covers case where agent is blocked
+    	return isOutsideGrid;
+    }
+    
+    /**
      * Primitive actions take a direction (e.g. NORTH, NORTHEAST, etc)
      * This converts the difference between the current position and the
      * desired position to a direction.
