@@ -23,6 +23,53 @@ public class AstarAgent extends Agent {
             this.y = y;
         }
     }
+    
+    /**
+     * A Node data structure for building a graph
+     * 
+     * @author JRG94
+     *
+     */
+    private class Node implements Comparable
+    {
+    	public MapLocation loc;
+    	public double heuristicCost;
+    	public double pathCost;
+    	
+    	public Node(MapLocation loc, double heuristicCost, double pathCost) {
+    		this.loc = loc;
+    		this.heuristicCost = heuristicCost;
+    		this.pathCost = pathCost;
+    	}
+    	
+    	public int compareTo(Object o) {
+    		
+    		Node test = null;
+    		
+    		// Make sure the object being compared is actually a node
+    		if (o instanceof Node) {
+    			test = (Node) o;
+    		}
+    		else {
+    			System.out.println("Type Mismatch");
+    			System.exit(1);
+    		}
+    		
+    		// Determine the estimated cost for each node
+    		double cost = heuristicCost + pathCost;
+    		double testCost = test.heuristicCost + test.pathCost;
+    		
+    		if (cost > testCost) {
+    			return 1;
+    		}
+    		else if (cost == testCost) {
+    			return 0;
+    		}
+    		else {
+    			return -1;
+    		}
+    	}
+    }
 
     Stack<MapLocation> path;
     int footmanID, townhallID, enemyFootmanID;
@@ -336,11 +383,11 @@ public class AstarAgent extends Agent {
     }
     
     /**
-     * Returns a list of neighbor map locations
+     * A method which produces a list of neighbor map locations from the current map location
      * 
-     * @param current
-     * @param xExtent
-     * @param yExtent
+     * @param current the current map location
+     * @param xExtent the width of the map
+     * @param yExtent the height of the map
      * @return a list of neighbor map locations
      */
     public ArrayList<MapLocation> produceNeighborList(MapLocation current, int xExtent, int yExtent) {
@@ -358,7 +405,12 @@ public class AstarAgent extends Agent {
     			// Compute the location of the current neighbor
     			int neighborX = current.x + x;
     			int neighborY = current.y + y;
+    			MapLocation neighbor = new MapLocation(neighborX, neighborY, null, 0);
     			
+    			// If the neighbor is valid, add it to the list of neighbors
+    			if (isValidMapLocation(current, neighbor, xExtent, yExtent)) {
+    				neighbors.add(neighbor);
+    			}
     		}
     	}
     	
@@ -366,7 +418,12 @@ public class AstarAgent extends Agent {
     }
     
     public MapLocation findLowestCostNeighbor(MapLocation current, int xExtent, int yExtent) {
-    	for (int x = 0; x < ) 
+    	ArrayList<MapLocation> neighbors = produceNeighborList(current, xExtent, yExtent);
+    	
+    	// Iterate through the list of neighbors
+    	for (MapLocation loc: neighbors) {
+    		
+    	}
     }
     
     /**
