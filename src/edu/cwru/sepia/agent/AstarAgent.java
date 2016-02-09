@@ -30,34 +30,21 @@ public class AstarAgent extends Agent {
      * @author JRG94
      *
      */
-    private class Node implements Comparable
+    private class Node implements Comparable<Node>
     {
     	public MapLocation loc;
     	public double heuristicCost;
     	public double pathCost;
     	
-    	public Node(MapLocation loc, double heuristicCost, double pathCost) {
+    	public Node(MapLocation loc) {
     		this.loc = loc;
-    		this.heuristicCost = heuristicCost;
-    		this.pathCost = pathCost;
     	}
     	
-    	public int compareTo(Object o) {
-    		
-    		Node test = null;
-    		
-    		// Make sure the object being compared is actually a node
-    		if (o instanceof Node) {
-    			test = (Node) o;
-    		}
-    		else {
-    			System.out.println("Type Mismatch");
-    			System.exit(1);
-    		}
+    	public int compareTo(Node n) {
     		
     		// Determine the estimated cost for each node
     		double cost = heuristicCost + pathCost;
-    		double testCost = test.heuristicCost + test.pathCost;
+    		double testCost = n.heuristicCost + n.pathCost;
     		
     		if (cost > testCost) {
     			return 1;
@@ -343,11 +330,12 @@ public class AstarAgent extends Agent {
     private Stack<MapLocation> AstarSearch(MapLocation start, MapLocation goal, int xExtent, int yExtent, MapLocation enemyFootmanLoc, Set<MapLocation> resourceLocations)
     {
     	// Declare open and closed lists
-    	ArrayList<MapLocation> openList = new ArrayList<MapLocation>();
-    	Stack<MapLocation> closedList = new Stack<MapLocation>();
+    	ArrayList<Node> openList = new ArrayList<Node>();
+    	ArrayList<Node> closedList = new ArrayList<Node>();
     	
     	// Add the starting location to the open list and empty the closed list
-    	openList.add(goal);
+    	openList.add(new Node(start));
+    	Collections.sort(openList);
     	
     	// While there are still nodes in the open list and the target hasn't been found
     	while (openList.size() > 0) {
@@ -361,9 +349,13 @@ public class AstarAgent extends Agent {
     			// If the cost is less than the cost known for this position, we have found a better path. Remove it from the open or closed lists
     			// If the location isn't in either the open or closed list, record the costs for location and add it to the open list. Record the path to this node.
     	}
-    		
-        // return an empty path
-        return closedList;
+    	
+    	// Initializes a stack and returns the path on it
+    	Stack<MapLocation> path = new Stack<MapLocation>();
+    	for (int i = closedList.size() - 1; i > 0; i--) {
+    		path.push(closedList.get(i).loc);
+    	}
+        return path;
     }
 
     /**
