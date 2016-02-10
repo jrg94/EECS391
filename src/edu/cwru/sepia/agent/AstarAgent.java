@@ -330,12 +330,10 @@ public class AstarAgent extends Agent {
     	// Declare open and closed lists
     	ArrayList<MapLocation> openList = new ArrayList<MapLocation>();
     	ArrayList<MapLocation> closedList = new ArrayList<MapLocation>();
-    	System.out.println("Created the open and closed lists");
     	
     	// Add the starting location to the open list and empty the closed list
     	openList.add(start);
     	Collections.sort(openList);
-    	System.out.println("Added starting position and sorted the list");
     	
     	// While there are still nodes in the open list and the target hasn't been found
     	while (openList.size() > 0) {
@@ -343,7 +341,6 @@ public class AstarAgent extends Agent {
     		// Goal test
     		MapLocation curr = openList.get(0);
     		if (curr.x == goal.x && curr.y == goal.y) {
-    			System.out.println("Found the goal");
     			break;
     		}
     		
@@ -373,9 +370,8 @@ public class AstarAgent extends Agent {
     			
     			// If the location isn't in either the open or closed list, record the costs for location and add it to the open list. Record the path to this node.
     			if (!openList.contains(neighbor) && !closedList.contains(neighbor)) {
-    	    		System.out.println("Checking: " + neighbor.x + "," + neighbor.y);
     				neighbor.cost = checkCost;
-    				neighbor.heuristic = computeHeuristicCost();
+    				neighbor.heuristic = computeHeuristicCost(curr.x, curr.y, goal.x, goal.y);
     				openList.add(neighbor);
     				neighbor.cameFrom = curr;
     				Collections.sort(openList);
@@ -385,7 +381,6 @@ public class AstarAgent extends Agent {
     	    	
     	// Check that the goal has a parent node
     	if (openList.get(0).cameFrom == null) {
-    		System.out.println("Did not find the goal");
     		return null;
     	}
     	
@@ -398,7 +393,6 @@ public class AstarAgent extends Agent {
     	// While the current node does not equal start
     	MapLocation goalLoc = openList.get(0).cameFrom;
     	while (!goalLoc.equals(start)) {
-    		System.out.println("Path: " + goalLoc.x + "," + goalLoc.y);
     		path.push(goalLoc);
     		goalLoc = goalLoc.cameFrom;
     	}
@@ -406,9 +400,37 @@ public class AstarAgent extends Agent {
         return path;
     }
 
-	public float computeHeuristicCost() {
-		// TODO: compute this
-		return 0;
+    /**
+     * Computes the heuristic for this map location using the Chebyshev distance
+     * max(|x2 - x1|, |y2 - y1|)
+     * 
+     * @param currentX 
+     * @param currentY
+     * @param goalX
+     * @param goalY
+     * @return
+     */
+	public float computeHeuristicCost(int currentX, int currentY, int goalX, int goalY) {
+		int xDistance = goalX - currentX;
+		int yDistance = goalY - currentY;
+		
+		// Absolute value
+		if (xDistance < 0) {
+			xDistance = xDistance * -1;
+		}
+		
+		// Absolute value
+		if (yDistance < 0) {
+			yDistance = yDistance * -1;
+		}
+		
+		// Determines the max of the two
+		if (xDistance > yDistance) {
+			return xDistance;
+		}
+		else {
+			return yDistance;
+		}
 	}
     
     /**
