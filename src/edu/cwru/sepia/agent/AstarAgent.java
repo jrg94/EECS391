@@ -22,6 +22,17 @@ public class AstarAgent extends Agent {
             this.x = x;
             this.y = y;
         }
+        
+        @Override
+        public boolean equals(Object o) {
+        	if (o instanceof MapLocation) {
+        		MapLocation temp = (MapLocation)o;
+        		return temp.x == this.x && temp.y == this.y;
+        	}
+        	else {
+        		return false;
+        	}
+        }
     }
     
     /**
@@ -32,14 +43,17 @@ public class AstarAgent extends Agent {
      */
     private class Node implements Comparable<Node>
     {
+    	// TODO: In final version, make these private
     	public MapLocation loc;
     	public double heuristicCost;
     	public double pathCost;
+    	public Node parent;
     	
     	public Node(MapLocation loc) {
     		this.loc = loc;
     	}
     	
+    	@Override
     	public int compareTo(Node n) {
     		
     		// Determine the estimated cost for each node
@@ -54,6 +68,16 @@ public class AstarAgent extends Agent {
     		}
     		else {
     			return -1;
+    		}
+    	}
+    	
+    	@Override
+    	public boolean equals(Object o) {
+    		if (o instanceof Node) {
+    			return ((Node)o).loc.equals(this.loc);
+    		}
+    		else {
+    			return false;
     		}
     	}
     }
@@ -377,8 +401,18 @@ public class AstarAgent extends Agent {
     				check.pathCost = checkCost;
     				check.heuristicCost = computeHeuristicCost();
     				openList.add(check);
+    				check.parent = curr;
     				Collections.sort(openList);
     			}
+    		}
+    	}
+    	    	
+    	// Check that the goal has a parent node
+    	Node gNode = new Node(goal);
+    	if (closedList.contains(gNode)) {
+    		gNode = openList.get(0);
+    		if (gNode.parent == null) {
+    			return null;
     		}
     	}
     	
@@ -387,11 +421,14 @@ public class AstarAgent extends Agent {
     	 * Ignores the start and end nodes as specified in the problem description
     	 */
     	Stack<MapLocation> path = new Stack<MapLocation>();
-    	/**
-    	 * Pretty sure I have the wrong idea of how the closed list works...
-    	for (int i = closedList.size() - 1; i > 0; i--) {
-    		path.push(closedList.get(i).loc);
-    	}*/
+    	
+    	// While the current node does not equal start
+    	gNode = gNode.parent;
+    	while (!gNode.equals(new Node(start))) {
+    		path.push(gNode.loc);
+    		gNode = gNode.parent;
+    	}
+    	
         return path;
     }
 
@@ -449,15 +486,6 @@ public class AstarAgent extends Agent {
     	}
     	
     	return neighbors;
-    }
-    
-    public MapLocation findLowestCostNeighbor(MapLocation current, int xExtent, int yExtent) {
-    	ArrayList<MapLocation> neighbors = produceNeighborList(current, xExtent, yExtent);
-    	
-    	// Iterate through the list of neighbors
-    	for (MapLocation loc: neighbors) {
-    		
-    	}
     }
     
     /**
