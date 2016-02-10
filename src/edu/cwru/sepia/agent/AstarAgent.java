@@ -55,53 +55,6 @@ public class AstarAgent extends Agent {
     		}
     	}
     }
-    
-    /**
-     * A Node data structure for building a graph
-     * 
-     * @author JRG94
-     *
-     */
-    private class Node implements Comparable<Node>
-    {
-    	// TODO: In final version, make these private
-    	public MapLocation loc;
-    	public double heuristicCost;
-    	public double pathCost;
-    	public Node parent;
-    	
-    	public Node(MapLocation loc) {
-    		this.loc = loc;
-    	}
-    	
-    	@Override
-    	public int compareTo(Node n) {
-    		
-    		// Determine the estimated cost for each node
-    		double cost = heuristicCost + pathCost;
-    		double testCost = n.heuristicCost + n.pathCost;
-    		
-    		if (cost > testCost) {
-    			return 1;
-    		}
-    		else if (cost == testCost) {
-    			return 0;
-    		}
-    		else {
-    			return -1;
-    		}
-    	}
-    	
-    	@Override
-    	public boolean equals(Object o) {
-    		if (o instanceof Node) {
-    			return ((Node)o).loc.equals(this.loc);
-    		}
-    		else {
-    			return false;
-    		}
-    	}
-    }
 
     Stack<MapLocation> path;
     int footmanID, townhallID, enemyFootmanID;
@@ -375,19 +328,19 @@ public class AstarAgent extends Agent {
     private Stack<MapLocation> AstarSearch(MapLocation start, MapLocation goal, int xExtent, int yExtent, MapLocation enemyFootmanLoc, Set<MapLocation> resourceLocations)
     {
     	// Declare open and closed lists
-    	ArrayList<Node> openList = new ArrayList<Node>();
-    	ArrayList<Node> closedList = new ArrayList<Node>();
+    	ArrayList<MapLocation> openList = new ArrayList<MapLocation>();
+    	ArrayList<MapLocation> closedList = new ArrayList<MapLocation>();
     	
     	// Add the starting location to the open list and empty the closed list
-    	openList.add(new Node(start));
+    	openList.add(start);
     	Collections.sort(openList);
     	
     	// While there are still nodes in the open list and the target hasn't been found
     	while (openList.size() > 0) {
     		
     		// Goal test
-    		Node curr = openList.get(0);
-    		if (curr.loc.x == goal.x && curr.loc.y == goal.y) {
+    		MapLocation curr = openList.get(0);
+    		if (curr.x == goal.x && curr.y == goal.y) {
     			break;
     		}
     		
@@ -396,19 +349,17 @@ public class AstarAgent extends Agent {
     		closedList.add(curr);
     		
     		// Look at every neighbor of the step
-    		ArrayList<MapLocation> neighbors = produceNeighborList(curr.loc, xExtent, yExtent);
+    		ArrayList<MapLocation> neighbors = produceNeighborList(curr, xExtent, yExtent);
     		for (MapLocation neighbor: neighbors) {
-    			
-    			Node check = new Node(neighbor);
     			
     			/*
     			 * Calculate the path cost of reaching the neighbor
     			 * Assuming the movement cost is just 1
     			 */
-    			double checkCost = curr.pathCost + 1;
+    			float checkCost = curr.cost + 1;
     			
     			// If the cost is less than the cost known for this position, we have found a better path. Remove it from the open or closed lists
-    			if (checkCost < check.pathCost) {
+    			if (checkCost < neighbor.cost) {
     				if (openList.contains(neighbor)) {
     					openList.remove(neighbor);
     				}
@@ -419,20 +370,18 @@ public class AstarAgent extends Agent {
     			
     			// If the location isn't in either the open or closed list, record the costs for location and add it to the open list. Record the path to this node.
     			if (!openList.contains(neighbor) && !closedList.contains(neighbor)) {
-    				check.pathCost = checkCost;
-    				check.heuristicCost = computeHeuristicCost();
-    				openList.add(check);
-    				check.parent = curr;
+    				neighbor.cost = checkCost;
+    				neighbor.heuristic = computeHeuristicCost();
+    				openList.add(neighbor);
+    				neighbor.cameFrom = curr;
     				Collections.sort(openList);
     			}
     		}
     	}
     	    	
     	// Check that the goal has a parent node
-    	Node gNode = new Node(goal);
-    	if (closedList.contains(gNode)) {
-    		gNode = openList.get(0);
-    		if (gNode.parent == null) {
+    	if (closedList.contains(goal)) {
+    		if (openList.get(0).cameFrom == null) {
     			return null;
     		}
     	}
@@ -444,16 +393,16 @@ public class AstarAgent extends Agent {
     	Stack<MapLocation> path = new Stack<MapLocation>();
     	
     	// While the current node does not equal start
-    	gNode = gNode.parent;
-    	while (!gNode.equals(new Node(start))) {
-    		path.push(gNode.loc);
-    		gNode = gNode.parent;
+    	MapLocation goalLoc = goal.cameFrom;
+    	while (!goalLoc.equals(start)) {
+    		path.push(goalLoc);
+    		goalLoc = goalLoc.cameFrom;
     	}
     	
         return path;
     }
 
-	public double computeHeuristicCost() {
+	public float computeHeuristicCost() {
 		// TODO: compute this
 		return 0;
 	}
