@@ -17,10 +17,13 @@ public class AstarAgentTest {
 		boolean testInsideGridNotBlocked = a.isValidMapLocation(new AstarAgent.MapLocation(1,1, null, 0), new AstarAgent.MapLocation(1,2, null, 0), 10, 10, new HashSet<MapLocation>());
 		assertTrue(testInsideGridNotBlocked);
 		
-		Set<MapLocation> resources = new HashSet<MapLocation>();
-		resources.add(new AstarAgent.MapLocation(1,1,null,0));
 		boolean testOutsideGrid = a.isValidMapLocation(new AstarAgent.MapLocation(0,0, null, 0), new AstarAgent.MapLocation(-1,0, null, 0), 10, 10, new HashSet<MapLocation>());
 		assertFalse(testOutsideGrid);
+		
+		Set<MapLocation> resources = new HashSet<MapLocation>();
+		resources.add(new AstarAgent.MapLocation(1,1,null,0));
+		boolean testInsideGridBlocked = a.isValidMapLocation(new AstarAgent.MapLocation(0,0, null, 0), new AstarAgent.MapLocation(1,1, null, 0), 10, 10, resources);
+		assertFalse(testInsideGridBlocked);
 	}
 
 }

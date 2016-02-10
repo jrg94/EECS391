@@ -424,8 +424,10 @@ public class AstarAgent extends Agent {
     	// Tests grid bounds to determine if the next location is within the grid
     	boolean isOutsideGrid = (next.x < 0) || (next.y < 0) || (next.x >= xExtent) || (next.y >= yExtent);
     	// TODO: Insert condition that covers case where agent is blocked
-    	if (resourceLocations.contains(next)) {
-    		return false;
+    	for (MapLocation loc: resourceLocations) {
+    		if (loc.equals(next)) {
+    			return false;
+    		}
     	}
     	return !isOutsideGrid;
     }
