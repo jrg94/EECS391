@@ -330,10 +330,12 @@ public class AstarAgent extends Agent {
     	// Declare open and closed lists
     	ArrayList<MapLocation> openList = new ArrayList<MapLocation>();
     	ArrayList<MapLocation> closedList = new ArrayList<MapLocation>();
+    	System.out.println("Created the open and closed lists");
     	
     	// Add the starting location to the open list and empty the closed list
     	openList.add(start);
     	Collections.sort(openList);
+    	System.out.println("Added starting position and sorted the list");
     	
     	// While there are still nodes in the open list and the target hasn't been found
     	while (openList.size() > 0) {
@@ -341,6 +343,7 @@ public class AstarAgent extends Agent {
     		// Goal test
     		MapLocation curr = openList.get(0);
     		if (curr.x == goal.x && curr.y == goal.y) {
+    			System.out.println("Found the goal");
     			break;
     		}
     		
@@ -349,7 +352,7 @@ public class AstarAgent extends Agent {
     		closedList.add(curr);
     		
     		// Look at every neighbor of the step
-    		ArrayList<MapLocation> neighbors = produceNeighborList(curr, xExtent, yExtent);
+    		ArrayList<MapLocation> neighbors = produceNeighborList(curr, xExtent, yExtent, resourceLocations);
     		for (MapLocation neighbor: neighbors) {
     			
     			/*
@@ -380,10 +383,8 @@ public class AstarAgent extends Agent {
     	}
     	    	
     	// Check that the goal has a parent node
-    	if (closedList.contains(goal)) {
-    		if (openList.get(0).cameFrom == null) {
-    			return null;
-    		}
+    	if (goal.cameFrom == null) {
+    		return null;
     	}
     	
     	/*
@@ -416,11 +417,14 @@ public class AstarAgent extends Agent {
      * @param yExtent Height of map
      * @return true if the next map location is valid
      */
-    public boolean isValidMapLocation(MapLocation current, MapLocation next, int xExtent, int yExtent) {
+    public boolean isValidMapLocation(MapLocation current, MapLocation next, int xExtent, int yExtent, Set<MapLocation> resourceLocations) {
     	// Tests grid bounds to determine if the next location is within the grid
     	boolean isOutsideGrid = (next.x < 0) || (next.y < 0) || (next.x >= xExtent) || (next.y >= yExtent);
     	// TODO: Insert condition that covers case where agent is blocked
-    	return isOutsideGrid;
+    	if (resourceLocations.contains(next)) {
+    		return false;
+    	}
+    	return !isOutsideGrid;
     }
     
     /**
@@ -431,7 +435,7 @@ public class AstarAgent extends Agent {
      * @param yExtent the height of the map
      * @return a list of neighbor map locations
      */
-    public ArrayList<MapLocation> produceNeighborList(MapLocation current, int xExtent, int yExtent) {
+    public ArrayList<MapLocation> produceNeighborList(MapLocation current, int xExtent, int yExtent, Set<MapLocation> resourceLocations) {
     	ArrayList<MapLocation> neighbors = new ArrayList<MapLocation>();
     	
     	// Iterates through all neighbor nodes
@@ -449,7 +453,7 @@ public class AstarAgent extends Agent {
     			MapLocation neighbor = new MapLocation(neighborX, neighborY, null, 0);
     			
     			// If the neighbor is valid, add it to the list of neighbors
-    			if (isValidMapLocation(current, neighbor, xExtent, yExtent)) {
+    			if (isValidMapLocation(current, neighbor, xExtent, yExtent, resourceLocations)) {
     				neighbors.add(neighbor);
     			}
     		}
