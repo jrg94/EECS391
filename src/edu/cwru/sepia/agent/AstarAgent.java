@@ -13,10 +13,12 @@ import java.util.*;
 
 public class AstarAgent extends Agent {
 
-	//@TestVisible
-    static class MapLocation
+    static class MapLocation implements Comparable<MapLocation>
     {
         public int x, y;
+        MapLocation cameFrom;
+        float heuristic;
+        float cost;
 
         public MapLocation(int x, int y, MapLocation cameFrom, float cost)
         {
@@ -34,6 +36,24 @@ public class AstarAgent extends Agent {
         		return false;
         	}
         }
+        
+        @Override
+    	public int compareTo(MapLocation loc) {
+    		
+    		// Determine the estimated cost for each node
+    		double cost = heuristic + this.cost;
+    		double testCost = loc.heuristic + loc.cost;
+    		
+    		if (cost > testCost) {
+    			return 1;
+    		}
+    		else if (cost == testCost) {
+    			return 0;
+    		}
+    		else {
+    			return -1;
+    		}
+    	}
     }
     
     /**
