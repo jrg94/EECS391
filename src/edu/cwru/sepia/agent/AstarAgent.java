@@ -331,6 +331,7 @@ public class AstarAgent extends Agent {
     	ArrayList<MapLocation> openList = new ArrayList<MapLocation>();
     	ArrayList<MapLocation> closedList = new ArrayList<MapLocation>();
     	
+    	closedList.add(enemyFootmanLoc);
     	// Add the starting location to the open list and empty the closed list
     	openList.add(start);
     	Collections.sort(openList);
