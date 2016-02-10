@@ -243,6 +243,20 @@ public class AstarAgent extends Agent {
      */
     private boolean shouldReplanPath(State.StateView state, History.HistoryView history, Stack<MapLocation> currentPath)
     {
+    	MapLocation enemyFootmanLocation = null;
+    	if (enemyFootmanID == -1){
+    		return false;
+    	}
+    	else{
+    		Unit.UnitView enemy = state.getUnit(enemyFootmanID);
+    		enemyFootmanLocation = new MapLocation(enemy.getXPosition(), enemy.getYPosition(), null, 0);
+    	}
+    	// See if the enemy footman is within the current path
+    	for (MapLocation location : currentPath){
+    		if (enemyFootmanLocation.equals(location)){
+    			return true;
+    		}
+    	}
         return false;
     }
 
