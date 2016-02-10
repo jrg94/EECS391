@@ -373,6 +373,7 @@ public class AstarAgent extends Agent {
     			
     			// If the location isn't in either the open or closed list, record the costs for location and add it to the open list. Record the path to this node.
     			if (!openList.contains(neighbor) && !closedList.contains(neighbor)) {
+    	    		System.out.println("Checking: " + neighbor.x + "," + neighbor.y);
     				neighbor.cost = checkCost;
     				neighbor.heuristic = computeHeuristicCost();
     				openList.add(neighbor);
@@ -383,7 +384,8 @@ public class AstarAgent extends Agent {
     	}
     	    	
     	// Check that the goal has a parent node
-    	if (goal.cameFrom == null) {
+    	if (openList.get(0).cameFrom == null) {
+    		System.out.println("Did not find the goal");
     		return null;
     	}
     	
@@ -394,8 +396,9 @@ public class AstarAgent extends Agent {
     	Stack<MapLocation> path = new Stack<MapLocation>();
     	
     	// While the current node does not equal start
-    	MapLocation goalLoc = goal.cameFrom;
+    	MapLocation goalLoc = openList.get(0).cameFrom;
     	while (!goalLoc.equals(start)) {
+    		System.out.println("Path: " + goalLoc.x + "," + goalLoc.y);
     		path.push(goalLoc);
     		goalLoc = goalLoc.cameFrom;
     	}
