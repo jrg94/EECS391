@@ -13,7 +13,8 @@ import java.util.*;
 
 public class AstarAgent extends Agent {
 
-    class MapLocation
+	//@TestVisible
+    static class MapLocation
     {
         public int x, y;
 
