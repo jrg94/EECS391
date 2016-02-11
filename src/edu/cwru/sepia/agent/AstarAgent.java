@@ -38,6 +38,11 @@ public class AstarAgent extends Agent {
         }
         
         @Override
+        public int hashCode (){
+        	return 31*x+y;
+        }
+        
+        @Override
     	public int compareTo(MapLocation loc) {
     		
     		// Determine the estimated cost for each node
@@ -460,11 +465,8 @@ public class AstarAgent extends Agent {
     public boolean isValidMapLocation(MapLocation current, MapLocation next, int xExtent, int yExtent, Set<MapLocation> resourceLocations) {
     	// Tests grid bounds to determine if the next location is within the grid
     	boolean isOutsideGrid = (next.x < 0) || (next.y < 0) || (next.x >= xExtent) || (next.y >= yExtent);
-    	// TODO: Insert condition that covers case where agent is blocked
-    	for (MapLocation loc: resourceLocations) {
-    		if (loc.equals(next)) {
-    			return false;
-    		}
+    	if (resourceLocations.contains(next)){
+    		return false;
     	}
     	return !isOutsideGrid;
     }
