@@ -6,6 +6,7 @@ import edu.cwru.sepia.action.DirectedAction;
 import edu.cwru.sepia.action.TargetedAction;
 import edu.cwru.sepia.environment.model.state.State;
 import edu.cwru.sepia.environment.model.state.Unit;
+import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 import edu.cwru.sepia.util.Direction;
 
 import java.util.*;
@@ -20,8 +21,10 @@ import java.util.*;
  */
 public class GameState {
 	
-	private LinkedList<Unit> footmen;
-	private LinkedList<Unit> archers;
+	private List<Unit.UnitView> footmen;
+	private List<Unit.UnitView> archers;
+	private int xMax;
+	private int yMax;
 
     /**
      * You will implement this constructor. It will
@@ -45,16 +48,16 @@ public class GameState {
      * @param state Current state of the episode
      */
     public GameState(State.StateView state) {
-    	footmen = new LinkedList<Unit>();
-    	archers = new LinkedList<Unit>();
+		Integer[] playerNumbers = state.getPlayerNumbers();
+		
+		// Generates a list of footmen and a list of archers based on an array of player numbers
+		footmen = state.getUnits(playerNumbers[0]);
+		archers = state.getUnits(playerNumbers[1]);
+		
+		xMax = state.getXExtent();
+		yMax = state.getYExtent();
     	
-    	/**
-    	 * Loops through the resource IDs
-    	 * Based on a loop in the AstarAgent code
-    	 */
-    	for (Integer resourceID: state.getAllResourceIds()) {
-    		
-    	}
+    	System.out.println(String.format("Game contains %d footmen and %d archers", footmen.size(), archers.size()));
     }
 
     /**
