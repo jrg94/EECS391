@@ -23,6 +23,7 @@ public class GameState {
 	
 	private List<Unit.UnitView> footmen;
 	private List<Unit.UnitView> archers;
+	private List<Integer> obstacleIDs;
 	private int xMax;
 	private int yMax;
 
@@ -54,8 +55,12 @@ public class GameState {
 		footmen = state.getUnits(playerNumbers[0]);
 		archers = state.getUnits(playerNumbers[1]);
 		
+		// Track the size of the grid
 		xMax = state.getXExtent();
 		yMax = state.getYExtent();
+		
+		// Track the state of the obstacles
+		obstacleIDs = state.getAllResourceIds();
     	
     	System.out.println(String.format("Game contains %d footmen and %d archers", footmen.size(), archers.size()));
     }
@@ -79,7 +84,7 @@ public class GameState {
      * @return The weighted linear combination of the features
      */
     public double getUtility() {
-        return 0.0;
+        return footmen.get(0).getHP() * .5 + footmen.get(1).getHP() * .5;
     }
 
     /**
@@ -99,6 +104,13 @@ public class GameState {
      * @return All possible actions and their associated resulting game state
      */
     public List<GameStateChild> getChildren() {
-        return null;
+    	
+    	List<GameStateChild> allActionsAndState = new LinkedList<GameStateChild>();
+    	
+    	for (Direction direction: Direction.values()) {
+    		
+    	}
+    	
+        return allActionsAndState;
     }
 }
