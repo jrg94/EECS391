@@ -19,6 +19,9 @@ import java.util.*;
  * but do not delete or change the signatures of the provided methods.
  */
 public class GameState {
+	
+	private LinkedList<Unit> footmen;
+	private LinkedList<Unit> archers;
 
     /**
      * You will implement this constructor. It will
@@ -42,6 +45,16 @@ public class GameState {
      * @param state Current state of the episode
      */
     public GameState(State.StateView state) {
+    	footmen = new LinkedList<Unit>();
+    	archers = new LinkedList<Unit>();
+    	
+    	/**
+    	 * Loops through the resource IDs
+    	 * Based on a loop in the AstarAgent code
+    	 */
+    	for (Integer resourceID: state.getAllResourceIds()) {
+    		
+    	}
     }
 
     /**

@@ -74,6 +74,23 @@ public class MinimaxAlphaBeta extends Agent {
      */
     public GameStateChild alphaBetaSearch(GameStateChild node, int depth, double alpha, double beta)
     {
+    	// If depth is 0 or node is terminal node, return node with updated heuristic
+    	if (depth == 0 || node.state.getChildren() == null) {
+    		return node;
+    	}
+    	
+    	// Else, begin maximizing
+    	else {
+    		double v = -Double.POSITIVE_INFINITY;
+    		
+    		// For each child of node
+    			// Set v to be the max of v and alphaBetaSearch(child, depth, alpha, beta)
+    			// Set a to be the max a and v
+    			// If Beta <= Alpha
+    				// break
+    		// return node with updated v
+    	}
+    	
         return node;
     }
 
