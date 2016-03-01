@@ -97,7 +97,47 @@ public class GameState {
      * @return The weighted linear combination of the features
      */
     public double getUtility() {
-        return footmen.get(0).getHP() * .5 + footmen.get(1).getHP() * .5;
+    	
+    	// Initialize the current shortest path to zero
+    	Double totalShortestPath = 0.0;
+    	
+    	// For each footman in the game
+    	for (Unit.UnitView footman: footmen) {
+    		
+    		// Initialize the current shortest path to infinity
+    		Double footmanShortestPath = Double.POSITIVE_INFINITY;
+    		
+    		// For each archer in the game
+    		for (Unit.UnitView archer: archers) {
+    		
+    			// Compute the distance between the footman and the archer - c = sqrt(a^2 + b^2)
+    			double a = footman.getXPosition() - archer.getXPosition();
+    			double b = footman.getYPosition() - archer.getYPosition();
+    			double aSquared = Math.pow(a, 2);
+    			double bSquared = Math.pow(b, 2);
+    			double c = Math.sqrt(aSquared + bSquared);
+    			
+    			// Store the shortest path
+    			if (c < footmanShortestPath) {
+    				footmanShortestPath = c;
+    			}
+    		}
+    		
+    		totalShortestPath += footmanShortestPath;
+    	}
+    	
+    	/**
+    	 * Our utility function calculates the average shortest path (straight line)
+    	 * to an archer. The smallest average path for any set of footmen yields the highest 
+    	 * utility
+    	 */
+    	
+    	// The total shortest path is averaged, inverted, and normalized (based on largest possible straight line path) 
+    	// such that shortest paths yield higher utilities
+    	// TODO: Figure out how to normalize this
+    	Double utility = 1 / (totalShortestPath / footmen.size());
+    	
+        return utility;
     }
 
     /**
@@ -139,7 +179,7 @@ public class GameState {
     	for (Direction direction: Direction.values()) {
     		
     		// If this unit is not blocked
-    		if (!isBlocked(unit, direction)) {
+    		if (!isValidMove(unit, direction)) {
     			
     		}
     	}
@@ -166,7 +206,7 @@ public class GameState {
      * @param dir The direction of movement
      * @return true if the move is valid
      */
-    private boolean isBlocked(Unit.UnitView unit, Direction dir) {
+    private boolean isValidMove(Unit.UnitView unit, Direction dir) {
     	
     	int newX = unit.getXPosition() + dir.xComponent();
     	int newY = unit.getYPosition() + dir.yComponent();
@@ -177,12 +217,24 @@ public class GameState {
 	    	boolean isResource = state.isResourceAt(newX, newY);
 	    	boolean isUnit = state.isUnitAt(newX, newY);
 	    	
+	    	// If there is a unit in the new space
+	    	if (isUnit && !isResource) {
+	    	
+		    	// Get the unit and its type
+		    	Integer otherUnitID = state.unitAt(newX, newY);
+		    	Unit.UnitView otherUnit = state.getUnit(otherUnitID);
+		    	String otherUnitType = otherUnit.getTemplateView().getName().toLowerCase();
+		    	
+		    	String unitType = unit.getTemplateView().getName().toLowerCase();
+	    	}
+	    	
 	    	// If space does not have a resource or unit on it, 
-	    	if (!isResource && !isUnit) {
+	    	else if (!isResource && !isUnit) {
 	    		return true;
 	    	}
     	}
     	
     	return false;
     }
+    
 }
