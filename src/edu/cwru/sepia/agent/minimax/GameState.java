@@ -160,7 +160,9 @@ public class GameState {
     	
     	List<GameStateChild> allActionsAndState = new LinkedList<GameStateChild>();
     	
- 
+    	// TODO: Take the generated hashmaps for each unit and combine them to form
+    	// all the possible combinations of next states. Decide if this is a good
+    	// way to do this or hardcode this for two footmen.
     	
         return allActionsAndState;
     }
@@ -226,6 +228,10 @@ public class GameState {
 		    	String otherUnitType = otherUnit.getTemplateView().getName().toLowerCase();
 		    	
 		    	String unitType = unit.getTemplateView().getName().toLowerCase();
+		    	
+		    	// TODO: Decide if it is necessary to set this up for archers and footmen
+		    	// or if it is safe to assume that this function will be used to attack 
+		    	// as a footman only
 	    	}
 	    	
 	    	// If space does not have a resource or unit on it, 
