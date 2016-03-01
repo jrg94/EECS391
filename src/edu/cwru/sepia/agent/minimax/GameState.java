@@ -107,10 +107,52 @@ public class GameState {
     	
     	List<GameStateChild> allActionsAndState = new LinkedList<GameStateChild>();
     	
-    	for (Direction direction: Direction.values()) {
-    		
-    	}
+ 
     	
         return allActionsAndState;
+    }
+    
+    /**
+     * Produces a set of unit actions 
+     * @param unit
+     * @return
+     */
+    private List<Map<Integer, Action>> getUnitActions(Unit.UnitView unit) {
+    	
+    	// The list of action maps
+    	List<Map<Integer, Action>> unitActions = new LinkedList<Map<Integer, Action>>();
+    	
+    	// Convenient variables for unit
+    	int x = unit.getXPosition();
+    	int y = unit.getYPosition();
+    	
+    	// Check each direction for this unit
+    	for (Direction direction: Direction.values()) {
+    		
+    		// If this unit is in bounds and the movement is not blocked
+    		if (isInBounds(x, y, direction)) {
+    			
+    		}
+    	}
+    }
+    
+    /**
+     * Tests to see if movement is legal within the bounds of the board
+     * @param x the current x of a unit in this state
+     * @param y the current y of a unit in this state
+     * @param dir the intended movement direction
+     * @return true if the intended movement is legal with the bounds of the board
+     */
+    private boolean isInBounds(int x, int y, Direction dir) {
+    	boolean inX = x + dir.xComponent() < xMax && x >= 0;
+    	boolean inY = y + dir.yComponent() < yMax && y >= 0;
+    	
+    	return inX && inY;
+    }
+    
+    private boolean isBlocked(int x, int y, Direction dir) {
+    	
+    	
+    	return true;
     }
 }
