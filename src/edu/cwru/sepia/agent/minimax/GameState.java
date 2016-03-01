@@ -49,11 +49,22 @@ public class GameState {
      * @param state Current state of the episode
      */
     public GameState(State.StateView state) {
-		Integer[] playerNumbers = state.getPlayerNumbers();
+	
+    	// Initializes the lists of units
+		footmen = new LinkedList<Unit.UnitView>();
+		archers = new LinkedList<Unit.UnitView>();
 		
-		// Generates a list of footmen and a list of archers based on an array of player numbers
-		footmen = state.getUnits(playerNumbers[0]);
-		archers = state.getUnits(playerNumbers[1]);
+		// Generates the lists of archers and footmen based on unit type
+		for (Unit.UnitView unit: state.getAllUnits()) {
+			String unitType = unit.getTemplateView().getName().toLowerCase();
+			
+			if (unitType.equals("footman")) {
+				footmen.add(unit);
+			}
+			else if (unitType.equals("archer")) {
+				archers.add(unit);
+			}
+		}
 		
 		// Track the size of the grid
 		xMax = state.getXExtent();
@@ -134,6 +145,7 @@ public class GameState {
     			
     		}
     	}
+    	return unitActions;
     }
     
     /**
@@ -150,7 +162,10 @@ public class GameState {
     	return inX && inY;
     }
     
-    private boolean isBlocked(int x, int y, Direction dir) {
+    private boolean isBlocked(Unit.UnitView unit, Direction dir) {
+    	
+    	int newX = unit.getXPosition() + dir.xComponent();
+    	int newY = unit.getYPosition() + dir.yComponent();
     	
     	
     	return true;
