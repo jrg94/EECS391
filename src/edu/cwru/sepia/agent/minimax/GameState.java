@@ -21,6 +21,7 @@ import java.util.*;
  */
 public class GameState {
 	
+	private State.StateView state;
 	private List<Unit.UnitView> footmen;
 	private List<Unit.UnitView> archers;
 	private List<Integer> obstacleIDs;
@@ -72,8 +73,9 @@ public class GameState {
 		
 		// Track the state of the obstacles
 		obstacleIDs = state.getAllResourceIds();
-    	
-    	System.out.println(String.format("Game contains %d footmen and %d archers", footmen.size(), archers.size()));
+		
+		// If all else fails, have a direct reference to the state
+		this.state = state;
     }
 
     /**
@@ -133,15 +135,11 @@ public class GameState {
     	// The list of action maps
     	List<Map<Integer, Action>> unitActions = new LinkedList<Map<Integer, Action>>();
     	
-    	// Convenient variables for unit
-    	int x = unit.getXPosition();
-    	int y = unit.getYPosition();
-    	
     	// Check each direction for this unit
     	for (Direction direction: Direction.values()) {
     		
-    		// If this unit is in bounds and the movement is not blocked
-    		if (isInBounds(x, y, direction)) {
+    		// If this unit is not blocked
+    		if (!isBlocked(unit, direction)) {
     			
     		}
     	}
@@ -162,12 +160,29 @@ public class GameState {
     	return inX && inY;
     }
     
+    /**
+     * Tests to see if movement is legal based on whether the space is occupied or not
+     * @param unit The unit to be moved
+     * @param dir The direction of movement
+     * @return true if the move is valid
+     */
     private boolean isBlocked(Unit.UnitView unit, Direction dir) {
     	
     	int newX = unit.getXPosition() + dir.xComponent();
     	int newY = unit.getYPosition() + dir.yComponent();
     	
+    	// If this move is in the bounds of the map, we can check if the move is occupied
+    	if (isInBounds(newX, newY, dir)) {
     	
-    	return true;
+	    	boolean isResource = state.isResourceAt(newX, newY);
+	    	boolean isUnit = state.isUnitAt(newX, newY);
+	    	
+	    	// If space does not have a resource or unit on it, 
+	    	if (!isResource && !isUnit) {
+	    		return true;
+	    	}
+    	}
+    	
+    	return false;
     }
 }
