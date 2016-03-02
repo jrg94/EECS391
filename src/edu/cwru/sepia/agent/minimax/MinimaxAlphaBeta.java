@@ -79,17 +79,22 @@ public class MinimaxAlphaBeta extends Agent {
     		return node;
     	}
     	
-    	// Else, begin maximizing
-    	else {
-    		double v = -Double.POSITIVE_INFINITY;
-    		
-    		// For each child of node
-    			// Set v to be the max of v and alphaBetaSearch(child, depth, alpha, beta)
-    			// Set a to be the max a and v
+    	// If maximizing player
+    		// v = -infinity
+			// For each child of node
+				// Set v to be the max of v and alphaBetaSearch(child, depth, alpha, beta)
+				// Set a to be the max a and v
+				// If Beta <= Alpha
+					// break
+    		// return node with updated v
+    	// Else, minimize
+    		// v = infinity
+    		// for each child node
+    			// Set v to be the min of v and alphaBetaSearch(child, depth, alpha, beta)
+    			// Set b to be the min of b and v
     			// If Beta <= Alpha
     				// break
     		// return node with updated v
-    	}
     	
         return node;
     }
