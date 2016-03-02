@@ -171,10 +171,14 @@ public class GameState {
         return allActionsAndState;
     }
     
+    // TODO: write a method that generates all combinations of actions
+    // This has to be recursive because we can't dynamically write nested loops
+    
     /**
      * Produces a set of unit actions 
-     * @param unit
-     * @return
+     * 
+     * @param unit the unit for which the actions will be generated
+     * @return 
      */
     private List<Action> getUnitActions(Unit.UnitView unit) {
     	
@@ -229,7 +233,7 @@ public class GameState {
      * @param enemies the list of potential threats within range
      * @return the finalized list of enemies in attack range
      */
-    public List<Unit.UnitView> getNearbyEnemies(Unit.UnitView unit, List<Unit.UnitView> enemies) {
+    private List<Unit.UnitView> getNearbyEnemies(Unit.UnitView unit, List<Unit.UnitView> enemies) {
     	
     	// Holds the list of enemies within attack range
     	List<Unit.UnitView> nearbyEnemies = new LinkedList<Unit.UnitView>();
