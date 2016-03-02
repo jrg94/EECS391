@@ -79,9 +79,6 @@ public class MinimaxAlphaBeta extends Agent {
     		return node;
     	}
     	
-    	// Find a way to set this
-    	boolean maxPlayer = true;
-    	
     	// If maximizing player
     	if (isMaxPlayer(node)) {
     		
@@ -104,16 +101,26 @@ public class MinimaxAlphaBeta extends Agent {
     		}
     		// return node with updated v
     	}
+    	
     	// Else, minimize
     	else {
+    		
     		// v = infinity
     		double v = Double.POSITIVE_INFINITY;
+    		
     		// for each child node
     		for (GameStateChild child: node.state.getChildren()) {
+    			
     			// Set v to be the min of v and alphaBetaSearch(child, depth, alpha, beta)
+    			v = Math.min(v, alphaBetaSearch(child, depth - 1, alpha, beta).state.getUtility());
+    			
     			// Set b to be the min of b and v
+    			beta = Math.min(beta, v);
+    			
     			// If Beta <= Alpha
-    				// break
+    			if (beta <= alpha) {
+    				break;
+    			}
     		}
     		// return node with updated v
     	}
