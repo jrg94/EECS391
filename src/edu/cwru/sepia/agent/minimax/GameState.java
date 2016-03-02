@@ -189,20 +189,6 @@ public class GameState {
     }
     
     /**
-     * Tests to see if movement is legal within the bounds of the board
-     * @param x the current x of a unit in this state
-     * @param y the current y of a unit in this state
-     * @param dir the intended movement direction
-     * @return true if the intended movement is legal with the bounds of the board
-     */
-    private boolean isInBounds(int x, int y, Direction dir) {
-    	boolean inX = x + dir.xComponent() < xMax && x >= 0;
-    	boolean inY = y + dir.yComponent() < yMax && y >= 0;
-    	
-    	return inX && inY;
-    }
-    
-    /**
      * Tests to see if movement is legal based on whether the space is occupied or not
      * 
      * @param unit The unit to be moved
@@ -214,34 +200,13 @@ public class GameState {
     	int newX = unit.getXPosition() + dir.xComponent();
     	int newY = unit.getYPosition() + dir.yComponent();
     	
-    	// If this move is in the bounds of the map, we can check if the move is occupied
-    	if (isInBounds(newX, newY, dir)) {
+    	// Not sure if the latter two tests will throw an error because out of bounds
+    	boolean isInBounds = state.inBounds(newX, newY);
+    	boolean hasResource = state.isResourceAt(newX, newY);
+    	boolean hasUnit = state.isUnitAt(newX, newY);
     	
-	    	boolean isResource = state.isResourceAt(newX, newY);
-	    	boolean isUnit = state.isUnitAt(newX, newY);
-	    	
-	    	// If there is a unit in the new space
-	    	if (isUnit && !isResource) {
-	    	
-		    	// Get the unit and its type
-		    	Integer otherUnitID = state.unitAt(newX, newY);
-		    	Unit.UnitView otherUnit = state.getUnit(otherUnitID);
-		    	String otherUnitType = otherUnit.getTemplateView().getName().toLowerCase();
-		    	
-		    	String unitType = unit.getTemplateView().getName().toLowerCase();
-		    	
-		    	// TODO: Decide if it is necessary to set this up for archers and footmen
-		    	// or if it is safe to assume that this function will be used to attack 
-		    	// as a footman only
-	    	}
-	    	
-	    	// If space does not have a resource or unit on it, 
-	    	else if (!isResource && !isUnit) {
-	    		return true;
-	    	}
-    	}
-    	
-    	return false;
+    	// Return true if and only if the new space is in bounds and empty
+    	return isInBounds && !hasResource && !hasUnit;
     }
     
     /**
