@@ -81,6 +81,10 @@ public class GameState {
 		// If all else fails, have a direct reference to the state
 		this.state = state;
     }
+    
+    public int getTurnNumber() {
+    	return turnNumber;
+    }
 
     /**
      * You will implement this function.

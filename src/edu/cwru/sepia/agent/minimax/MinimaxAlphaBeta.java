@@ -83,25 +83,31 @@ public class MinimaxAlphaBeta extends Agent {
     	boolean maxPlayer = true;
     	
     	// If maximizing player
-    	if (maxPlayer) {
+    	if (isMaxPlayer(node)) {
     		// v = -infinity
     		double v = -Double.POSITIVE_INFINITY;
 			// For each child of node
+    		for (GameStateChild child: node.state.getChildren()) {
 				// Set v to be the max of v and alphaBetaSearch(child, depth, alpha, beta)
 				// Set a to be the max a and v
 				// If Beta <= Alpha
 					// break
+    		}
     		// return node with updated v
     	}
     	// Else, minimize
+    	else {
     		// v = infinity
+    		double v = Double.POSITIVE_INFINITY;
     		// for each child node
+    		for (GameStateChild child: node.state.getChildren()) {
     			// Set v to be the min of v and alphaBetaSearch(child, depth, alpha, beta)
     			// Set b to be the min of b and v
     			// If Beta <= Alpha
     				// break
+    		}
     		// return node with updated v
-    	
+    	}
         return node;
     }
 
@@ -121,5 +127,14 @@ public class MinimaxAlphaBeta extends Agent {
     public List<GameStateChild> orderChildrenWithHeuristics(List<GameStateChild> children)
     {
         return children;
+    }
+    
+    /**
+     * Returns a boolean based on the turn
+     * @param node
+     * @return
+     */
+    private boolean isMaxPlayer(GameStateChild node) {
+    	return node.state.getTurnNumber() % 2 == 0;
     }
 }
