@@ -27,6 +27,8 @@ public class GameState {
 	private List<Integer> obstacleIDs;
 	private int xMax;
 	private int yMax;
+	
+	private boolean maxPlayer;
 
     /**
      * You will implement this constructor. It will
@@ -50,6 +52,8 @@ public class GameState {
      * @param state Current state of the episode
      */
     public GameState(State.StateView state) {
+    	
+    	maxPlayer = false;
 	
     	// Initializes the lists of units
 		footmen = new LinkedList<Unit.UnitView>();
@@ -172,19 +176,28 @@ public class GameState {
      * @param unit
      * @return
      */
-    private List<Map<Integer, Action>> getUnitActions(Unit.UnitView unit) {
+    private List<Action> getUnitActions(Unit.UnitView unit) {
     	
     	// The list of action maps
-    	List<Map<Integer, Action>> unitActions = new LinkedList<Map<Integer, Action>>();
+    	List<Action> unitActions = new LinkedList<Action>();
     	
     	// Check each direction for this unit
     	for (Direction direction: Direction.values()) {
     		
-    		// If this unit is not blocked
+    		// If this move is valid, add 
     		if (!isValidMove(unit, direction)) {
-    			
+    			unitActions.add(Action.createPrimitiveMove(unit.getID(), direction));
     		}
     	}
+    	
+    	// Determines if we should attack footmen or archers
+    	boolean isFootman = unit.getTemplateView().getName().toLowerCase().equals("footman");
+    	
+    	// Check nearby enemies as well
+    	for (Unit.UnitView enemy: getNearbyEnemies(unit, isFootman ? archers : footmen)) {
+    		unitActions.add(Action.createPrimitiveAttack(unit.getID(), enemy.getID()));
+    	}
+    	
     	return unitActions;
     }
     
