@@ -204,6 +204,7 @@ public class GameState {
     
     /**
      * Tests to see if movement is legal based on whether the space is occupied or not
+     * 
      * @param unit The unit to be moved
      * @param dir The direction of movement
      * @return true if the move is valid
@@ -243,4 +244,32 @@ public class GameState {
     	return false;
     }
     
+    /**
+     * Returns a list of enemies that are within attack range
+     * 
+     * @param unit the unit who is looking for something to attack
+     * @param enemies the list of potential threats within range
+     * @return the finalized list of enemies in attack range
+     */
+    public List<Unit.UnitView> getNearbyEnemies(Unit.UnitView unit, List<Unit.UnitView> enemies) {
+    	
+    	// Holds the list of enemies within attack range
+    	List<Unit.UnitView> nearbyEnemies = new LinkedList<Unit.UnitView>();
+    	
+    	// Stores the attack range of our unit
+    	int attackRange = unit.getTemplateView().getRange();
+    	
+    	// Run through the list of enemies
+    	for (Unit.UnitView enemy: enemies) {
+    		int changeInX = Math.abs(unit.getXPosition() - enemy.getXPosition());
+    		int changeInY = Math.abs(unit.getYPosition() - enemy.getYPosition());
+    		
+    		// If attack range is within the sum of the change in x and change in y
+    		if (attackRange >= changeInX + changeInY) {
+    			nearbyEnemies.add(enemy);
+    		}
+    	}
+    	
+    	return nearbyEnemies;
+    }
 }
