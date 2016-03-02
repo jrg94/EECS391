@@ -27,9 +27,8 @@ public class GameState {
 	private List<Integer> obstacleIDs;
 	private int xMax;
 	private int yMax;
+	private int turnNumber;
 	
-	private boolean maxPlayer;
-
     /**
      * You will implement this constructor. It will
      * extract all of the needed state information from the built in
@@ -52,8 +51,6 @@ public class GameState {
      * @param state Current state of the episode
      */
     public GameState(State.StateView state) {
-    	
-    	maxPlayer = false;
 	
     	// Initializes the lists of units
 		footmen = new LinkedList<Unit.UnitView>();
@@ -74,6 +71,9 @@ public class GameState {
 		// Track the size of the grid
 		xMax = state.getXExtent();
 		yMax = state.getYExtent();
+		
+		// Get turn
+		turnNumber = state.getTurnNumber();
 		
 		// Track the state of the obstacles
 		obstacleIDs = state.getAllResourceIds();
