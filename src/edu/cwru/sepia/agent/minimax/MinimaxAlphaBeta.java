@@ -84,14 +84,23 @@ public class MinimaxAlphaBeta extends Agent {
     	
     	// If maximizing player
     	if (isMaxPlayer(node)) {
+    		
     		// v = -infinity
     		double v = -Double.POSITIVE_INFINITY;
+    		
 			// For each child of node
     		for (GameStateChild child: node.state.getChildren()) {
+    			
 				// Set v to be the max of v and alphaBetaSearch(child, depth, alpha, beta)
+    			v = Math.max(v, alphaBetaSearch(child, depth - 1, alpha, beta).state.getUtility());
+    			
 				// Set a to be the max a and v
+    			alpha = Math.max(alpha, v);
+    			
 				// If Beta <= Alpha
-					// break
+    			if (beta <= alpha) {
+    				break;
+    			}
     		}
     		// return node with updated v
     	}
