@@ -8,6 +8,7 @@ import edu.cwru.sepia.environment.model.state.State;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class MinimaxAlphaBeta extends Agent {
@@ -79,6 +80,7 @@ public class MinimaxAlphaBeta extends Agent {
     	
     	// If depth is 0 or node is terminal node, return node with updated heuristic
     	if (depth == 0 || orderedChildren.size() == 0) {
+    		System.out.println("Depth: 0");
     		return node;
     	}
     	
@@ -163,7 +165,15 @@ public class MinimaxAlphaBeta extends Agent {
      */
     public List<GameStateChild> orderChildrenWithHeuristics(List<GameStateChild> children)
     {
-        return children;
+    	// Would love to use comparable, but we can't edit GameStateChild
+    	List<GameStateChild> orderedList = new LinkedList<GameStateChild>();
+    	
+    	// Run through the list to be ordered
+    	for (GameStateChild node: children) {
+    		
+    	}
+    	
+        return orderedList;
     }
     
     /**
