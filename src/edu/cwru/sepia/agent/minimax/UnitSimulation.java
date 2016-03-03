@@ -143,6 +143,10 @@ public class UnitSimulation {
 	(Basic Damage - Target's Armor) + Piercing Damage = Maximum damage inflicted
 	The attacker does a random amount of damage from 50%-100% of this total each attack.
 	Source: http://classic.battle.net/war2/basic/combat.shtml
+	 */
+	
+	/**
+	 * The damage calculation without the rng 
 	 * @param enemyArmor
 	 * @return
 	 */
@@ -150,12 +154,22 @@ public class UnitSimulation {
 		return Math.max(basicDamage - enemyArmor, 0) + piercingDamage;
 	}
 	
+	/**
+	 * The damage calculation with the rng
+	 * @param enemyArmor
+	 * @return
+	 */
 	public int randomDamageCalculation (int enemyArmor){
 		Random r = new Random();
 		double rngPercent = .5 + .5*r.nextDouble();
 		return (int)(rngPercent*damageCalculation(enemyArmor));
 	}
 	
+	/**
+	 * The damage calculation with expected value for rng (average)
+	 * @param enemyArmor
+	 * @return
+	 */
 	public int expectedDamageCalculation (int enemyArmor){
 		return (int) (.75*damageCalculation(enemyArmor));
 	}
