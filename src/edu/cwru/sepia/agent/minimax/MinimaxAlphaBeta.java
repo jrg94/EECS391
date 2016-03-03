@@ -8,6 +8,8 @@ import edu.cwru.sepia.environment.model.state.State;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -165,15 +167,22 @@ public class MinimaxAlphaBeta extends Agent {
      */
     public List<GameStateChild> orderChildrenWithHeuristics(List<GameStateChild> children)
     {
-    	// Would love to use comparable, but we can't edit GameStateChild
-    	List<GameStateChild> orderedList = new LinkedList<GameStateChild>();
+    	// Just use collections.sort
+    	Collections.sort(children, new Comparator<GameStateChild>() {
+    		public int compare(GameStateChild gsc1, GameStateChild gsc2) {
+    			if (gsc1.state.getUtility() < gsc2.state.getUtility()) {
+    				return -1;
+    			}
+    			else if (gsc1.state.getUtility() == gsc2.state.getUtility()) {
+    				return 0;
+    			}
+    			else {
+    				return -1;
+    			}
+    		}
+    	});
     	
-    	// Run through the list to be ordered
-    	for (GameStateChild node: children) {
-    		
-    	}
-    	
-        return orderedList;
+        return children;
     }
     
     /**
