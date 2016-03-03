@@ -214,15 +214,16 @@ public class GameState {
     	List<Action> unitAction1 = new LinkedList<Action>();
     	List<Action> unitAction2 = new LinkedList<Action>();
     	
+    	List<UnitSimulation> units = getUnitsByTurn();
     	
     	// All possible actions depending on the units' turn
-    	unitAction1 = getUnitActions(footmen.get(0));
-    	unitAction2 = getUnitActionsIfAlive(footmen);
+    	unitAction1 = getUnitActions(units.get(0));
+    	unitAction2 = getUnitActionsIfAlive(units);
     	
     	if (unitAction2.isEmpty()){
     		for (Action action : unitAction1){
 				Map<Integer, Action> unitActionsMap = new HashMap<Integer, Action>();
-				unitActionsMap.put(footmen.get(0).getID(), action);
+				unitActionsMap.put(units.get(0).getID(), action);
     			addNextStateToChildren(allActionsAndState, unitActionsMap);
     		}
     	}
@@ -230,8 +231,8 @@ public class GameState {
     		for (Action action1 : unitAction1){
     			for (Action action2 : unitAction2){
     				Map<Integer, Action> unitActionsMap = new HashMap<Integer, Action>();
-    				unitActionsMap.put(footmen.get(0).getID(), action1);
-    				unitActionsMap.put(footmen.get(0).getID(), action2);
+    				unitActionsMap.put(units.get(0).getID(), action1);
+    				unitActionsMap.put(units.get(0).getID(), action2);
     				addNextStateToChildren(allActionsAndState, unitActionsMap);
     			}
     		}
@@ -239,6 +240,15 @@ public class GameState {
         return allActionsAndState;
     }
 
+    private List<UnitSimulation> getUnitsByTurn(){
+    	if (isFootmenTurn){
+    		return footmen;
+    	}
+    	else{
+    		return archers;
+    	}
+    }
+    
 	private void addNextStateToChildren(List<GameStateChild> allActionsAndState, Map<Integer, Action> unitActionsMap) {
 		GameState nextState = new GameState(this);
 		allActionsAndState.add(new GameStateChild(unitActionsMap, nextState));
@@ -272,13 +282,28 @@ public class GameState {
 		}
 	}
 	
+	/**
+	 * finds unit simulation by id
+	 * has to manually go through and match because list index does not necessarily equal unitID
+	 * @param unitID
+	 * @return
+	 */
 	private UnitSimulation getUnitSimulationByID(int unitID){
 		if (unitID<2){//isFootman
-			return footmen.get(unitID);
+			for (UnitSimulation unit : footmen){
+				if (unit.getID()==unitID){
+					return unit;
+				}
+			}
 		}
 		else{
-			return archers.get(unitID);
+			for (UnitSimulation unit : archers){
+				if (unit.getID()==unitID){
+					return unit;
+				}
+			}
 		}
+		return null;
 	}
     
     // TODO: write a method that generates all combinations of actions
