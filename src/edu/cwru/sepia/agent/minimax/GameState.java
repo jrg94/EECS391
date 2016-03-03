@@ -28,6 +28,7 @@ public class GameState {
 	private int xMax;
 	private int yMax;
 	private int turnNumber;
+	private boolean isFootmenTurn;
 	
     /**
      * You will implement this constructor. It will
@@ -80,6 +81,20 @@ public class GameState {
 		
 		// If all else fails, have a direct reference to the state
 		this.state = state;
+		
+		// This will start out as true as a footman will first call this
+		isFootmenTurn = true;
+    }
+    
+    /**
+     * Constructor override to clone game state easily
+     * @param originalState
+     */
+    public GameState (GameState originalState){
+    	footmen = new LinkedList<Unit.UnitView>(originalState.footmen);
+    	archers = new LinkedList<Unit.UnitView>(originalState.archers);
+    	obstacleIDs = originalState.obstacleIDs; //this value isn't getting changed, no need to clone
+    	isFootmenTurn = !isFootmenTurn;
     }
     
     public int getTurnNumber() {
@@ -120,6 +135,8 @@ public class GameState {
     		
     			// Compute the distance between the footman and the archer - c = sqrt(a^2 + b^2)
     			double c = distance(footman, archer);
+    			//TODO incorporate footman hp and archer hp
+    			
     			
     			// Store the shortest path
     			if (c < footmanShortestPath) {
@@ -172,13 +189,38 @@ public class GameState {
     public List<GameStateChild> getChildren() {
     	
     	List<GameStateChild> allActionsAndState = new LinkedList<GameStateChild>();
+    	List<Action> unitAction1 = new LinkedList<Action>();
+    	List<Action> unitAction2 = new LinkedList<Action>();
     	
-    	// TODO: Take the generated hashmaps for each unit and combine them to form
-    	// all the possible combinations of next states. Decide if this is a good
-    	// way to do this or hardcode this for two footmen.
     	
+    	// All possible actions depending on the units' turn
+    	unitAction1 = getUnitActions(footmen.get(0));
+    	unitAction2 = getUnitActionsIfAlive(footmen);
+    	
+    	if (unitAction2.isEmpty()){
+    		for (Action action : unitAction1){
+				Map<Integer, Action> unitActionsMap = new HashMap<Integer, Action>();
+				unitActionsMap.put(footmen.get(0).getID(), action);
+    			addNextStateToChildren(allActionsAndState, unitActionsMap);
+    		}
+    	}
+    	else{
+    		for (Action action1 : unitAction1){
+    			for (Action action2 : unitAction2){
+    				Map<Integer, Action> unitActionsMap = new HashMap<Integer, Action>();
+    				unitActionsMap.put(footmen.get(0).getID(), action1);
+    				unitActionsMap.put(footmen.get(0).getID(), action2);
+    				addNextStateToChildren(allActionsAndState, unitActionsMap);
+    			}
+    		}
+    	}
         return allActionsAndState;
     }
+
+	private void addNextStateToChildren(List<GameStateChild> allActionsAndState, Map<Integer, Action> unitActionsMap) {
+		GameState nextState = new GameState(this);
+		allActionsAndState.add(new GameStateChild(unitActionsMap, nextState));
+	}
     
     // TODO: write a method that generates all combinations of actions
     // This has to be recursive because we can't dynamically write nested loops
@@ -214,6 +256,19 @@ public class GameState {
     	return unitActions;
     }
     
+
+    /**
+     * helper method to see if the second unit is alive or not
+     * @param units
+     * @return
+     */
+	private List<Action> getUnitActionsIfAlive(List<Unit.UnitView> units) {
+		if (units.size()==2){
+			return getUnitActions(units.get(1));
+		}
+		return null;
+	}
+	
     /**
      * Tests to see if movement is legal based on whether the space is occupied or not
      * 
