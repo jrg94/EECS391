@@ -219,8 +219,8 @@ public class GameState {
     public List<GameStateChild> getChildren() {
     	
     	List<GameStateChild> allActionsAndState = new LinkedList<GameStateChild>();
-    	List<Action> unitAction1 = new LinkedList<Action>();
-    	List<Action> unitAction2 = new LinkedList<Action>();
+    	List<Action> unitAction1;
+    	List<Action> unitAction2;
     	
     	List<UnitSimulation> units = getUnitsByTurn();
     	
@@ -240,7 +240,7 @@ public class GameState {
     			for (Action action2 : unitAction2){
     				Map<Integer, Action> unitActionsMap = new HashMap<Integer, Action>();
     				unitActionsMap.put(units.get(0).getID(), action1);
-    				unitActionsMap.put(units.get(0).getID(), action2);
+    				unitActionsMap.put(units.get(1).getID(), action2);
     				addNextStateToChildren(allActionsAndState, unitActionsMap);
     			}
     		}
@@ -332,7 +332,7 @@ public class GameState {
     	for (Direction direction: Direction.values()) {
     		
     		// If this move is valid, add 
-    		if (!isValidMove(unit, direction)) {
+    		if (isValidMove(unit, direction)) {
     			unitActions.add(Action.createPrimitiveMove(unit.getID(), direction));
     		}
     	}
@@ -360,7 +360,7 @@ public class GameState {
 		if (units.size()==2){
 			return getUnitActions(units.get(1));
 		}
-		return null;
+		return new LinkedList<Action>();
 	}
 	
     /**
