@@ -35,6 +35,7 @@ public class GameState {
 	private boolean isFootmenTurn;
 	
 	private Double utility;
+	private int sameSpaceTurnCount;
 	
     /**
      * You will implement this constructor. It will
@@ -91,6 +92,7 @@ public class GameState {
 		// This will start out as true as a footman will first call this
 		isFootmenTurn = true;
 		utility = null;
+		sameSpaceTurnCount = 0;
     }
     
     /**
@@ -112,6 +114,7 @@ public class GameState {
     	isFootmenTurn = !isFootmenTurn;
     	state = originalState.state;
     	utility = null;
+    	sameSpaceTurnCount = originalState.sameSpaceTurnCount;
     }
     
     public int getTurnNumber() {
@@ -267,7 +270,9 @@ public class GameState {
 	private void addNextStateToChildren(List<GameStateChild> allActionsAndState, Map<Integer, Action> unitActionsMap) {
 		GameState nextState = new GameState(this);
 		nextState.calculateNextState(unitActionsMap);
-		allActionsAndState.add(new GameStateChild(unitActionsMap, nextState));
+		GameStateChild child = new GameStateChild(unitActionsMap, nextState);
+		
+		allActionsAndState.add(child);
 	}
 	
 	private void calculateNextState(Map<Integer, Action> unitActionsMap){
@@ -295,6 +300,26 @@ public class GameState {
 			
 			}
 		}
+	}
+	
+	/**
+	 * determines if the next state results in doing nothing
+	 * @param nextState
+	 * @return
+	 */
+	private boolean isSameSpace (GameStateChild nextState){
+		//if next state's actions include attack, return false
+		for (Action action : nextState.action.values()){
+			if (action.getType() == ActionType.PRIMITIVEATTACK){
+				return true;
+			}
+		}
+		
+		// check if footmen are on the same space
+		for (UnitSimulation unit: nextState.state.footmen){
+			
+		}
+		
 	}
 	
 	/**
