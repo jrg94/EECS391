@@ -74,8 +74,11 @@ public class MinimaxAlphaBeta extends Agent {
      */
     public GameStateChild alphaBetaSearch(GameStateChild node, int depth, double alpha, double beta)
     {
+    	// Order the list of children
+    	List<GameStateChild> orderedChildren = orderChildrenWithHeuristics(node.state.getChildren());
+    	
     	// If depth is 0 or node is terminal node, return node with updated heuristic
-    	if (depth == 0 || node.state.getChildren() == null) {
+    	if (depth == 0 || orderedChildren.size() == 0) {
     		return node;
     	}
     	
@@ -86,10 +89,19 @@ public class MinimaxAlphaBeta extends Agent {
     		double v = -Double.POSITIVE_INFINITY;
     		
 			// For each child of node
-    		for (GameStateChild child: node.state.getChildren()) {
+    		for (GameStateChild child: orderedChildren) {
+    			
+    			// Run recursive call to generate childNode & get utility
+    			GameStateChild childNode = alphaBetaSearch(child, depth - 1, alpha, beta);
+    			double utility = childNode.state.getUtility();
     			
 				// Set v to be the max of v and alphaBetaSearch(child, depth, alpha, beta)
-    			v = Math.max(v, alphaBetaSearch(child, depth - 1, alpha, beta).state.getUtility());
+    			v = Math.max(v, childNode.state.getUtility());
+    			
+    			// If v and the utility function match, reassign the node 
+    			if (v == utility) {
+    				node = childNode;
+    			}
     			
 				// Set a to be the max a and v
     			alpha = Math.max(alpha, v);
@@ -109,10 +121,19 @@ public class MinimaxAlphaBeta extends Agent {
     		double v = Double.POSITIVE_INFINITY;
     		
     		// for each child node
-    		for (GameStateChild child: node.state.getChildren()) {
+    		for (GameStateChild child: orderedChildren) {
+    			
+    			// Run recursive call to generate childNode & get utility
+    			GameStateChild childNode = alphaBetaSearch(child, depth - 1, alpha, beta);
+    			double utility = childNode.state.getUtility();
     			
     			// Set v to be the min of v and alphaBetaSearch(child, depth, alpha, beta)
-    			v = Math.min(v, alphaBetaSearch(child, depth - 1, alpha, beta).state.getUtility());
+    			v = Math.min(v, utility);
+    			
+    			// If v and the utility function match, reassign the node 
+    			if (v == utility) {
+    				node = childNode;
+    			}
     			
     			// Set b to be the min of b and v
     			beta = Math.min(beta, v);
