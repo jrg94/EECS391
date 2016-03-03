@@ -34,7 +34,7 @@ public class GameState {
 	private int turnNumber;
 	private boolean isFootmenTurn;
 	
-	private double utility;
+	private Double utility;
 	
     /**
      * You will implement this constructor. It will
@@ -90,7 +90,7 @@ public class GameState {
 		
 		// This will start out as true as a footman will first call this
 		isFootmenTurn = true;
-		utility = Double.NaN;
+		utility = null;
     }
     
     /**
@@ -111,7 +111,7 @@ public class GameState {
     	obstacleIDs = originalState.obstacleIDs; //this value isn't getting changed, no need to clone
     	isFootmenTurn = !isFootmenTurn;
     	state = originalState.state;
-    	utility = Double.NaN;
+    	utility = null;
     }
     
     public int getTurnNumber() {
@@ -137,7 +137,7 @@ public class GameState {
      * @return The weighted linear combination of the features
      */
     public double getUtility() {
-    	if (this.utility != Double.NaN){
+    	if (this.utility != null){
     		return this.utility;
     	}
     	// Initialize the current shortest path to zero
@@ -177,7 +177,7 @@ public class GameState {
     	// TODO: Figure out how to normalize this
     	Double utility = 1 / (totalShortestPath / footmen.size());
     	this.utility = utility;
-        return this.utility;
+        return utility;
     }
 
     //TODO might want to use simpler distance formula to save time
