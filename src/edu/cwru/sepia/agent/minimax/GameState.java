@@ -119,11 +119,7 @@ public class GameState {
     		for (Unit.UnitView archer: archers) {
     		
     			// Compute the distance between the footman and the archer - c = sqrt(a^2 + b^2)
-    			double a = footman.getXPosition() - archer.getXPosition();
-    			double b = footman.getYPosition() - archer.getYPosition();
-    			double aSquared = Math.pow(a, 2);
-    			double bSquared = Math.pow(b, 2);
-    			double c = Math.sqrt(aSquared + bSquared);
+    			double c = distance(footman, archer);
     			
     			// Store the shortest path
     			if (c < footmanShortestPath) {
@@ -147,6 +143,15 @@ public class GameState {
     	
         return utility;
     }
+
+	private double distance(Unit.UnitView footman, Unit.UnitView archer) {
+		double a = footman.getXPosition() - archer.getXPosition();
+		double b = footman.getYPosition() - archer.getYPosition();
+		double aSquared = Math.pow(a, 2);
+		double bSquared = Math.pow(b, 2);
+		double c = Math.sqrt(aSquared + bSquared);
+		return c;
+	}
 
     /**
      * You will implement this function.
