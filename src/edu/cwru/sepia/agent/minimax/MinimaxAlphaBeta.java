@@ -158,6 +158,7 @@ public class MinimaxAlphaBeta extends Agent {
 	}
     
     private GameStateChild alphaBetaSearch(GameStateChild node, int depth, double alpha, double beta, boolean isMaximizingPlayer){
+    	System.out.println("Depth: " + depth);
     	if (depth == 0){ //or archers dead
     		return node;
     	}
