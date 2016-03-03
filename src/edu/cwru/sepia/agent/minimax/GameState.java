@@ -225,18 +225,32 @@ public class GameState {
 	
 	private void calculateNextState(Map<Integer, Action> unitActionsMap){
 		for (Integer unitID : unitActionsMap.keySet()){
-			switch(unitActionsMap.get(unitID).getType()){
+			Action action = unitActionsMap.get(unitID);
+			switch(action.getType()){
 			case PRIMITIVEATTACK:
 				
 				break;
 			case PRIMITIVEMOVE:
-				
+				UnitSimulation unit = getUnitSimulationByID(unitID);
+				int x = ((DirectedAction)action).getDirection().xComponent();
+				int y = ((DirectedAction)action).getDirection().yComponent();
+				unit.moveXBy(x);
+				unit.moveYBy(y);
 				break;
 			default:
-				System.out.println(String.format("Illegal unit action detected: %s", unitActionsMap.get(unitID).getType()));
+				System.out.println(String.format("Illegal unit action detected: %s", action.getType()));
 				break;
 			
 			}
+		}
+	}
+	
+	private UnitSimulation getUnitSimulationByID(int unitID){
+		if (unitID<2){//isFootman
+			return footmen.get(unitID);
+		}
+		else{
+			return archers.get(unitID);
 		}
 	}
     
@@ -262,6 +276,8 @@ public class GameState {
     			unitActions.add(Action.createPrimitiveMove(unit.getID(), direction));
     		}
     	}
+    	
+    	//TODO does this allow for move and attack at the same time?
     	
     	// Determines if we should attack footmen or archers
     	boolean isFootman = unit.getName().equals("footman");

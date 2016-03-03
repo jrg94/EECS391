@@ -47,10 +47,10 @@ public class UnitSimulation {
 
 
 	/**
-	 * @param xPosition the xPosition to set
+	 * @param x the x to move horizontally by
 	 */
-	public void setXPosition(int xPosition) {
-		this.xPosition = xPosition;
+	public void moveXBy(int x){
+		this.xPosition += x;
 	}
 
 
@@ -63,10 +63,10 @@ public class UnitSimulation {
 
 
 	/**
-	 * @param yPosition the yPosition to set
+	 * @param y the y to move vertically by
 	 */
-	public void setYPosition(int yPosition) {
-		this.yPosition = yPosition;
+	public void moveYBy(int y) {
+		this.yPosition += y;
 	}
 
 
