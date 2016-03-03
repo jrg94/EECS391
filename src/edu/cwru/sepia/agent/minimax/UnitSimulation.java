@@ -36,6 +36,23 @@ public class UnitSimulation {
 		armor=unit.getTemplateView().getArmor();
 	}
 	
+	/**
+	 * constructor for deep cloning
+	 * @param unit
+	 */
+	public UnitSimulation (UnitSimulation unit){
+		xPosition=unit.getXPosition();
+		yPosition=unit.getYPosition();
+		id=unit.getID();
+		currentHP=unit.getCurrentHP();
+		maxHP=unit.getMaxHP();
+		name=unit.getName();
+		range=unit.getRange();
+		basicDamage=unit.basicDamage;
+		piercingDamage=unit.piercingDamage;
+		armor=unit.armor;
+	}
+	
 
 	/**
 	 * @return the armor
