@@ -97,11 +97,11 @@ public class GameState {
      * @param originalState
      */
     public GameState (GameState originalState){
-    	footmen = new LinkedList<UnitSimulation>(originalState.footmen);
+    	footmen = new LinkedList<UnitSimulation>();
     	for (int i = 0; i<originalState.footmen.size(); i++){
     		footmen.add(new UnitSimulation(originalState.footmen.get(i)));
     	}
-    	archers = new LinkedList<UnitSimulation>(originalState.archers);
+    	archers = new LinkedList<UnitSimulation>();
     	for (int i = 0; i<originalState.archers.size(); i++){
     		archers.add(new UnitSimulation(originalState.archers.get(i)));
     	}

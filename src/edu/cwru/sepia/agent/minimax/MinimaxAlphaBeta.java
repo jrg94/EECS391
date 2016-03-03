@@ -168,7 +168,7 @@ public class MinimaxAlphaBeta extends Agent {
     		for (GameStateChild child : orderedChildren){
     			GameStateChild descendent = alphaBetaSearch(child, depth-1, alpha, beta, !isMaximizingPlayer);
     			if (descendent.state.getUtility() > v){
-    				node=descendent;
+    				best=descendent;
     			}
     			v = Math.max (v, descendent.state.getUtility());
     			alpha = Math.max(alpha, v);
@@ -183,10 +183,10 @@ public class MinimaxAlphaBeta extends Agent {
     		for (GameStateChild child : orderedChildren){
     			GameStateChild descendent = alphaBetaSearch(child, depth-1, alpha, beta, !isMaximizingPlayer);
     			if (descendent.state.getUtility() < v){
-    				node = descendent;
+    				best = descendent;
     			}
     			v = Math.min(v, descendent.state.getUtility());
-    			node = descendent;
+    			best = descendent;
     			beta = Math.min(beta, v);
     			if (beta <= alpha){
     				break;
