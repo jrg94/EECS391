@@ -361,7 +361,8 @@ public class GameState {
     	List<Action> unitActions = new LinkedList<Action>();
     	
     	// Check each direction for this unit
-    	for (Direction direction: Direction.values()) {
+    	Direction[] legalDirections = new Direction[]{Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
+    	for (Direction direction: legalDirections) {// Direction.values include diagonal movements 
     		
     		// If this move is valid, add 
     		if (isValidMove(unit, direction)) {
