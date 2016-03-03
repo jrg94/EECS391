@@ -226,12 +226,17 @@ public class GameState {
 	private void calculateNextState(Map<Integer, Action> unitActionsMap){
 		for (Integer unitID : unitActionsMap.keySet()){
 			Action action = unitActionsMap.get(unitID);
+			UnitSimulation unit;
 			switch(action.getType()){
 			case PRIMITIVEATTACK:
-				
+				unit = getUnitSimulationByID(unitID);
+				TargetedAction attack = (TargetedAction)action;
+				UnitSimulation targetUnit = getUnitSimulationByID(attack.getTargetId());
+				int damageDealt = unit.expectedDamageCalculation(targetUnit.getArmor());
+				targetUnit.decrementHP(damageDealt);
 				break;
 			case PRIMITIVEMOVE:
-				UnitSimulation unit = getUnitSimulationByID(unitID);
+				unit = getUnitSimulationByID(unitID);
 				int x = ((DirectedAction)action).getDirection().xComponent();
 				int y = ((DirectedAction)action).getDirection().yComponent();
 				unit.moveXBy(x);
