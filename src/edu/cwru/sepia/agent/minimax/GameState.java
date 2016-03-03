@@ -220,6 +220,24 @@ public class GameState {
 	private void addNextStateToChildren(List<GameStateChild> allActionsAndState, Map<Integer, Action> unitActionsMap) {
 		GameState nextState = new GameState(this);
 		allActionsAndState.add(new GameStateChild(unitActionsMap, nextState));
+		calculateNextState(unitActionsMap);
+	}
+	
+	private void calculateNextState(Map<Integer, Action> unitActionsMap){
+		for (Integer unitID : unitActionsMap.keySet()){
+			switch(unitActionsMap.get(unitID).getType()){
+			case PRIMITIVEATTACK:
+				
+				break;
+			case PRIMITIVEMOVE:
+				
+				break;
+			default:
+				System.out.println(String.format("Illegal unit action detected: %s", unitActionsMap.get(unitID).getType()));
+				break;
+			
+			}
+		}
 	}
     
     // TODO: write a method that generates all combinations of actions
