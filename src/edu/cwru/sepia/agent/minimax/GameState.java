@@ -22,8 +22,8 @@ import java.util.*;
 public class GameState {
 	
 	private State.StateView state;
-	private List<Unit.UnitView> footmen;
-	private List<Unit.UnitView> archers;
+	private List<UnitSimulation> footmen;
+	private List<UnitSimulation> archers;
 	private List<Integer> obstacleIDs;
 	private int xMax;
 	private int yMax;
@@ -54,18 +54,18 @@ public class GameState {
     public GameState(State.StateView state) {
 	
     	// Initializes the lists of units
-		footmen = new LinkedList<Unit.UnitView>();
-		archers = new LinkedList<Unit.UnitView>();
+		footmen = new LinkedList<UnitSimulation>();
+		archers = new LinkedList<UnitSimulation>();
 		
 		// Generates the lists of archers and footmen based on unit type
 		for (Unit.UnitView unit: state.getAllUnits()) {
 			String unitType = unit.getTemplateView().getName().toLowerCase();
 			
 			if (unitType.equals("footman")) {
-				footmen.add(unit);
+				footmen.add(new UnitSimulation(unit));
 			}
 			else if (unitType.equals("archer")) {
-				archers.add(unit);
+				archers.add(new UnitSimulation(unit));
 			}
 		}
 		
@@ -91,8 +91,8 @@ public class GameState {
      * @param originalState
      */
     public GameState (GameState originalState){
-    	footmen = new LinkedList<Unit.UnitView>(originalState.footmen);
-    	archers = new LinkedList<Unit.UnitView>(originalState.archers);
+    	footmen = new LinkedList<UnitSimulation>(originalState.footmen);
+    	archers = new LinkedList<UnitSimulation>(originalState.archers);
     	obstacleIDs = originalState.obstacleIDs; //this value isn't getting changed, no need to clone
     	isFootmenTurn = !isFootmenTurn;
     }
@@ -125,13 +125,13 @@ public class GameState {
     	Double totalShortestPath = 0.0;
     	
     	// For each footman in the game
-    	for (Unit.UnitView footman: footmen) {
+    	for (UnitSimulation footman: footmen) {
     		
     		// Initialize the current shortest path to infinity
     		Double footmanShortestPath = Double.POSITIVE_INFINITY;
     		
     		// For each archer in the game
-    		for (Unit.UnitView archer: archers) {
+    		for (UnitSimulation archer: archers) {
     		
     			// Compute the distance between the footman and the archer - c = sqrt(a^2 + b^2)
     			double c = distance(footman, archer);
@@ -161,7 +161,7 @@ public class GameState {
         return utility;
     }
 
-	private double distance(Unit.UnitView footman, Unit.UnitView archer) {
+	private double distance(UnitSimulation footman, UnitSimulation archer) {
 		double a = footman.getXPosition() - archer.getXPosition();
 		double b = footman.getYPosition() - archer.getYPosition();
 		double aSquared = Math.pow(a, 2);
@@ -249,7 +249,7 @@ public class GameState {
      * @param unit the unit for which the actions will be generated
      * @return 
      */
-    private List<Action> getUnitActions(Unit.UnitView unit) {
+    private List<Action> getUnitActions(UnitSimulation unit) {
     	
     	// The list of action maps
     	List<Action> unitActions = new LinkedList<Action>();
@@ -264,10 +264,10 @@ public class GameState {
     	}
     	
     	// Determines if we should attack footmen or archers
-    	boolean isFootman = unit.getTemplateView().getName().toLowerCase().equals("footman");
+    	boolean isFootman = unit.getName().equals("footman");
     	
     	// Check nearby enemies as well
-    	for (Unit.UnitView enemy: getNearbyEnemies(unit, isFootman ? archers : footmen)) {
+    	for (UnitSimulation enemy: getNearbyEnemies(unit, isFootman ? archers : footmen)) {
     		unitActions.add(Action.createPrimitiveAttack(unit.getID(), enemy.getID()));
     	}
     	
@@ -280,7 +280,7 @@ public class GameState {
      * @param units
      * @return
      */
-	private List<Action> getUnitActionsIfAlive(List<Unit.UnitView> units) {
+	private List<Action> getUnitActionsIfAlive(List<UnitSimulation> units) {
 		if (units.size()==2){
 			return getUnitActions(units.get(1));
 		}
@@ -294,7 +294,7 @@ public class GameState {
      * @param dir The direction of movement
      * @return true if the move is valid
      */
-    private boolean isValidMove(Unit.UnitView unit, Direction dir) {
+    private boolean isValidMove(UnitSimulation unit, Direction dir) {
     	
     	int newX = unit.getXPosition() + dir.xComponent();
     	int newY = unit.getYPosition() + dir.yComponent();
@@ -315,16 +315,16 @@ public class GameState {
      * @param enemies the list of potential threats within range
      * @return the finalized list of enemies in attack range
      */
-    private List<Unit.UnitView> getNearbyEnemies(Unit.UnitView unit, List<Unit.UnitView> enemies) {
+    private List<UnitSimulation> getNearbyEnemies(UnitSimulation unit, List<UnitSimulation> enemies) {
     	
     	// Holds the list of enemies within attack range
-    	List<Unit.UnitView> nearbyEnemies = new LinkedList<Unit.UnitView>();
+    	List<UnitSimulation> nearbyEnemies = new LinkedList<UnitSimulation>();
     	
     	// Stores the attack range of our unit
-    	int attackRange = unit.getTemplateView().getRange();
+    	int attackRange = unit.getRange();
     	
     	// Run through the list of enemies
-    	for (Unit.UnitView enemy: enemies) {
+    	for (UnitSimulation enemy: enemies) {
     		int changeInX = Math.abs(unit.getXPosition() - enemy.getXPosition());
     		int changeInY = Math.abs(unit.getYPosition() - enemy.getYPosition());
     		
