@@ -21,6 +21,10 @@ import java.util.*;
  */
 public class GameState {
 	
+	private static final double FOOTMAN_HP_WEIGHT = .3;
+	private static final double ARCHER_HP_WEIGHT = .7;
+	private static final double DISTANCE_WEIGHT = 1;
+	
 	private State.StateView state;
 	private List<UnitSimulation> footmen;
 	private List<UnitSimulation> archers;
@@ -161,13 +165,31 @@ public class GameState {
         return utility;
     }
 
+    //TODO might want to use simpler distance formula to save time
 	private double distance(UnitSimulation footman, UnitSimulation archer) {
 		double a = footman.getXPosition() - archer.getXPosition();
 		double b = footman.getYPosition() - archer.getYPosition();
 		double aSquared = Math.pow(a, 2);
 		double bSquared = Math.pow(b, 2);
-		double c = Math.sqrt(aSquared + bSquared);
-		return c;
+		return Math.sqrt(aSquared + bSquared);
+	}
+	
+	/**
+	 * higher this value, the better
+	 * @param footman
+	 * @return
+	 */
+	private double footmanHPUtility(UnitSimulation footman){
+		return FOOTMAN_HP_WEIGHT*(double)footman.getCurrentHP()/footman.getMaxHP();
+	}
+	
+	/**
+	 * lower this value, the better
+	 * @param archer
+	 * @return
+	 */
+	private double archerHPUtility(UnitSimulation archer){
+		return ARCHER_HP_WEIGHT*(double)archer.getCurrentHP()/archer.getMaxHP();
 	}
 
     /**
