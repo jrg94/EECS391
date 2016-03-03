@@ -3,34 +3,52 @@ package edu.cwru.sepia.agent.minimax;
 import edu.cwru.sepia.environment.model.state.Unit;
 
 public class UnitSimulation {
-	private int x;
-	/**
-	 * @return the x
-	 */
-	public int getX() {
-		return x;
+	private int xPosition;
+	private int yPosition;
+	private int unitID;
+	private int currentHP;
+	private int maxHP;
+	
+	public UnitSimulation(Unit.UnitView unit){
+		xPosition=unit.getXPosition();
+		yPosition=unit.getYPosition();
+		unitID=unit.getID();
+		currentHP=unit.getHP();
+		maxHP=unit.getTemplateView().getBaseHealth();
 	}
+	
 
 	/**
-	 * @param x the x to set
+	 * @return the xPosition
 	 */
-	public void setX(int x) {
-		this.x = x;
+	public int getXPosition() {
+		return xPosition;
 	}
 
-	/**
-	 * @return the y
-	 */
-	public int getY() {
-		return y;
-	}
 
 	/**
-	 * @param y the y to set
+	 * @param xPosition the xPosition to set
 	 */
-	public void setY(int y) {
-		this.y = y;
+	public void setXPosition(int xPosition) {
+		this.xPosition = xPosition;
 	}
+
+
+	/**
+	 * @return the yPosition
+	 */
+	public int getYPosition() {
+		return yPosition;
+	}
+
+
+	/**
+	 * @param yPosition the yPosition to set
+	 */
+	public void setYPosition(int yPosition) {
+		this.yPosition = yPosition;
+	}
+
 
 	/**
 	 * @return the unitID
@@ -53,16 +71,4 @@ public class UnitSimulation {
 		return maxHP;
 	}
 
-	private int y;
-	private int unitID;
-	private int currentHP;
-	private int maxHP;
-	
-	public UnitSimulation(Unit.UnitView unit){
-		x=unit.getXPosition();
-		y=unit.getYPosition();
-		unitID=unit.getID();
-		currentHP=unit.getHP();
-		maxHP=unit.getTemplateView().getBaseHealth();
-	}
 }
