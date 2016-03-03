@@ -81,6 +81,7 @@ public class MinimaxAlphaBeta extends Agent {
     	List<GameStateChild> orderedChildren = orderChildrenWithHeuristics(node.state.getChildren());
     	
     	// If depth is 0 or node is terminal node, return node with updated heuristic
+    	System.out.println("Depth: " + depth);
     	if (depth == 0 || orderedChildren.size() == 0) {
     		System.out.println("Depth: 0");
     		return node;
@@ -100,7 +101,7 @@ public class MinimaxAlphaBeta extends Agent {
     			double utility = childNode.state.getUtility();
     			
 				// Set v to be the max of v and alphaBetaSearch(child, depth, alpha, beta)
-    			v = Math.max(v, childNode.state.getUtility());
+    			v = Math.max(v, utility);
     			
     			// If v and the utility function match, reassign the node 
     			if (v == utility) {
