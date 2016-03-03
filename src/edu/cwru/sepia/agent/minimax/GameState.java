@@ -23,7 +23,9 @@ public class GameState {
 	
 	private static final double FOOTMAN_HP_WEIGHT = .3;
 	private static final double ARCHER_HP_WEIGHT = .7;
-	private static final double DISTANCE_WEIGHT = 1;
+	private static final double DISTANCE_WEIGHT = .05;
+	private static final double ACTIONS_WEIGHT = 1;
+	private static final double MAX_ACTIONS = 25;
 	
 	private State.StateView state;
 	private List<UnitSimulation> footmen;
@@ -36,6 +38,7 @@ public class GameState {
 	
 	private Double utility;
 	private int sameSpaceTurnCount;
+	private int numActions;
 	
     /**
      * You will implement this constructor. It will
@@ -140,33 +143,9 @@ public class GameState {
      * @return The weighted linear combination of the features
      */
     public double getUtility() {
+    	
     	if (this.utility != null){
     		return this.utility;
-    	}
-    	// Initialize the current shortest path to zero
-    	Double totalShortestPath = 0.0;
-    	
-    	// For each footman in the game
-    	for (UnitSimulation footman: footmen) {
-    		
-    		// Initialize the current shortest path to infinity
-    		Double footmanShortestPath = Double.POSITIVE_INFINITY;
-    		
-    		// For each archer in the game
-    		for (UnitSimulation archer: archers) {
-    		
-    			// Compute the distance between the footman and the archer - c = sqrt(a^2 + b^2)
-    			double c = distance(footman, archer);
-    			//TODO incorporate footman hp and archer hp
-    			
-    			
-    			// Store the shortest path
-    			if (c < footmanShortestPath) {
-    				footmanShortestPath = c;
-    			}
-    		}
-    		
-    		totalShortestPath += footmanShortestPath;
     	}
     	
     	/**
@@ -178,7 +157,7 @@ public class GameState {
     	// The total shortest path is averaged, inverted, and normalized (based on largest possible straight line path) 
     	// such that shortest paths yield higher utilities
     	// TODO: Figure out how to normalize this
-    	Double utility = 1 / (totalShortestPath / footmen.size());
+    	Double utility = distanceUtility() + numberOfActionsUtility();
     	this.utility = utility;
         return utility;
     }
@@ -209,7 +188,40 @@ public class GameState {
 	private double archerHPUtility(UnitSimulation archer){
 		return ARCHER_HP_WEIGHT*(double)archer.getCurrentHP()/archer.getMaxHP();
 	}
+	
+	private double numberOfActionsUtility() {
+		return ACTIONS_WEIGHT * numActions/MAX_ACTIONS;
+	}
 
+	private double distanceUtility() {
+		// Initialize the current shortest path to zero
+    	Double totalShortestPath = 0.0;
+    	
+    	// For each footman in the game
+    	for (UnitSimulation footman: footmen) {
+    		
+    		// Initialize the current shortest path to infinity
+    		Double footmanShortestPath = Double.POSITIVE_INFINITY;
+    		
+    		// For each archer in the game
+    		for (UnitSimulation archer: archers) {
+    		
+    			// Compute the distance between the footman and the archer - c = sqrt(a^2 + b^2)
+    			double c = distance(footman, archer);
+    			//TODO incorporate footman hp and archer hp
+    			
+    			
+    			// Store the shortest path
+    			if (c < footmanShortestPath) {
+    				footmanShortestPath = c;
+    			}
+    		}
+    		
+    		totalShortestPath += footmanShortestPath;
+    	}
+    	return DISTANCE_WEIGHT * (1 / (totalShortestPath/footmen.size()));
+	}
+	
     /**
      * You will implement this function.
      *
@@ -255,6 +267,7 @@ public class GameState {
     			}
     		}
     	}
+    	numActions = allActionsAndState.size();
         return allActionsAndState;
     }
 
