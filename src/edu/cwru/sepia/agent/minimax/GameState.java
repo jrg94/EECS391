@@ -259,8 +259,8 @@ public class GameState {
     
 	private void addNextStateToChildren(List<GameStateChild> allActionsAndState, Map<Integer, Action> unitActionsMap) {
 		GameState nextState = new GameState(this);
-		allActionsAndState.add(new GameStateChild(unitActionsMap, nextState));
 		nextState.calculateNextState(unitActionsMap);
+		allActionsAndState.add(new GameStateChild(unitActionsMap, nextState));
 	}
 	
 	private void calculateNextState(Map<Integer, Action> unitActionsMap){
