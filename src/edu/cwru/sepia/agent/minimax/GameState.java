@@ -319,6 +319,7 @@ public class GameState {
 		for (UnitSimulation unit: nextState.state.footmen){
 			
 		}
+		return false;
 		
 	}
 	

@@ -190,4 +190,8 @@ public class UnitSimulation {
 	public int expectedDamageCalculation (int enemyArmor){
 		return (int) (.75*damageCalculation(enemyArmor));
 	}
+	
+	public String toString(){
+		return name + ": " + xPosition + ", " + yPosition;
+	}
 }

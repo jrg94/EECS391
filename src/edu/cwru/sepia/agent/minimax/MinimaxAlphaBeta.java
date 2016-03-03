@@ -40,7 +40,7 @@ public class MinimaxAlphaBeta extends Agent {
                 numPlys,
                 Double.NEGATIVE_INFINITY,
                 Double.POSITIVE_INFINITY);
-
+        System.out.println("Turn is: " + newstate.getTurnNumber());
         return bestChild.action;
     }
 
@@ -169,7 +169,7 @@ public class MinimaxAlphaBeta extends Agent {
     		for (GameStateChild child : orderedChildren){
     			GameStateChild descendent = alphaBetaSearch(child, depth-1, alpha, beta, !isMaximizingPlayer);
     			if (descendent.state.getUtility() > v){
-    				best=descendent;
+    				best=child;
     			}
     			v = Math.max (v, descendent.state.getUtility());
     			alpha = Math.max(alpha, v);
@@ -184,7 +184,7 @@ public class MinimaxAlphaBeta extends Agent {
     		for (GameStateChild child : orderedChildren){
     			GameStateChild descendent = alphaBetaSearch(child, depth-1, alpha, beta, !isMaximizingPlayer);
     			if (descendent.state.getUtility() < v){
-    				best = descendent;
+    				best = child;
     			}
     			v = Math.min(v, descendent.state.getUtility());
     			best = descendent;
@@ -196,7 +196,7 @@ public class MinimaxAlphaBeta extends Agent {
     		return best;
     	}
     }
-
+    
     /**
      * You will implement this.
      *
