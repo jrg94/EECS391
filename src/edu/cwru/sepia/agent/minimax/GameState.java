@@ -34,6 +34,9 @@ public class GameState {
 	private int turnNumber;
 	private boolean isFootmenTurn;
 	
+	private Double utility;
+	private int sameSpaceTurnCount;
+	
     /**
      * You will implement this constructor. It will
      * extract all of the needed state information from the built in
@@ -88,6 +91,8 @@ public class GameState {
 		
 		// This will start out as true as a footman will first call this
 		isFootmenTurn = true;
+		utility = null;
+		sameSpaceTurnCount = 0;
     }
     
     /**
@@ -97,16 +102,19 @@ public class GameState {
      * @param originalState
      */
     public GameState (GameState originalState){
-    	footmen = new LinkedList<UnitSimulation>(originalState.footmen);
+    	footmen = new LinkedList<UnitSimulation>();
     	for (int i = 0; i<originalState.footmen.size(); i++){
     		footmen.add(new UnitSimulation(originalState.footmen.get(i)));
     	}
-    	archers = new LinkedList<UnitSimulation>(originalState.archers);
+    	archers = new LinkedList<UnitSimulation>();
     	for (int i = 0; i<originalState.archers.size(); i++){
     		archers.add(new UnitSimulation(originalState.archers.get(i)));
     	}
     	obstacleIDs = originalState.obstacleIDs; //this value isn't getting changed, no need to clone
     	isFootmenTurn = !isFootmenTurn;
+    	state = originalState.state;
+    	utility = null;
+    	sameSpaceTurnCount = originalState.sameSpaceTurnCount;
     }
     
     public int getTurnNumber() {
@@ -132,7 +140,9 @@ public class GameState {
      * @return The weighted linear combination of the features
      */
     public double getUtility() {
-    	
+    	if (this.utility != null){
+    		return this.utility;
+    	}
     	// Initialize the current shortest path to zero
     	Double totalShortestPath = 0.0;
     	
@@ -169,7 +179,7 @@ public class GameState {
     	// such that shortest paths yield higher utilities
     	// TODO: Figure out how to normalize this
     	Double utility = 1 / (totalShortestPath / footmen.size());
-    	
+    	this.utility = utility;
         return utility;
     }
 
@@ -260,7 +270,9 @@ public class GameState {
 	private void addNextStateToChildren(List<GameStateChild> allActionsAndState, Map<Integer, Action> unitActionsMap) {
 		GameState nextState = new GameState(this);
 		nextState.calculateNextState(unitActionsMap);
-		allActionsAndState.add(new GameStateChild(unitActionsMap, nextState));
+		GameStateChild child = new GameStateChild(unitActionsMap, nextState);
+		
+		allActionsAndState.add(child);
 	}
 	
 	private void calculateNextState(Map<Integer, Action> unitActionsMap){
@@ -288,6 +300,26 @@ public class GameState {
 			
 			}
 		}
+	}
+	
+	/**
+	 * determines if the next state results in doing nothing
+	 * @param nextState
+	 * @return
+	 */
+	private boolean isSameSpace (GameStateChild nextState){
+		//if next state's actions include attack, return false
+		for (Action action : nextState.action.values()){
+			if (action.getType() == ActionType.PRIMITIVEATTACK){
+				return true;
+			}
+		}
+		
+		// check if footmen are on the same space
+		for (UnitSimulation unit: nextState.state.footmen){
+			
+		}
+		
 	}
 	
 	/**
@@ -329,7 +361,8 @@ public class GameState {
     	List<Action> unitActions = new LinkedList<Action>();
     	
     	// Check each direction for this unit
-    	for (Direction direction: Direction.values()) {
+    	Direction[] legalDirections = new Direction[]{Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
+    	for (Direction direction: legalDirections) {// Direction.values include diagonal movements 
     		
     		// If this move is valid, add 
     		if (isValidMove(unit, direction)) {

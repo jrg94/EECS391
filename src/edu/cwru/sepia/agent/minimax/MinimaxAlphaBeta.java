@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.Map;
 
 public class MinimaxAlphaBeta extends Agent {
@@ -77,7 +76,12 @@ public class MinimaxAlphaBeta extends Agent {
      */
     public GameStateChild alphaBetaSearch(GameStateChild node, int depth, double alpha, double beta)
     {
-    	// Order the list of children
+    	return alphaBetaSearch(node, depth, alpha, beta, true);
+    }
+
+	private GameStateChild oldAlphaBeta(GameStateChild node, int depth,
+			double alpha, double beta) {
+		// Order the list of children
     	List<GameStateChild> orderedChildren = orderChildrenWithHeuristics(node.state.getChildren());
     	
     	// If depth is 0 or node is terminal node, return node with updated heuristic
@@ -151,6 +155,46 @@ public class MinimaxAlphaBeta extends Agent {
     		// return node with updated v
     	}
         return node;
+	}
+    
+    private GameStateChild alphaBetaSearch(GameStateChild node, int depth, double alpha, double beta, boolean isMaximizingPlayer){
+    	//System.out.println("Depth: " + depth);
+    	if (depth == 0){ //or archers dead
+    		return node;
+    	}
+    	GameStateChild best = node;
+    	List<GameStateChild> orderedChildren = orderChildrenWithHeuristics(node.state.getChildren());
+    	if (isMaximizingPlayer){
+    		double v = Double.NEGATIVE_INFINITY;
+    		for (GameStateChild child : orderedChildren){
+    			GameStateChild descendent = alphaBetaSearch(child, depth-1, alpha, beta, !isMaximizingPlayer);
+    			if (descendent.state.getUtility() > v){
+    				best=descendent;
+    			}
+    			v = Math.max (v, descendent.state.getUtility());
+    			alpha = Math.max(alpha, v);
+    			if (beta <= alpha){
+    				break;
+    			}
+    		}
+    		return best;
+    	}
+    	else{
+    		double v = Double.POSITIVE_INFINITY;
+    		for (GameStateChild child : orderedChildren){
+    			GameStateChild descendent = alphaBetaSearch(child, depth-1, alpha, beta, !isMaximizingPlayer);
+    			if (descendent.state.getUtility() < v){
+    				best = descendent;
+    			}
+    			v = Math.min(v, descendent.state.getUtility());
+    			best = descendent;
+    			beta = Math.min(beta, v);
+    			if (beta <= alpha){
+    				break;
+    			}
+    		}
+    		return best;
+    	}
     }
 
     /**
