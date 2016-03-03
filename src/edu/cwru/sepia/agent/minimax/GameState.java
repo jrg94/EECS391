@@ -92,11 +92,19 @@ public class GameState {
     
     /**
      * Constructor override to clone game state easily
+     * 
+     * Deep clones the units
      * @param originalState
      */
     public GameState (GameState originalState){
     	footmen = new LinkedList<UnitSimulation>(originalState.footmen);
+    	for (int i = 0; i<originalState.footmen.size(); i++){
+    		footmen.add(new UnitSimulation(originalState.footmen.get(i)));
+    	}
     	archers = new LinkedList<UnitSimulation>(originalState.archers);
+    	for (int i = 0; i<originalState.archers.size(); i++){
+    		archers.add(new UnitSimulation(originalState.archers.get(i)));
+    	}
     	obstacleIDs = originalState.obstacleIDs; //this value isn't getting changed, no need to clone
     	isFootmenTurn = !isFootmenTurn;
     }
