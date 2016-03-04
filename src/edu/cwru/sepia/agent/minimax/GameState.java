@@ -23,7 +23,7 @@ public class GameState {
 	
 	private static final double FOOTMAN_HP_WEIGHT = .3;
 	private static final double ARCHER_HP_WEIGHT = .7;
-	private static final double DISTANCE_WEIGHT = .05;
+	private static final double DISTANCE_WEIGHT = 1;
 	private static final double ACTIONS_WEIGHT = 1;
 	private static final double MAX_ACTIONS = 25;
 	
@@ -190,7 +190,10 @@ public class GameState {
 	}
 	
 	private double numberOfActionsUtility() {
-		return ACTIONS_WEIGHT * numActions/MAX_ACTIONS;
+		int actions = getUnitActions(footmen.get(0)).size() * getUnitActions(footmen.get(1)).size();
+		double temp = ACTIONS_WEIGHT * actions/MAX_ACTIONS;
+		System.out.println("Action Utility: " + temp);
+		return temp;
 	}
 
 	private double distanceUtility() {
