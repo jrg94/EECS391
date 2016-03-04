@@ -340,6 +340,7 @@ public class GameState {
     		for (Action action1 : unitAction1){
     			for (Action action2 : unitAction2){
     				Map<Integer, Action> unitActionsMap = new HashMap<Integer, Action>();
+    				//TODO don't add moves where units bump into each other 
     				unitActionsMap.put(units.get(0).getID(), action1);
     				unitActionsMap.put(units.get(1).getID(), action2);
     				addNextStateToChildren(allActionsAndState, unitActionsMap);
