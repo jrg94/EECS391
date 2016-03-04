@@ -24,6 +24,11 @@ public class GameState {
 	private static final double FOOTMAN_HP_WEIGHT = .3;
 	private static final double ARCHER_HP_WEIGHT = .7;
 	private static final double DISTANCE_WEIGHT = 1;
+	private static final double ACTIONS_WEIGHT = 0;
+	private static final double RANDOM_WEIGHT = 0;
+	private static final double OBSTACLE_WEIGHT = 0;
+	
+	private static final double MAX_ACTIONS = 25;
 	
 	private State.StateView state;
 	private List<UnitSimulation> footmen;
@@ -36,6 +41,7 @@ public class GameState {
 	
 	private Double utility;
 	private int sameSpaceTurnCount;
+	private int numActions;
 	
     /**
      * You will implement this constructor. It will
@@ -140,10 +146,74 @@ public class GameState {
      * @return The weighted linear combination of the features
      */
     public double getUtility() {
+    	
     	if (this.utility != null){
     		return this.utility;
     	}
-    	// Initialize the current shortest path to zero
+    	
+    	/**
+    	 * Our utility function uses a linear combination of multiple factors such as:
+    	 * Shortest average distance to the enemy
+    	 * Number of actions available in this state
+    	 * Random factor
+    	 */
+    	
+    	Double utility = distanceUtility() + numberOfActionsUtility() + stochasticUtility() - obstaclesUtility();
+    	
+    	this.utility = utility;
+        return utility;
+    }
+	
+	/**
+	 * higher this value, the better
+	 * 
+	 * @param footman
+	 * @return
+	 */
+	private double footmanHPUtility(UnitSimulation footman){
+		return FOOTMAN_HP_WEIGHT*(double)footman.getCurrentHP()/footman.getMaxHP();
+	}
+	
+	/**
+	 * lower this value, the better
+	 * 
+	 * @param archer
+	 * @return
+	 */
+	private double archerHPUtility(UnitSimulation archer){
+		return ARCHER_HP_WEIGHT*(double)archer.getCurrentHP()/archer.getMaxHP();
+	}
+	
+	/**
+	 * Maximize this value to prioritize avoiding obstacles and attacking
+	 * The idea is that the higher number of total actions for a state means a
+	 * unit has more options to move and attack. This should help the unit
+	 * avoid obstacles while prioritizing states that offer attack
+	 * 
+	 * @return
+	 */
+	private double numberOfActionsUtility() {
+		int actions = 0;
+		
+		// Determines if we should attack footmen or archers
+    	boolean isFootman = state.getTurnNumber() % 2 == 0;
+		
+    	// Determines total number of actions
+		for (UnitSimulation archerOrFootman: isFootman ? archers : footmen) {
+			actions += getUnitActions(archerOrFootman).size();
+		}
+		
+		double temp = ACTIONS_WEIGHT * actions/MAX_ACTIONS;
+		return temp;
+	}
+
+	/**
+	 * Calculates the average straight line distance to the enemy and make its function of 1
+	 * 
+	 * @return
+	 */
+	private double distanceUtility() {
+		// Initialize the current shortest path to zero
     	Double totalShortestPath = 0.0;
     	
     	// For each footman in the game
@@ -168,23 +238,62 @@ public class GameState {
     		
     		totalShortestPath += footmanShortestPath;
     	}
-    	
-    	/**
-    	 * Our utility function calculates the average shortest path (straight line)
-    	 * to an archer. The smallest average path for any set of footmen yields the highest 
-    	 * utility
-    	 */
-    	
-    	// The total shortest path is averaged, inverted, and normalized (based on largest possible straight line path) 
-    	// such that shortest paths yield higher utilities
-    	// TODO: Figure out how to normalize this
-    	Double utility = 1 / (totalShortestPath / footmen.size());
-    	this.utility = utility;
-        return utility;
-    }
-
-    //TODO might want to use simpler distance formula to save time
-	private double distance(UnitSimulation footman, UnitSimulation archer) {
+    	return DISTANCE_WEIGHT * (1 / (totalShortestPath/footmen.size()));
+	}
+	
+	/**
+	 * Produces a random utility up until turn number matches RANDOM_WEIGHT
+	 * Based on simulated annealing - utilities would be basically randomized for a bit
+	 * 
+	 * @return
+	 */
+	private double stochasticUtility() {
+		return RANDOM_WEIGHT * (Math.random()/state.getTurnNumber());
+	}
+	
+	/**
+	 * This would serve as a penalty cost
+	 * 
+	 * @return
+	 */
+	private double obstaclesUtility() {
+		
+		int numObstacles = 0;
+		
+		// Determines if we should attack footmen or archers
+    	boolean isFootman = state.getTurnNumber() % 2 == 0;
+		
+    	// Determines total number of actions
+		for (UnitSimulation archerOrFootman: isFootman ? archers : footmen) {
+			int x = archerOrFootman.getXPosition();
+			int y = archerOrFootman.getYPosition();
+			
+			// For all directions
+			for (Direction dir: Direction.values()) {
+				
+				// All obstacles within distance 1
+				if (state.isResourceAt(x + dir.xComponent(), y + dir.yComponent())) {
+					numObstacles++;
+				}
+				
+				// All obstacles within distance 2
+				if (state.isResourceAt(x + dir.xComponent() * 2, y + dir.yComponent() * 2)) {
+					numObstacles++;
+				}
+			}
+		}
+		return OBSTACLE_WEIGHT * (numObstacles/12);
+	}
+	
+    /**
+     * The distance formula
+     * TODO use a cheaper formula to save time
+     * 
+     * @param footman
+     * @param archer
+     * @return
+     */
+    private double distance(UnitSimulation footman, UnitSimulation archer) {
 		double a = footman.getXPosition() - archer.getXPosition();
 		double b = footman.getYPosition() - archer.getYPosition();
 		double aSquared = Math.pow(a, 2);
@@ -192,24 +301,6 @@ public class GameState {
 		return Math.sqrt(aSquared + bSquared);
 	}
 	
-	/**
-	 * higher this value, the better
-	 * @param footman
-	 * @return
-	 */
-	private double footmanHPUtility(UnitSimulation footman){
-		return FOOTMAN_HP_WEIGHT*(double)footman.getCurrentHP()/footman.getMaxHP();
-	}
-	
-	/**
-	 * lower this value, the better
-	 * @param archer
-	 * @return
-	 */
-	private double archerHPUtility(UnitSimulation archer){
-		return ARCHER_HP_WEIGHT*(double)archer.getCurrentHP()/archer.getMaxHP();
-	}
-
     /**
      * You will implement this function.
      *
@@ -256,6 +347,7 @@ public class GameState {
     			}
     		}
     	}
+    	numActions = allActionsAndState.size();
         return allActionsAndState;
     }
 
