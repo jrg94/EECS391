@@ -26,7 +26,7 @@ public class GameState {
 	private static final double DISTANCE_WEIGHT = 1;
 	private static final double ACTIONS_WEIGHT = 0;
 	private static final double RANDOM_WEIGHT = 0;
-	private static final double OBSTACLE_WEIGHT = 1;
+	private static final double OBSTACLE_WEIGHT = 0;
 	
 	private static final double MAX_ACTIONS = 25;
 	
@@ -238,7 +238,6 @@ public class GameState {
     		
     		totalShortestPath += footmanShortestPath;
     	}
-    	System.out.println("Distance Utility: " + DISTANCE_WEIGHT * (1 / (totalShortestPath/footmen.size())));
     	return DISTANCE_WEIGHT * (1 / (totalShortestPath/footmen.size()));
 	}
 	
@@ -283,8 +282,7 @@ public class GameState {
 				}
 			}
 		}
-		System.out.println("Obstacle Utility: " + OBSTACLE_WEIGHT * numObstacles);
-		return OBSTACLE_WEIGHT * numObstacles;
+		return OBSTACLE_WEIGHT * (numObstacles/12);
 	}
 	
     /**
