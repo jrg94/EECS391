@@ -25,8 +25,10 @@ public class GameState {
 	private static final double ARCHER_HP_WEIGHT = .7;
 	private static final double DISTANCE_WEIGHT = 1;
 	private static final double ACTIONS_WEIGHT = 0;
+	private static final double RANDOM_WEIGHT = 0;
+	private static final double OBSTACLE_WEIGHT = 1;
+	
 	private static final double MAX_ACTIONS = 25;
-	private static final double RANDOM_WEIGHT = 20;
 	
 	private State.StateView state;
 	private List<UnitSimulation> footmen;
@@ -156,7 +158,7 @@ public class GameState {
     	 * Random factor
     	 */
     	
-    	Double utility = distanceUtility() + numberOfActionsUtility() + stochasticUtility();
+    	Double utility = distanceUtility() + numberOfActionsUtility() + stochasticUtility() - obstaclesUtility();
     	
     	this.utility = utility;
         return utility;
@@ -236,6 +238,7 @@ public class GameState {
     		
     		totalShortestPath += footmanShortestPath;
     	}
+    	System.out.println("Distance Utility: " + DISTANCE_WEIGHT * (1 / (totalShortestPath/footmen.size())));
     	return DISTANCE_WEIGHT * (1 / (totalShortestPath/footmen.size()));
 	}
 	
@@ -247,6 +250,41 @@ public class GameState {
 	 */
 	private double stochasticUtility() {
 		return RANDOM_WEIGHT * (Math.random()/state.getTurnNumber());
+	}
+	
+	/**
+	 * This would serve as a penalty cost
+	 * 
+	 * @return
+	 */
+	private double obstaclesUtility() {
+		
+		int numObstacles = 0;
+		
+		// Determines if we should attack footmen or archers
+    	boolean isFootman = state.getTurnNumber() % 2 == 0;
+		
+    	// Determines total number of actions
+		for (UnitSimulation archerOrFootman: isFootman ? archers : footmen) {
+			int x = archerOrFootman.getXPosition();
+			int y = archerOrFootman.getYPosition();
+			
+			// For all directions
+			for (Direction dir: Direction.values()) {
+				
+				// All obstacles within distance 1
+				if (state.isResourceAt(x + dir.xComponent(), y + dir.yComponent())) {
+					numObstacles++;
+				}
+				
+				// All obstacles within distance 2
+				if (state.isResourceAt(x + dir.xComponent() * 2, y + dir.yComponent() * 2)) {
+					numObstacles++;
+				}
+			}
+		}
+		System.out.println("Obstacle Utility: " + OBSTACLE_WEIGHT * numObstacles);
+		return OBSTACLE_WEIGHT * numObstacles;
 	}
 	
     /**
