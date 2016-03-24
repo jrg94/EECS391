@@ -1,6 +1,7 @@
 package edu.cwru.sepia.agent.planner;
 
 import edu.cwru.sepia.environment.model.state.State;
+import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
 import java.util.List;
 
@@ -25,6 +26,18 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  */
 public class GameState implements Comparable<GameState> {
 
+	
+	private int playerNum;
+	private int requiredGold;
+	private int requiredWood;
+	private boolean buildPeasants;
+	
+	private int mapSizeX;
+	private int mapSizeY;
+	
+	private int peasantX;
+	private int peasantY;
+	
     /**
      * Construct a GameState from a stateview object. This is used to construct the initial search node. All other
      * nodes should be constructed from the another constructor you create or by factory functions that you create.
@@ -37,7 +50,19 @@ public class GameState implements Comparable<GameState> {
      */
     public GameState(State.StateView state, int playernum, int requiredGold, int requiredWood, boolean buildPeasants) {
         // TODO: Implement me!
+    	this.playerNum = playernum;
+    	this.requiredGold = requiredGold;
+    	this.requiredWood = requiredWood;
+    	this.buildPeasants = buildPeasants;
+    	
+    	this.mapSizeX = state.getXExtent();
+    	this.mapSizeY = state.getYExtent();
+    	
+    	UnitView peasantUnit = findPeasant(state.getAllUnits());
+    	peasantX = peasantUnit.getXPosition();
+    	peasantY = peasantUnit.getYPosition();
     }
+    
 
     /**
      * Unlike in the first A* assignment there are many possible goal states. As long as the wood and gold requirements
@@ -122,5 +147,15 @@ public class GameState implements Comparable<GameState> {
     public int hashCode() {
         // TODO: Implement me!
         return 0;
+    }
+    
+
+    private UnitView findPeasant(List<UnitView> allUnits){
+    	for(UnitView unit : allUnits){
+    		if (unit.getTemplateView().getName().toLowerCase().equals("peasant")){
+    			return unit;
+    		}
+    	}
+    	return null;
     }
 }
