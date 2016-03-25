@@ -203,4 +203,16 @@ public class GameState implements Comparable<GameState> {
     private boolean isAdjacent(int x, int y, int x2, int y2){
     	return Math.abs(x-x2)==1 && Math.abs(y-y2)==1;
     }
+    
+    public boolean isPesantHolding(){
+    	return peasant.getCargoAmount() != 0;
+    }
+    
+    public boolean isResourceEmpty(ResourceView res){
+    	return res.getAmountRemaining() == 0;
+    }
+    
+    public void harvest(ResourceView res){
+    	
+    }
 }
