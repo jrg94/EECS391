@@ -1,8 +1,11 @@
 package edu.cwru.sepia.agent.planner;
 
+import edu.cwru.sepia.environment.model.state.ResourceNode;
+import edu.cwru.sepia.environment.model.state.ResourceNode.ResourceView;
 import edu.cwru.sepia.environment.model.state.State;
 import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -35,8 +38,10 @@ public class GameState implements Comparable<GameState> {
 	private int mapSizeX;
 	private int mapSizeY;
 	
-	private int peasantX;
-	private int peasantY;
+	private UnitView peasant;
+	private UnitView townHall;
+	private List<ResourceView> goldMines;
+	private List<ResourceView> forests;
 	
     /**
      * Construct a GameState from a stateview object. This is used to construct the initial search node. All other
@@ -58,11 +63,40 @@ public class GameState implements Comparable<GameState> {
     	this.mapSizeX = state.getXExtent();
     	this.mapSizeY = state.getYExtent();
     	
-    	UnitView peasantUnit = findPeasant(state.getAllUnits());
-    	peasantX = peasantUnit.getXPosition();
-    	peasantY = peasantUnit.getYPosition();
+    	peasant = findUnit(state.getAllUnits(),"peasant");
+    	townHall = findUnit(state.getAllUnits(), "townhall");
+    	
+    	goldMines = new ArrayList<ResourceView>();
+    	forests = new ArrayList<ResourceView>();
+    	
+    	for (ResourceView res : state.getAllResourceNodes()){
+    		switch(res.getType()){
+    			case GOLD_MINE:
+    				goldMines.add(res);
+    				break;
+    			case TREE:
+    				forests.add(res);
+    				break;
+    		}
+    	}
+    	
     }
     
+    public UnitView getPeasant(){
+    	return peasant;
+    }
+    
+    public UnitView getTownHall(){
+    	return townHall;
+    }
+    
+    public List<ResourceView> getGoldMines(){
+    	return goldMines;
+    }
+    
+    public List<ResourceView> getForests(){
+    	return forests;
+    }
 
     /**
      * Unlike in the first A* assignment there are many possible goal states. As long as the wood and gold requirements
@@ -149,10 +183,9 @@ public class GameState implements Comparable<GameState> {
         return 0;
     }
     
-
-    private UnitView findPeasant(List<UnitView> allUnits){
+    private UnitView findUnit(List<UnitView> allUnits, String unitName){
     	for(UnitView unit : allUnits){
-    		if (unit.getTemplateView().getName().toLowerCase().equals("peasant")){
+    		if (unit.getTemplateView().getName().toLowerCase().equals(unitName)){
     			return unit;
     		}
     	}
