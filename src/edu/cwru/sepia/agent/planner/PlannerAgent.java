@@ -2,6 +2,7 @@ package edu.cwru.sepia.agent.planner;
 
 import edu.cwru.sepia.action.Action;
 import edu.cwru.sepia.agent.Agent;
+import edu.cwru.sepia.agent.AstarAgent.MapLocation;
 import edu.cwru.sepia.agent.planner.actions.StripsAction;
 import edu.cwru.sepia.environment.model.history.History;
 import edu.cwru.sepia.environment.model.state.State;
@@ -91,8 +92,77 @@ public class PlannerAgent extends Agent {
      * @return The plan or null if no plan is found.
      */
     private Stack<StripsAction> AstarSearch(GameState startState) {
-        // TODO: Implement me!
-        return null;
+    	
+    	// Declare open and closed lists
+    	PriorityQueue<GameState> openList = new PriorityQueue<GameState>();
+    	HashSet<GameState> closedList = new HashSet<GameState>();
+    	    	
+    	// Add the starting location to the open list and empty the closed list
+    	openList.add(startState);
+    	    	
+    	// While there are still nodes in the open list and the target hasn't been found
+    	while (openList.size() > 0) {
+    		
+    		// Goal test
+    		GameState curr = openList.peek();
+    		if (curr.isGoal()) {
+    			break;
+    		}
+    		
+    		// Move this node from open list to closed list
+    		openList.remove(curr);
+    		closedList.add(curr);
+    		
+    		// Look at every neighbor of the step
+    		ArrayList<MapLocation> neighbors = produceNeighborList(curr, xExtent, yExtent, resourceLocations);
+    		for (MapLocation neighbor: neighbors) {
+    			
+    			/*
+    			 * Calculate the path cost of reaching the neighbor
+    			 * Assuming the movement cost is just 1
+    			 */
+    			float checkCost = curr.cost + 1;
+    			
+    			// If the cost is less than the cost known for this position, we have found a better path. Remove it from the open or closed lists
+    			if (checkCost < neighbor.cost) {
+    				if (openList.contains(neighbor)) {
+    					openList.remove(neighbor);
+    				}
+    				if (closedList.contains(neighbor)) {
+    					closedList.remove(neighbor);
+    				}
+    			}
+    			
+    			// If the location isn't in either the open or closed list, record the costs for location and add it to the open list. Record the path to this node.
+    			if (!openList.contains(neighbor) && !closedList.contains(neighbor)) {
+    				neighbor.cost = checkCost;
+    				neighbor.heuristic = computeHeuristicCost(curr.x, curr.y, goal.x, goal.y);
+    				openList.add(neighbor);
+    				neighbor.cameFrom = curr;
+    				Collections.sort(openList);
+    			}
+    		}
+    	}
+    	    	
+    	// Check that the goal has a parent node
+    	if (openList.get(0).cameFrom == null) {
+    		return null;
+    	}
+    	
+    	/*
+    	 * Initializes a stack and returns the path on it
+    	 * Ignores the start and end nodes as specified in the problem description
+    	 */
+    	Stack<MapLocation> path = new Stack<MapLocation>();
+    	
+    	// While the current node does not equal start
+    	MapLocation goalLoc = openList.get(0).cameFrom;
+    	while (!goalLoc.equals(start)) {
+    		path.push(goalLoc);
+    		goalLoc = goalLoc.cameFrom;
+    	}
+    	
+        return path;
     }
 
     /**
