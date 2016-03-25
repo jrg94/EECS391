@@ -11,7 +11,7 @@ import java.util.List;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
- * This class is used to represent the state of the game after applying one of the avaiable actions. It will also
+ * This class is used to represent the state of the game after applying one of the available actions. It will also
  * track the A* specific information such as the parent pointer and the cost and heuristic function. Remember that
  * unlike the path planning A* from the first assignment the cost of an action may be more than 1. Specifically the cost
  * of executing a compound action such as move can be more than 1. You will need to account for this in your heuristic
@@ -96,6 +96,55 @@ public class GameState implements Comparable<GameState> {
     public List<ResourceSimulation> getForests(){
     	return forests;
     }
+    
+	/**
+	 * @return the playerNum
+	 */
+	public int getPlayerNum() {
+		return playerNum;
+	}
+
+	/**
+	 * @return the requiredGold
+	 */
+	public int getRequiredGold() {
+		return requiredGold;
+	}
+
+	/**
+	 * @return the requiredWood
+	 */
+	public int getRequiredWood() {
+		return requiredWood;
+	}
+
+	/**
+	 * @return the buildPeasants
+	 */
+	public boolean isBuildPeasants() {
+		return buildPeasants;
+	}
+
+	/**
+	 * @return the mapSizeX
+	 */
+	public int getMapSizeX() {
+		return mapSizeX;
+	}
+
+	/**
+	 * @return the mapSizeY
+	 */
+	public int getMapSizeY() {
+		return mapSizeY;
+	}
+
+	/**
+	 * @return the parent
+	 */
+	public GameState getParent() {
+		return parent;
+	}
 
     /**
      * Unlike in the first A* assignment there are many possible goal states. As long as the wood and gold requirements
