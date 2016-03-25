@@ -114,34 +114,27 @@ public class PlannerAgent extends Agent {
     		closedList.add(curr);
     		
     		// Look at every neighbor of the step
-    		ArrayList<MapLocation> neighbors = produceNeighborList(curr, xExtent, yExtent, resourceLocations);
-    		for (MapLocation neighbor: neighbors) {
+    		List<GameState> children = curr.generateChildren();
+    		for (GameState child: children) {
     			
-    			/*
-    			 * Calculate the path cost of reaching the neighbor
-    			 * Assuming the movement cost is just 1
-    			 */
-    			float checkCost = curr.cost + 1;
-    			
-    			// If the cost is less than the cost known for this position, we have found a better path. Remove it from the open or closed lists
-    			if (checkCost < neighbor.cost) {
-    				if (openList.contains(neighbor)) {
-    					openList.remove(neighbor);
-    				}
-    				if (closedList.contains(neighbor)) {
-    					closedList.remove(neighbor);
-    				}
+    			// If the closed list contains this child, skip it
+    			if (closedList.contains(child)) {
+    				continue;
     			}
     			
-    			// If the location isn't in either the open or closed list, record the costs for location and add it to the open list. Record the path to this node.
-    			if (!openList.contains(neighbor) && !closedList.contains(neighbor)) {
-    				neighbor.cost = checkCost;
-    				neighbor.heuristic = computeHeuristicCost(curr.x, curr.y, goal.x, goal.y);
-    				openList.add(neighbor);
-    				neighbor.cameFrom = curr;
-    				Collections.sort(openList);
+    			// Calculate cost to the next state
+    			// TODO: Figure out what to add
+    			double checkCost = curr.getCost();
+    			
+    			// If child node is not in open list
+    			if (!openList.contains(child)) {
+    				openList.add(child);
     			}
-    		}
+    			// Else if the estimated cost is greater than or equal to this child's cost
+    			else if (checkCost >= child.getCost()) {
+    				continue;
+    			}
+    		}    		
     	}
     	    	
     	// Check that the goal has a parent node
