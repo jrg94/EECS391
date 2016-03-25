@@ -38,10 +38,10 @@ public class GameState implements Comparable<GameState> {
 	private int mapSizeX;
 	private int mapSizeY;
 	
-	private UnitView peasant;
+	private PeasantSimulation peasant;
 	private UnitView townHall;
-	private List<ResourceView> goldMines;
-	private List<ResourceView> forests;
+	private List<ResourceSimulation> goldMines;
+	private List<ResourceSimulation> forests;
 	
     /**
      * Construct a GameState from a stateview object. This is used to construct the initial search node. All other
@@ -54,7 +54,6 @@ public class GameState implements Comparable<GameState> {
      * @param buildPeasants True if the BuildPeasant action should be considered
      */
     public GameState(State.StateView state, int playernum, int requiredGold, int requiredWood, boolean buildPeasants) {
-        // TODO: Implement me!
     	this.playerNum = playernum;
     	this.requiredGold = requiredGold;
     	this.requiredWood = requiredWood;
@@ -63,26 +62,26 @@ public class GameState implements Comparable<GameState> {
     	this.mapSizeX = state.getXExtent();
     	this.mapSizeY = state.getYExtent();
     	
-    	peasant = findUnit(state.getAllUnits(),"peasant");
+    	peasant = new PeasantSimulation(findUnit(state.getAllUnits(),"peasant"));
     	townHall = findUnit(state.getAllUnits(), "townhall");
     	
-    	goldMines = new ArrayList<ResourceView>();
-    	forests = new ArrayList<ResourceView>();
+    	goldMines = new ArrayList<ResourceSimulation>();
+    	forests = new ArrayList<ResourceSimulation>();
     	
     	for (ResourceView res : state.getAllResourceNodes()){
     		switch(res.getType()){
     			case GOLD_MINE:
-    				goldMines.add(res);
+    				goldMines.add(new ResourceSimulation(res));
     				break;
     			case TREE:
-    				forests.add(res);
+    				forests.add(new ResourceSimulation(res));
     				break;
     		}
     	}
     	
     }
     
-    public UnitView getPeasant(){
+    public PeasantSimulation getPeasant(){
     	return peasant;
     }
     
@@ -90,11 +89,11 @@ public class GameState implements Comparable<GameState> {
     	return townHall;
     }
     
-    public List<ResourceView> getGoldMines(){
+    public List<ResourceSimulation> getGoldMines(){
     	return goldMines;
     }
     
-    public List<ResourceView> getForests(){
+    public List<ResourceSimulation> getForests(){
     	return forests;
     }
 
@@ -205,14 +204,11 @@ public class GameState implements Comparable<GameState> {
     }
     
     public boolean isPesantHolding(){
-    	return peasant.getCargoAmount() != 0;
+    	return peasant.getCargo() != 0;
     }
     
     public boolean isResourceEmpty(ResourceView res){
     	return res.getAmountRemaining() == 0;
     }
     
-    public void harvest(ResourceView res){
-    	
-    }
 }
