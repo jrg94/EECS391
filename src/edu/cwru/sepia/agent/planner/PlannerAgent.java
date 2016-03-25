@@ -2,7 +2,6 @@ package edu.cwru.sepia.agent.planner;
 
 import edu.cwru.sepia.action.Action;
 import edu.cwru.sepia.agent.Agent;
-import edu.cwru.sepia.agent.AstarAgent.MapLocation;
 import edu.cwru.sepia.agent.planner.actions.StripsAction;
 import edu.cwru.sepia.environment.model.history.History;
 import edu.cwru.sepia.environment.model.state.State;
@@ -100,20 +99,20 @@ public class PlannerAgent extends Agent {
     	// Add the starting location to the open list and empty the closed list
     	openList.add(startState);
     	    	
-    	// While there are still nodes in the open list and the target hasn't been found
-    	while (openList.size() > 0) {
+    	// While the openList is not empty
+    	while (!openList.isEmpty()) {
     		
     		// Goal test
     		GameState curr = openList.peek();
     		if (curr.isGoal()) {
-    			break;
+    			return buildStripsPlan(curr);
     		}
     		
     		// Move this node from open list to closed list
     		openList.remove(curr);
     		closedList.add(curr);
     		
-    		// Look at every neighbor of the step
+    		// Look at every child of the step
     		List<GameState> children = curr.generateChildren();
     		for (GameState child: children) {
     			
@@ -123,8 +122,8 @@ public class PlannerAgent extends Agent {
     			}
     			
     			// Calculate cost to the next state
-    			// TODO: Figure out what to add
-    			double checkCost = curr.getCost();
+    			// TODO: Make sure this is correct
+    			double checkCost = curr.getCost() + child.heuristic();
     			
     			// If child node is not in open list
     			if (!openList.contains(child)) {
@@ -134,28 +133,24 @@ public class PlannerAgent extends Agent {
     			else if (checkCost >= child.getCost()) {
     				continue;
     			}
+    			
+    			// This path is the best yet - link it
+    			child.setParent(curr);
     		}    		
     	}
-    	    	
-    	// Check that the goal has a parent node
-    	if (openList.get(0).cameFrom == null) {
-    		return null;
-    	}
     	
-    	/*
-    	 * Initializes a stack and returns the path on it
-    	 * Ignores the start and end nodes as specified in the problem description
-    	 */
-    	Stack<MapLocation> path = new Stack<MapLocation>();
-    	
-    	// While the current node does not equal start
-    	MapLocation goalLoc = openList.get(0).cameFrom;
-    	while (!goalLoc.equals(start)) {
-    		path.push(goalLoc);
-    		goalLoc = goalLoc.cameFrom;
-    	}
-    	
-        return path;
+        return new Stack<StripsAction>();
+    }
+    
+    /**
+     * A helper method that will prepare the stack of actions based
+     * on a list of GameState nodes
+     * 
+     * @param goal
+     * @return
+     */
+    private Stack<StripsAction> buildStripsPlan(GameState goal) {
+    	return new Stack<StripsAction>();
     }
 
     /**
