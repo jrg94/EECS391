@@ -150,7 +150,20 @@ public class PlannerAgent extends Agent {
      * @return
      */
     private Stack<StripsAction> buildStripsPlan(GameState goal) {
-    	return new Stack<StripsAction>();
+    	
+    	// The stack to be returned with the plan
+    	Stack<StripsAction> plan = new Stack<StripsAction>();
+    	
+    	GameState nodeptr = goal;
+    	
+    	while (nodeptr.getParent() != null) {
+    		// TODO: push the action associated with this state onto the stack
+    		// This action will be based on the previous state - it may be easiest to
+    		// just generate this as we build the tree
+    		nodeptr = nodeptr.getParent();
+    	}
+    	
+    	return plan;
     }
 
     /**

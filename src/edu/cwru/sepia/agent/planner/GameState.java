@@ -225,4 +225,5 @@ public class GameState implements Comparable<GameState> {
     public void setParent(GameState parent) {
     	this.parent = parent;
     }
+    
 }
