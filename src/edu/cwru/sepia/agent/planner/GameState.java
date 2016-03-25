@@ -191,4 +191,16 @@ public class GameState implements Comparable<GameState> {
     	}
     	return null;
     }
+    
+    public boolean isAdjacent(UnitView peasant, ResourceView res){
+    	return isAdjacent(peasant.getXPosition(), peasant.getYPosition(), res.getXPosition(), res.getYPosition());
+    }
+    
+    public boolean isAdjacent(UnitView peasant, UnitView townHall){
+    	return isAdjacent(peasant.getXPosition(), peasant.getYPosition(), townHall.getXPosition(), townHall.getYPosition());
+    }
+    
+    private boolean isAdjacent(int x, int y, int x2, int y2){
+    	return Math.abs(x-x2)==1 && Math.abs(y-y2)==1;
+    }
 }
