@@ -119,7 +119,21 @@ public class GameState implements Comparable<GameState> {
     	this.action = action;
     }
     
-    public Map<Integer, PeasantSimulation> getPeasantMap(){
+    /**
+	 * @return the goldMines
+	 */
+	public Map<Integer, ResourceSimulation> getGoldMines() {
+		return goldMines;
+	}
+
+	/**
+	 * @return the forests
+	 */
+	public Map<Integer, ResourceSimulation> getForests() {
+		return forests;
+	}
+
+	public Map<Integer, PeasantSimulation> getPeasantMap(){
     	return peasantMap;
     }
 
