@@ -1,6 +1,7 @@
 package edu.cwru.sepia.agent.planner;
 
 import edu.cwru.sepia.environment.model.state.ResourceNode.ResourceView;
+import edu.cwru.sepia.agent.planner.actions.StripsAction;
 import edu.cwru.sepia.environment.model.state.State;
 import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
@@ -44,6 +45,8 @@ public class GameState implements Comparable<GameState> {
 	
 	
 	private GameState parent;
+	/** The action used to get to this state*/
+	private StripsAction action;
 	
     /**
      * Construct a GameState from a stateview object. This is used to construct the initial search node. All other
@@ -94,13 +97,14 @@ public class GameState implements Comparable<GameState> {
     	}
     	
     	parent = null;
+    	action = null;
     }
     
     /**
      * Constructor for cloning a parent game state
      * @param parent
      */
-    public GameState(GameState parent){
+    public GameState(GameState parent, StripsAction action){
     	this.playerNum = parent.playerNum;
     	this.requiredGold = parent.requiredGold;
     	this.requiredWood = parent.requiredWood;
@@ -112,6 +116,7 @@ public class GameState implements Comparable<GameState> {
     	this.goldMines = new ArrayList<ResourceSimulation>(parent.goldMines);
     	this.forests = new ArrayList<ResourceSimulation>(parent.forests);
     	this.parent = parent;
+    	this.action = action;
     }
     
     public Map<Integer, PeasantSimulation> getPeasantMap(){
@@ -205,6 +210,13 @@ public class GameState implements Comparable<GameState> {
     }
 
     /**
+	 * @return the action
+	 */
+	public StripsAction getAction() {
+		return action;
+	}
+
+	/**
      * Unlike in the first A* assignment there are many possible goal states. As long as the wood and gold requirements
      * are met the peasants can be at any location and the capacities of the resource locations can be anything. Use
      * this function to check if the goal conditions are met and return true if they are.
