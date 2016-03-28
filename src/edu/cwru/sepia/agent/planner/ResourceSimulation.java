@@ -5,39 +5,27 @@ import edu.cwru.sepia.environment.model.state.ResourceNode.ResourceView;
 
 public class ResourceSimulation {
 
-
-
-	private int x;
-	private int y;
+	private Position position;
 	private int resourceRemaining;
 	private ResourceNode.Type resourceType;
 	
 	public ResourceSimulation(ResourceView res){
-		this.x = res.getXPosition();
-		this.y = res.getYPosition();
+		this.position = new Position(res.getXPosition(), res.getYPosition());
 		this.resourceRemaining = res.getAmountRemaining();
 		this.resourceType = res.getType();
 	}
 	
-	public ResourceSimulation(int x, int y, int resourceRemaining, ResourceNode.Type resourceType){
-		this.x = x;
-		this.y = y;
+	public ResourceSimulation(Position position, int resourceRemaining, ResourceNode.Type resourceType){
+		this.position = position;
 		this.resourceRemaining = resourceRemaining;
 		this.resourceType = resourceType;
 	}
-	
-	/**
-	 * @return the x
-	 */
-	public int getX() {
-		return x;
-	}
 
 	/**
-	 * @return the y
+	 * @return the position
 	 */
-	public int getY() {
-		return y;
+	public Position getPosition() {
+		return position;
 	}
 
 	/**
