@@ -39,7 +39,7 @@ public class GameState implements Comparable<GameState> {
 	private int mapSizeY;
 	
 	private Map<Integer, PeasantSimulation> peasantMap;
-	private UnitView townHall;
+	private StructureSimulation townHall;
 	private Map<Integer, ResourceSimulation> resourceMap;
 	
 	
@@ -68,13 +68,10 @@ public class GameState implements Comparable<GameState> {
     	
     	peasantMap = new HashMap<Integer, PeasantSimulation> ();
     	
-    			new PeasantSimulation(findUnit(state.getAllUnits(),"peasant"));
-    	townHall = findUnit(state.getAllUnits(), "townhall");
-
     	for (UnitView unit : state.getAllUnits()){
     		switch(unit.getTemplateView().getName()){
     		case "townhall":
-    			townHall = unit;
+    			townHall = new StructureSimulation(unit);
     			break;
     		case "peasant":
     			peasantMap.put(unit.getID(), new PeasantSimulation(unit));
@@ -127,7 +124,7 @@ public class GameState implements Comparable<GameState> {
     	this.peasantMap = peasantMap;
     }
     
-    public UnitView getTownHall(){
+    public StructureSimulation getTownHall(){
     	return townHall;
     }
     
@@ -273,15 +270,6 @@ public class GameState implements Comparable<GameState> {
     public int hashCode() {
         // TODO: Implement me!
         return 0;
-    }
-    
-    private UnitView findUnit(List<UnitView> allUnits, String unitName){
-    	for(UnitView unit : allUnits){
-    		if (unit.getTemplateView().getName().toLowerCase().equals(unitName)){
-    			return unit;
-    		}
-    	}
-    	return null;
     }
 
 }
