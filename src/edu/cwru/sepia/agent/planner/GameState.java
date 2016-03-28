@@ -117,6 +117,13 @@ public class GameState implements Comparable<GameState> {
     public Map<Integer, PeasantSimulation> getPeasantMap(){
     	return peasantMap;
     }
+
+    /**
+     * @param peasantMap the peasantMap to set
+     */
+    public void setPeasantMap(Map<Integer, PeasantSimulation> peasantMap) {
+    	this.peasantMap = peasantMap;
+    }
     
     public UnitView getTownHall(){
     	return townHall;
@@ -126,9 +133,23 @@ public class GameState implements Comparable<GameState> {
     	return goldMines;
     }
     
-    public List<ResourceSimulation> getForests(){
+    /**
+     * @param goldMines the goldMines to set
+     */
+    public void setGoldMines(List<ResourceSimulation> goldMines) {
+    	this.goldMines = goldMines;
+    }
+
+	public List<ResourceSimulation> getForests(){
     	return forests;
     }
+	
+	/**
+	 * @param forests the forests to set
+	 */
+	public void setForests(List<ResourceSimulation> forests) {
+		this.forests = forests;
+	}
     
 	/**
 	 * @return the playerNum
