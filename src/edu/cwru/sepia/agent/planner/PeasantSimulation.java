@@ -10,11 +10,19 @@ public class PeasantSimulation {
 	private int cargo;
 	private ResourceType cargoType;
 	
+	private boolean isCarrying;
+	
 	public PeasantSimulation(UnitView unit){
 		unitId = unit.getID();
 		position = new Position(unit.getXPosition(), unit.getYPosition());
 		cargo = unit.getCargoAmount();
 		cargoType = unit.getCargoType();
+		if (cargoType == null){
+			isCarrying = true;
+		}
+		else{
+			isCarrying = false;
+		}
 	}
 	
 	public PeasantSimulation(Position pos, int cargo, ResourceType cargoType, int unitId){
@@ -22,6 +30,12 @@ public class PeasantSimulation {
 		this.cargo = cargo;
 		this.cargoType = cargoType;
 		this.unitId = unitId;
+		if (cargoType == null){
+			isCarrying = true;
+		}
+		else{
+			isCarrying = false;
+		}
 	}
 	
 	/**
@@ -50,6 +64,10 @@ public class PeasantSimulation {
 	 */
 	public ResourceType getCargoType() {
 		return cargoType;
+	}
+
+	public boolean isCarrying() {
+		return isCarrying;
 	}
 	
 	/* (non-Javadoc)
