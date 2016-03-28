@@ -141,12 +141,26 @@ public class GameState implements Comparable<GameState> {
 	public int getRequiredGold() {
 		return requiredGold;
 	}
-
+	
+	/**
+	 * @param requiredGold the requiredGold to set
+	 */
+	public void setRequiredGold(int requiredGold) {
+		this.requiredGold = requiredGold;
+	}
+	
 	/**
 	 * @return the requiredWood
 	 */
 	public int getRequiredWood() {
 		return requiredWood;
+	}
+
+	/**
+	 * @param requiredWood the requiredWood to set
+	 */
+	public void setRequiredWood(int requiredWood) {
+		this.requiredWood = requiredWood;
 	}
 
 	/**
