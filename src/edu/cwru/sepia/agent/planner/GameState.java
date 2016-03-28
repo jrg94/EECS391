@@ -40,8 +40,8 @@ public class GameState implements Comparable<GameState> {
 	
 	private Map<Integer, PeasantSimulation> peasantMap;
 	private UnitView townHall;
-	private List<ResourceSimulation> goldMines;
-	private List<ResourceSimulation> forests;
+	private Map<Integer, ResourceSimulation> goldMines;
+	private Map<Integer, ResourceSimulation> forests;
 	
 	
 	private GameState parent;
@@ -82,16 +82,16 @@ public class GameState implements Comparable<GameState> {
     			break;
     		}
     	}
-    	goldMines = new ArrayList<ResourceSimulation>();
-    	forests = new ArrayList<ResourceSimulation>();
+    	goldMines = new HashMap<Integer, ResourceSimulation>();
+    	forests = new HashMap<Integer, ResourceSimulation>();
     	
     	for (ResourceView res : state.getAllResourceNodes()){
     		switch(res.getType()){
     			case GOLD_MINE:
-    				goldMines.add(new ResourceSimulation(res));
+    				goldMines.put(res.getID(), new ResourceSimulation(res));
     				break;
     			case TREE:
-    				forests.add(new ResourceSimulation(res));
+    				forests.put(res.getID(), new ResourceSimulation(res));
     				break;
     		}
     	}
@@ -113,8 +113,8 @@ public class GameState implements Comparable<GameState> {
     	this.mapSizeY = parent.mapSizeY;
     	this.peasantMap = new HashMap<Integer, PeasantSimulation>(parent.peasantMap);
     	this.townHall = parent.townHall;
-    	this.goldMines = new ArrayList<ResourceSimulation>(parent.goldMines);
-    	this.forests = new ArrayList<ResourceSimulation>(parent.forests);
+    	this.goldMines = new HashMap<Integer, ResourceSimulation>(parent.goldMines);
+    	this.forests = new HashMap<Integer, ResourceSimulation>(parent.forests);
     	this.parent = parent;
     	this.action = action;
     }
@@ -133,28 +133,6 @@ public class GameState implements Comparable<GameState> {
     public UnitView getTownHall(){
     	return townHall;
     }
-    
-    public List<ResourceSimulation> getGoldMines(){
-    	return goldMines;
-    }
-    
-    /**
-     * @param goldMines the goldMines to set
-     */
-    public void setGoldMines(List<ResourceSimulation> goldMines) {
-    	this.goldMines = goldMines;
-    }
-
-	public List<ResourceSimulation> getForests(){
-    	return forests;
-    }
-	
-	/**
-	 * @param forests the forests to set
-	 */
-	public void setForests(List<ResourceSimulation> forests) {
-		this.forests = forests;
-	}
     
 	/**
 	 * @return the playerNum
