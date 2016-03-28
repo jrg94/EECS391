@@ -5,7 +5,9 @@ import edu.cwru.sepia.environment.model.state.State;
 import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class is used to represent the state of the game after applying one of the available actions. It will also
@@ -35,7 +37,7 @@ public class GameState implements Comparable<GameState> {
 	private int mapSizeX;
 	private int mapSizeY;
 	
-	private PeasantSimulation peasant;
+	private Map<Integer, PeasantSimulation> peasantMap;
 	private UnitView townHall;
 	private List<ResourceSimulation> goldMines;
 	private List<ResourceSimulation> forests;
@@ -62,9 +64,21 @@ public class GameState implements Comparable<GameState> {
     	this.mapSizeX = state.getXExtent();
     	this.mapSizeY = state.getYExtent();
     	
-    	peasant = new PeasantSimulation(findUnit(state.getAllUnits(),"peasant"));
-    	townHall = findUnit(state.getAllUnits(), "townhall");
+    	peasantMap = new HashMap<Integer, PeasantSimulation> ();
     	
+    			new PeasantSimulation(findUnit(state.getAllUnits(),"peasant"));
+    	townHall = findUnit(state.getAllUnits(), "townhall");
+
+    	for (UnitView unit : state.getAllUnits()){
+    		switch(unit.getTemplateView().getName()){
+    		case "townhall":
+    			townHall = unit;
+    			break;
+    		case "peasant":
+    			peasantMap.put(unit.getID(), new PeasantSimulation(unit));
+    			break;
+    		}
+    	}
     	goldMines = new ArrayList<ResourceSimulation>();
     	forests = new ArrayList<ResourceSimulation>();
     	
@@ -88,8 +102,8 @@ public class GameState implements Comparable<GameState> {
     	
     }
     
-    public PeasantSimulation getPeasant(){
-    	return peasant;
+    public Map<Integer, PeasantSimulation> getPeasantMap(){
+    	return peasantMap;
     }
     
     public UnitView getTownHall(){
@@ -248,30 +262,6 @@ public class GameState implements Comparable<GameState> {
     		}
     	}
     	return null;
-    }
-    
-    public boolean isAdjacent(UnitView peasant, ResourceView res){
-    	return isAdjacent(peasant.getXPosition(), peasant.getYPosition(), res.getXPosition(), res.getYPosition());
-    }
-    
-    public boolean isAdjacent(UnitView peasant, UnitView townHall){
-    	return isAdjacent(peasant.getXPosition(), peasant.getYPosition(), townHall.getXPosition(), townHall.getYPosition());
-    }
-    
-    private boolean isAdjacent(int x, int y, int x2, int y2){
-    	return Math.abs(x-x2)==1 && Math.abs(y-y2)==1;
-    }
-    
-    public boolean isPesantHolding(){
-    	return peasant.getCargo() != 0;
-    }
-    
-    public boolean isResourceEmpty(ResourceView res){
-    	return res.getAmountRemaining() == 0;
-    }
-    
-    public void harvest(ResourceView res){
-    	
     }
 
 }
