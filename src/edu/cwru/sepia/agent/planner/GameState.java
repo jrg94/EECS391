@@ -96,10 +96,22 @@ public class GameState implements Comparable<GameState> {
     	parent = null;
     }
     
+    /**
+     * Constructor for cloning a parent game state
+     * @param parent
+     */
     public GameState(GameState parent){
-    	this.parent = parent;
     	this.playerNum = parent.playerNum;
-    	
+    	this.requiredGold = parent.requiredGold;
+    	this.requiredWood = parent.requiredWood;
+    	this.buildPeasants = parent.buildPeasants;
+    	this.mapSizeX = parent.mapSizeX;
+    	this.mapSizeY = parent.mapSizeY;
+    	this.peasantMap = new HashMap<Integer, PeasantSimulation>(parent.peasantMap);
+    	this.townHall = parent.townHall;
+    	this.goldMines = new ArrayList<ResourceSimulation>(parent.goldMines);
+    	this.forests = new ArrayList<ResourceSimulation>(parent.forests);
+    	this.parent = parent;
     }
     
     public Map<Integer, PeasantSimulation> getPeasantMap(){
