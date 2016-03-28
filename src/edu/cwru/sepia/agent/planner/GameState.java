@@ -40,8 +40,7 @@ public class GameState implements Comparable<GameState> {
 	
 	private Map<Integer, PeasantSimulation> peasantMap;
 	private UnitView townHall;
-	private Map<Integer, ResourceSimulation> goldMines;
-	private Map<Integer, ResourceSimulation> forests;
+	private Map<Integer, ResourceSimulation> resourceMap;
 	
 	
 	private GameState parent;
@@ -82,18 +81,10 @@ public class GameState implements Comparable<GameState> {
     			break;
     		}
     	}
-    	goldMines = new HashMap<Integer, ResourceSimulation>();
-    	forests = new HashMap<Integer, ResourceSimulation>();
+    	resourceMap = new HashMap<Integer, ResourceSimulation>();
     	
     	for (ResourceView res : state.getAllResourceNodes()){
-    		switch(res.getType()){
-    			case GOLD_MINE:
-    				goldMines.put(res.getID(), new ResourceSimulation(res));
-    				break;
-    			case TREE:
-    				forests.put(res.getID(), new ResourceSimulation(res));
-    				break;
-    		}
+    		resourceMap.put(res.getID(), new ResourceSimulation(res));
     	}
     	
     	parent = null;
@@ -113,24 +104,16 @@ public class GameState implements Comparable<GameState> {
     	this.mapSizeY = parent.mapSizeY;
     	this.peasantMap = new HashMap<Integer, PeasantSimulation>(parent.peasantMap);
     	this.townHall = parent.townHall;
-    	this.goldMines = new HashMap<Integer, ResourceSimulation>(parent.goldMines);
-    	this.forests = new HashMap<Integer, ResourceSimulation>(parent.forests);
+    	this.resourceMap = new HashMap<Integer, ResourceSimulation>(parent.resourceMap);
     	this.parent = parent;
     	this.action = action;
     }
-    
-    /**
-	 * @return the goldMines
-	 */
-	public Map<Integer, ResourceSimulation> getGoldMines() {
-		return goldMines;
-	}
 
 	/**
-	 * @return the forests
+	 * @return the resourceMap
 	 */
-	public Map<Integer, ResourceSimulation> getForests() {
-		return forests;
+	public Map<Integer, ResourceSimulation> getResourceMap() {
+		return resourceMap;
 	}
 
 	public Map<Integer, PeasantSimulation> getPeasantMap(){
