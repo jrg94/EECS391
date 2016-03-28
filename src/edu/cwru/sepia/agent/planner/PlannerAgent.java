@@ -91,8 +91,79 @@ public class PlannerAgent extends Agent {
      * @return The plan or null if no plan is found.
      */
     private Stack<StripsAction> AstarSearch(GameState startState) {
-        // TODO: Implement me!
-        return null;
+    	
+    	// Declare open and closed lists
+    	PriorityQueue<GameState> openList = new PriorityQueue<GameState>();
+    	HashSet<GameState> closedList = new HashSet<GameState>();
+    	    	
+    	// Add the starting location to the open list and empty the closed list
+    	openList.add(startState);
+    	    	
+    	// While the openList is not empty
+    	while (!openList.isEmpty()) {
+    		
+    		// Goal test
+    		GameState curr = openList.peek();
+    		if (curr.isGoal()) {
+    			return buildStripsPlan(curr);
+    		}
+    		
+    		// Move this node from open list to closed list
+    		openList.remove(curr);
+    		closedList.add(curr);
+    		
+    		// Look at every child of the step
+    		List<GameState> children = curr.generateChildren();
+    		for (GameState child: children) {
+    			
+    			// If the closed list contains this child, skip it
+    			if (closedList.contains(child)) {
+    				continue;
+    			}
+    			
+    			// Calculate cost to the next state
+    			// TODO: Make sure this is correct
+    			double checkCost = curr.getCost() + child.heuristic();
+    			
+    			// If child node is not in open list
+    			if (!openList.contains(child)) {
+    				openList.add(child);
+    			}
+    			// Else if the estimated cost is greater than or equal to this child's cost
+    			else if (checkCost >= child.getCost()) {
+    				continue;
+    			}
+    			
+    			// This path is the best yet - link it
+    			child.setParent(curr);
+    		}    		
+    	}
+    	
+        return new Stack<StripsAction>();
+    }
+    
+    /**
+     * A helper method that will prepare the stack of actions based
+     * on a list of GameState nodes
+     * 
+     * @param goal
+     * @return
+     */
+    private Stack<StripsAction> buildStripsPlan(GameState goal) {
+    	
+    	// The stack to be returned with the plan
+    	Stack<StripsAction> plan = new Stack<StripsAction>();
+    	
+    	GameState nodeptr = goal;
+    	
+    	while (nodeptr.getParent() != null) {
+    		// TODO: push the action associated with this state onto the stack
+    		// This action will be based on the previous state - it may be easiest to
+    		// just generate this as we build the tree
+    		nodeptr = nodeptr.getParent();
+    	}
+    	
+    	return plan;
     }
 
     /**

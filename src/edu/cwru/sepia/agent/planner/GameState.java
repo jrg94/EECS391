@@ -42,6 +42,8 @@ public class GameState implements Comparable<GameState> {
 	
 	private GameState parent;
 	
+	private GameState parent;
+	
     /**
      * Construct a GameState from a stateview object. This is used to construct the initial search node. All other
      * nodes should be constructed from the another constructor you create or by factory functions that you create.
@@ -265,4 +267,15 @@ public class GameState implements Comparable<GameState> {
     	return res.getAmountRemaining() == 0;
     }
     
+    public void harvest(ResourceView res){
+    	
+    }
+    
+    public GameState getParent() {
+    	return parent;
+    }
+    
+    public void setParent(GameState parent) {
+    	this.parent = parent;
+    }
 }
