@@ -5,37 +5,27 @@ import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
 public class PeasantSimulation {
 
-	private int x;
-	private int y;
+	private Position position;
 	private int cargo;
 	private ResourceType cargoType;
 	
 	public PeasantSimulation(UnitView unit){
-		x = unit.getXPosition();
-		y = unit.getYPosition();
+		position = new Position(unit.getXPosition(), unit.getYPosition());
 		cargo = unit.getCargoAmount();
 		cargoType = unit.getCargoType();
 	}
 	
-	public PeasantSimulation(int x, int y, int cargo, ResourceType cargoType){
-		this.x = x;
-		this.y = y;
+	public PeasantSimulation(Position pos, int cargo, ResourceType cargoType){
+		position = new Position(pos);
 		this.cargo = cargo;
 		this.cargoType = cargoType;
 	}
 	
 	/**
-	 * @return the x
+	 * @return the position
 	 */
-	public int getX() {
-		return x;
-	}
-	
-	/**
-	 * @return the y
-	 */
-	public int getY() {
-		return y;
+	public Position getPosition() {
+		return position;
 	}
 	
 	/**
