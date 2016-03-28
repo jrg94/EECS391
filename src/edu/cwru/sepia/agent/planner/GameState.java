@@ -1,14 +1,11 @@
 package edu.cwru.sepia.agent.planner;
 
-import edu.cwru.sepia.environment.model.state.ResourceNode;
 import edu.cwru.sepia.environment.model.state.ResourceNode.ResourceView;
 import edu.cwru.sepia.environment.model.state.State;
 import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * This class is used to represent the state of the game after applying one of the available actions. It will also
@@ -29,7 +26,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  */
 public class GameState implements Comparable<GameState> {
 
-	
+
 	private int playerNum;
 	private int requiredGold;
 	private int requiredWood;
@@ -42,6 +39,8 @@ public class GameState implements Comparable<GameState> {
 	private UnitView townHall;
 	private List<ResourceSimulation> goldMines;
 	private List<ResourceSimulation> forests;
+	
+	private GameState parent;
 	
     /**
      * Construct a GameState from a stateview object. This is used to construct the initial search node. All other
@@ -78,6 +77,13 @@ public class GameState implements Comparable<GameState> {
     				break;
     		}
     	}
+    	
+    	parent = null;
+    }
+    
+    public GameState(GameState parent){
+    	this.parent = parent;
+    	this.playerNum = parent.playerNum;
     	
     }
     
