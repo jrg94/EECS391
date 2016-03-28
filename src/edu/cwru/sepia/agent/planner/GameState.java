@@ -40,7 +40,6 @@ public class GameState implements Comparable<GameState> {
 	private List<ResourceSimulation> goldMines;
 	private List<ResourceSimulation> forests;
 	
-	private GameState parent;
 	
 	private GameState parent;
 	
@@ -153,6 +152,10 @@ public class GameState implements Comparable<GameState> {
 	public GameState getParent() {
 		return parent;
 	}
+	
+    public void setParent(GameState parent) {
+    	this.parent = parent;
+    }
 
     /**
      * Unlike in the first A* assignment there are many possible goal states. As long as the wood and gold requirements
@@ -270,12 +273,5 @@ public class GameState implements Comparable<GameState> {
     public void harvest(ResourceView res){
     	
     }
-    
-    public GameState getParent() {
-    	return parent;
-    }
-    
-    public void setParent(GameState parent) {
-    	this.parent = parent;
-    }
+
 }
