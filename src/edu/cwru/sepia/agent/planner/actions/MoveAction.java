@@ -23,8 +23,8 @@ public class MoveAction implements StripsAction{
 
 	@Override
 	public GameState apply(GameState state) {
-		PeasantSimulation peasantClone = new PeasantSimulation(destinationPosition, peasant.getCargo(), peasant.getCargoType(), peasant.getUnitId());
 		GameState nextGameState = new GameState(state, this);
+		PeasantSimulation peasantClone = new PeasantSimulation(destinationPosition, peasant.getCargo(), peasant.getCargoType(), peasant.getUnitId());
 		nextGameState.getPeasantMap().put(peasantClone.getUnitId(), peasantClone);
 		return nextGameState;
 	}
