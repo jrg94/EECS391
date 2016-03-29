@@ -157,9 +157,7 @@ public class PlannerAgent extends Agent {
     	GameState nodeptr = goal;
     	
     	while (nodeptr.getParent() != null) {
-    		// TODO: push the action associated with this state onto the stack
-    		// This action will be based on the previous state - it may be easiest to
-    		// just generate this as we build the tree
+    		plan.push(nodeptr.getAction());
     		nodeptr = nodeptr.getParent();
     	}
     	
