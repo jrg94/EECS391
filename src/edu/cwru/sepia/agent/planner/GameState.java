@@ -301,8 +301,8 @@ public class GameState implements Comparable<GameState> {
      */
     public double heuristic() {
     	
-        // TODO: Implement me!
-        return 0.0;
+        // TODO: Implement me! there are more factors than just gold and wood
+        return requiredGold+requiredWood;
     }
 
     /**

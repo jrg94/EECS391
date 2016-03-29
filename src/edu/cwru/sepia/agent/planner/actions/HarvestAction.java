@@ -24,7 +24,6 @@ public class HarvestAction implements StripsAction{
 				&& !peasant.isCarrying() 
 				&& resource.getResourceRemaining()>0
 				&& !hasEnough;
-				
 	}
 
 	@Override
