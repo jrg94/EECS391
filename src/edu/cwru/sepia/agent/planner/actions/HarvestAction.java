@@ -18,10 +18,13 @@ public class HarvestAction implements StripsAction{
 	
 	@Override
 	public boolean preconditionsMet(GameState state) {
+		boolean hasEnough = state.hasEnough(resource.getResourceType());
 		return resource!=null
 				&&peasant.getPosition().isAdjacent(resource.getPosition()) 
 				&& !peasant.isCarrying() 
-				&& resource.getResourceRemaining()>0;
+				&& resource.getResourceRemaining()>0
+				&& !hasEnough;
+				
 	}
 
 	@Override

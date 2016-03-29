@@ -5,6 +5,7 @@ import edu.cwru.sepia.agent.planner.actions.DepositAction;
 import edu.cwru.sepia.agent.planner.actions.HarvestAction;
 import edu.cwru.sepia.agent.planner.actions.MoveAction;
 import edu.cwru.sepia.agent.planner.actions.StripsAction;
+import edu.cwru.sepia.environment.model.state.ResourceNode;
 import edu.cwru.sepia.environment.model.state.State;
 import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
@@ -239,6 +240,9 @@ public class GameState implements Comparable<GameState> {
     		//Can peasants get on top of resource?
     		//TODO make peasant only go 1 space next to resource
     		for (ResourceSimulation resource : resourceMap.values()){
+    			if (hasEnough(resource.getResourceType())){
+    				continue;
+    			}
     			action = new MoveAction (peasant, resource.getPosition());
     			if (action.preconditionsMet(this)){
     				children.add(action.apply(this));
@@ -265,6 +269,27 @@ public class GameState implements Comparable<GameState> {
     	}
     	return null;
     }
+    
+    /**
+     * determines if the gamestate has enough of a certain resource and shouldn't plan for any more of these
+     * @param type
+     * @return
+     */
+    public boolean hasEnough(ResourceNode.Type type){
+    	switch(type){
+    	case GOLD_MINE:
+    		if (requiredGold<=0){
+    			return true;
+    		}
+    		break;
+		case TREE:
+			if (requiredWood<=0){
+				return true;
+			}
+			break;
+    	}
+    	return false;
+    }
 
     /**
      * Write your heuristic function here. Remember this must be admissible for the properties of A* to hold. If you
@@ -275,6 +300,7 @@ public class GameState implements Comparable<GameState> {
      * @return The value estimated remaining cost to reach a goal state from this state.
      */
     public double heuristic() {
+    	
         // TODO: Implement me!
         return 0.0;
     }
