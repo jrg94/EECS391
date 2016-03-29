@@ -1,6 +1,8 @@
 package edu.cwru.sepia.agent.planner;
 
 import edu.cwru.sepia.environment.model.state.ResourceNode.ResourceView;
+import edu.cwru.sepia.agent.planner.actions.DepositAction;
+import edu.cwru.sepia.agent.planner.actions.HarvestAction;
 import edu.cwru.sepia.agent.planner.actions.StripsAction;
 import edu.cwru.sepia.environment.model.state.State;
 import edu.cwru.sepia.environment.model.state.Unit.UnitView;
@@ -40,7 +42,7 @@ public class GameState implements Comparable<GameState> {
 	
 	private Map<Integer, PeasantSimulation> peasantMap;
 	private StructureSimulation townHall;
-	private Map<Integer, ResourceSimulation> resourceMap;
+	private Map<Position, ResourceSimulation> resourceMap;
 	
 	
 	private GameState parent;
@@ -78,10 +80,10 @@ public class GameState implements Comparable<GameState> {
     			break;
     		}
     	}
-    	resourceMap = new HashMap<Integer, ResourceSimulation>();
+    	resourceMap = new HashMap<Position, ResourceSimulation>();
     	
     	for (ResourceView res : state.getAllResourceNodes()){
-    		resourceMap.put(res.getID(), new ResourceSimulation(res));
+    		resourceMap.put(new Position(res.getXPosition(), res.getYPosition()), new ResourceSimulation(res));
     	}
     	
     	parent = null;
@@ -101,7 +103,7 @@ public class GameState implements Comparable<GameState> {
     	this.mapSizeY = parent.mapSizeY;
     	this.peasantMap = new HashMap<Integer, PeasantSimulation>(parent.peasantMap);
     	this.townHall = parent.townHall;
-    	this.resourceMap = new HashMap<Integer, ResourceSimulation>(parent.resourceMap);
+    	this.resourceMap = new HashMap<Position, ResourceSimulation>(parent.resourceMap);
     	this.parent = parent;
     	this.action = action;
     }
@@ -109,7 +111,7 @@ public class GameState implements Comparable<GameState> {
 	/**
 	 * @return the resourceMap
 	 */
-	public Map<Integer, ResourceSimulation> getResourceMap() {
+	public Map<Position, ResourceSimulation> getResourceMap() {
 		return resourceMap;
 	}
 

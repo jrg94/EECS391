@@ -5,7 +5,6 @@ import edu.cwru.sepia.environment.model.state.ResourceNode.ResourceView;
 
 public class ResourceSimulation {
 
-	private int resourceId;
 	private Position position;
 	private int resourceRemaining;
 	private ResourceNode.Type resourceType;
@@ -14,14 +13,12 @@ public class ResourceSimulation {
 		this.position = new Position(res.getXPosition(), res.getYPosition());
 		this.resourceRemaining = res.getAmountRemaining();
 		this.resourceType = res.getType();
-		this.resourceId = res.getID();
 	}
 	
 	public ResourceSimulation(Position position, int resourceRemaining, ResourceNode.Type resourceType, int resourceId){
 		this.position = position;
 		this.resourceRemaining = resourceRemaining;
 		this.resourceType = resourceType;
-		this.resourceId = resourceId;
 	}
 
 	/**
@@ -45,13 +42,6 @@ public class ResourceSimulation {
 		return resourceType;
 	}
 
-	/**
-	 * @return the resourceId
-	 */
-	public int getResourceId() {
-		return resourceId;
-	}
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -60,7 +50,6 @@ public class ResourceSimulation {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((position == null) ? 0 : position.hashCode());
-		result = prime * result + resourceId;
 		result = prime * result + resourceRemaining;
 		result = prime * result + ((resourceType == null) ? 0 : resourceType.hashCode());
 		return result;
@@ -83,8 +72,6 @@ public class ResourceSimulation {
 				return false;
 		} else if (!position.equals(other.position))
 			return false;
-		if (resourceId != other.resourceId)
-			return false;
 		if (resourceRemaining != other.resourceRemaining)
 			return false;
 		if (resourceType != other.resourceType)
@@ -97,7 +84,7 @@ public class ResourceSimulation {
 	 */
 	@Override
 	public String toString() {
-		return "ResourceSimulation [resourceId=" + resourceId + ", position=" + position + ", resourceRemaining="
+		return "ResourceSimulation [position=" + position + ", resourceRemaining="
 				+ resourceRemaining + ", resourceType=" + resourceType + "]";
 	}	
 	
