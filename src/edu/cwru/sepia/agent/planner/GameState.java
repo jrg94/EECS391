@@ -6,6 +6,7 @@ import edu.cwru.sepia.agent.planner.actions.HarvestAction;
 import edu.cwru.sepia.agent.planner.actions.MoveAction;
 import edu.cwru.sepia.agent.planner.actions.StripsAction;
 import edu.cwru.sepia.environment.model.state.ResourceNode;
+import edu.cwru.sepia.environment.model.state.ResourceType;
 import edu.cwru.sepia.environment.model.state.State;
 import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
@@ -37,6 +38,11 @@ public class GameState implements Comparable<GameState> {
 	private int playerNum;
 	private int requiredGold;
 	private int requiredWood;
+	
+	private int currentGold;
+	private int currentFood;
+	private int supplyCap;
+	
 	private boolean buildPeasants;
 	
 	private int mapSizeX;
@@ -71,6 +77,10 @@ public class GameState implements Comparable<GameState> {
     	this.mapSizeY = state.getYExtent();
     	
     	peasantMap = new HashMap<Integer, PeasantSimulation> ();
+
+    	currentGold = state.getResourceAmount(playernum, ResourceType.GOLD);
+    	currentFood = state.getSupplyAmount(playernum);
+    	supplyCap = state.getSupplyCap(playernum);
     	
     	for (UnitView unit : state.getAllUnits()){
     		switch(unit.getTemplateView().getName().toLowerCase()){
@@ -108,6 +118,10 @@ public class GameState implements Comparable<GameState> {
     	this.resourceMap = new HashMap<Position, ResourceSimulation>(parent.resourceMap);
     	this.parent = parent;
     	this.action = action;
+    	
+    	this.currentFood = parent.currentFood;
+    	this.currentGold = parent.currentGold;
+    	this.supplyCap = parent.supplyCap;
     }
 
 	/**
