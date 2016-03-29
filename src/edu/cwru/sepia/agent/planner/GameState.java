@@ -303,7 +303,8 @@ public class GameState implements Comparable<GameState> {
     public double heuristic() {
     	
         // TODO: Implement me! there are more factors than just gold and wood
-        return requiredGold+requiredWood;
+        //return requiredGold+requiredWood;
+    	return 0;
     }
 
     /**
@@ -399,10 +400,10 @@ public class GameState implements Comparable<GameState> {
 	 */
 	@Override
 	public String toString() {
-		return "GameState [playerNum=" + playerNum + ", requiredGold=" + requiredGold + ", requiredWood=" + requiredWood
+		return "GameState [action=" + action + ", playerNum=" + playerNum + ", requiredGold=" + requiredGold + ", requiredWood=" + requiredWood
 				+ ", buildPeasants=" + buildPeasants + ", mapSizeX=" + mapSizeX + ", mapSizeY=" + mapSizeY
 				+ ", peasantMap=" + peasantMap + ", townHall=" + townHall + ", resourceMap=" + resourceMap + ", parent="
-				+ parent + ", action=" + action + "]";
+				+ parent +  "]";
 	}
 
 	/* (non-Javadoc)
