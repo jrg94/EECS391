@@ -315,6 +315,9 @@ public class GameState implements Comparable<GameState> {
      */
     public double getCost() {
     	GameState trav = parent;
+    	if (action == null){
+    		return 0;
+    	}
     	int costSum = action.cost();
     	while (trav != null){
     		if (trav.action != null){
