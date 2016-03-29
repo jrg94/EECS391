@@ -1,6 +1,7 @@
 package edu.cwru.sepia.agent.planner;
 
 import edu.cwru.sepia.action.Action;
+import edu.cwru.sepia.action.ActionResult;
 import edu.cwru.sepia.agent.Agent;
 import edu.cwru.sepia.agent.planner.actions.*;
 import edu.cwru.sepia.environment.model.history.History;
@@ -31,8 +32,6 @@ public class PEAgent extends Agent {
     private int townhallId;
     private Position townhallPosition;
     private int peasantTemplateId;
-    
-    private Position lastPosition;
 
     public PEAgent(int playernum, Stack<StripsAction> plan) {
         super(playernum);
@@ -100,17 +99,28 @@ public class PEAgent extends Agent {
     	Map<Integer, Action> sepiaActions = new HashMap<Integer, Action>();
     	boolean doneMoving = true;
     	Action action = null;
-    	//TODO does this work for multiple peasants?
-    	for (int unitId : peasantIdMap.values()){
-    		Unit.UnitView peasant = stateView.getUnit(unitId);
-    		if(lastPosition==null || lastPosition.equals(new Position(peasant.getXPosition(), peasant.getYPosition()))){
-    			continue;
-    		}
-    		action = Action.createCompoundMove(unitId, lastPosition.x, lastPosition.y);
-    		doneMoving=false;
+    	if (stateView.getTurnNumber()!=0){
+    		Map<Integer, ActionResult> actionResults = historyView.getCommandFeedback(playernum, stateView.getTurnNumber()-1);
+    		  for (ActionResult result : actionResults.values()) {
+    			  switch(result.getFeedback()){
+    			  case INCOMPLETE:
+    				  action = result.getAction();
+    				  break;
+    			  case INCOMPLETEMAYBESTUCK:
+    				  System.out.println("[PEAgent] may be stuck, unitID= "+action.getUnitId());
+    			  case COMPLETED:
+    				  break;
+    			  case FAILED:
+    				  System.out.println("[PEAgent] failed an action");
+    				  break;
+    			  }
+    			  	
+    			    System.out.println(result.toString());
+
+    			  }
+    		
     	}
-    	
-    	if (doneMoving){
+    	if (action == null){
     		action = createSepiaAction(plan.pop());
     	}
     	sepiaActions.put(action.getUnitId(), action);
@@ -137,7 +147,6 @@ public class PEAgent extends Agent {
     	else if (action instanceof MoveAction){
     		MoveAction moveAction = ((MoveAction)action);
     		PeasantSimulation peasant = moveAction.getPeasant();
-    		lastPosition = moveAction.getDestinationPosition();
     		return Action.createCompoundMove(peasant.getUnitId(), moveAction.getDestinationPosition().x, moveAction.getDestinationPosition().y);
     	}
     	System.out.println("[PEAgent] Invalid StripsAction was entered in createSepiaAction");
