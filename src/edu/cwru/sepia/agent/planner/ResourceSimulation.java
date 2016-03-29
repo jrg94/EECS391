@@ -15,7 +15,7 @@ public class ResourceSimulation {
 		this.resourceType = res.getType();
 	}
 	
-	public ResourceSimulation(Position position, int resourceRemaining, ResourceNode.Type resourceType, int resourceId){
+	public ResourceSimulation(Position position, int resourceRemaining, ResourceNode.Type resourceType){
 		this.position = position;
 		this.resourceRemaining = resourceRemaining;
 		this.resourceType = resourceType;
