@@ -48,4 +48,11 @@ public class DepositAction implements StripsAction {
 		return 1;
 	}
 
+	/**
+	 * @return the peasant
+	 */
+	public PeasantSimulation getPeasant() {
+		return peasant;
+	}
+
 }

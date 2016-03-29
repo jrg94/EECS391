@@ -38,4 +38,18 @@ public class MoveAction implements StripsAction{
 		return 0;
 	}
 
+	/**
+	 * @return the peasant
+	 */
+	public PeasantSimulation getPeasant() {
+		return peasant;
+	}
+
+	/**
+	 * @return the destinationPosition
+	 */
+	public Position getDestinationPosition() {
+		return destinationPosition;
+	}
+
 }

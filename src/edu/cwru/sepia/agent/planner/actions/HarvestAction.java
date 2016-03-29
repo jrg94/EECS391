@@ -58,4 +58,18 @@ public class HarvestAction implements StripsAction{
 		return 1;
 	}
 
+	/**
+	 * @return the peasant
+	 */
+	public PeasantSimulation getPeasant() {
+		return peasant;
+	}
+
+	/**
+	 * @return the resource
+	 */
+	public ResourceSimulation getResource() {
+		return resource;
+	}
+
 }
