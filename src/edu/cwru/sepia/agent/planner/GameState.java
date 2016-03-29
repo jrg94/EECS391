@@ -311,6 +311,17 @@ public class GameState implements Comparable<GameState> {
 	}
 
     /* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "GameState [playerNum=" + playerNum + ", requiredGold=" + requiredGold + ", requiredWood=" + requiredWood
+				+ ", buildPeasants=" + buildPeasants + ", mapSizeX=" + mapSizeX + ", mapSizeY=" + mapSizeY
+				+ ", peasantMap=" + peasantMap + ", townHall=" + townHall + ", resourceMap=" + resourceMap + ", parent="
+				+ parent + ", action=" + action + "]";
+	}
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
