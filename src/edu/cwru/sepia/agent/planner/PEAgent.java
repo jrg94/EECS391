@@ -103,10 +103,6 @@ public class PEAgent extends Agent {
     	//TODO does this work for multiple peasants?
     	for (int unitId : peasantIdMap.values()){
     		Unit.UnitView peasant = stateView.getUnit(unitId);
-    		
-    		System.out.println("durative action: " + peasant.getCurrentDurativeAction());
-    		System.out.println("durative progress: " + peasant.getCurrentDurativeProgress());
-    		
     		if(lastPosition==null || lastPosition.equals(new Position(peasant.getXPosition(), peasant.getYPosition()))){
     			continue;
     		}
