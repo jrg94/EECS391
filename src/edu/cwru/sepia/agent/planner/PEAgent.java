@@ -31,6 +31,8 @@ public class PEAgent extends Agent {
     private int townhallId;
     private Position townhallPosition;
     private int peasantTemplateId;
+    
+    private Position lastPosition;
 
     public PEAgent(int playernum, Stack<StripsAction> plan) {
         super(playernum);
@@ -96,16 +98,25 @@ public class PEAgent extends Agent {
     @Override
     public Map<Integer, Action> middleStep(State.StateView stateView, History.HistoryView historyView) {
     	Map<Integer, Action> sepiaActions = new HashMap<Integer, Action>();
+    	boolean doneMoving = true;
+    	Action action = null;
     	//TODO does this work for multiple peasants?
     	for (int unitId : peasantIdMap.values()){
     		Unit.UnitView peasant = stateView.getUnit(unitId);
+    		
     		System.out.println("durative action: " + peasant.getCurrentDurativeAction());
     		System.out.println("durative progress: " + peasant.getCurrentDurativeProgress());
-    		if (peasant.getCurrentDurativeAction() != null){
-    			System.out.println("durative progress: " + peasant.getCurrentDurativeProgress());
+    		
+    		if(lastPosition==null || lastPosition.equals(new Position(peasant.getXPosition(), peasant.getYPosition()))){
+    			continue;
     		}
+    		action = Action.createCompoundMove(unitId, lastPosition.x, lastPosition.y);
+    		doneMoving=false;
     	}
-    	Action action = createSepiaAction(plan.pop());
+    	
+    	if (doneMoving){
+    		action = createSepiaAction(plan.pop());
+    	}
     	sepiaActions.put(action.getUnitId(), action);
         return sepiaActions;
     }
@@ -130,6 +141,7 @@ public class PEAgent extends Agent {
     	else if (action instanceof MoveAction){
     		MoveAction moveAction = ((MoveAction)action);
     		PeasantSimulation peasant = moveAction.getPeasant();
+    		lastPosition = moveAction.getDestinationPosition();
     		return Action.createCompoundMove(peasant.getUnitId(), moveAction.getDestinationPosition().x, moveAction.getDestinationPosition().y);
     	}
     	System.out.println("[PEAgent] Invalid StripsAction was entered in createSepiaAction");

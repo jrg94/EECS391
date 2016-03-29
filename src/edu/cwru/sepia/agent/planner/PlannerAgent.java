@@ -101,7 +101,6 @@ public class PlannerAgent extends Agent {
     	    	
     	// While the openList is not empty
     	while (!openList.isEmpty()) {
-    		
     		// Goal test
     		GameState curr = openList.peek();
     		System.out.println("[AstarSearch] current gameState: " + curr.toString());
@@ -136,10 +135,10 @@ public class PlannerAgent extends Agent {
     			}
     			
     			// This path is the best yet - link it
-    			child.setParent(curr);
+    			//child.setParent(curr);
     		}    		
     	}
-    	
+    	System.out.println("[AstarSearch]Gave up");
         return new Stack<StripsAction>();
     }
     
