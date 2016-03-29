@@ -33,10 +33,6 @@ import java.util.Map;
  */
 public class GameState implements Comparable<GameState> {
 
-	public static int moveDuration;
-	public static int depositDuration;
-	public static int gatherGoldDuration;
-	public static int gatherWoodDuration;
 
 	private int playerNum;
 	private int requiredGold;
@@ -83,10 +79,6 @@ public class GameState implements Comparable<GameState> {
     			break;
     		case "peasant":
     			peasantMap.put(unit.getID(), new PeasantSimulation(unit));
-    			moveDuration = unit.getTemplateView().getDurationMove();
-    			depositDuration = unit.getTemplateView().getDurationDeposit();
-    			gatherGoldDuration = unit.getTemplateView().getDurationGatherGold();
-    			gatherWoodDuration = unit.getTemplateView().getDurationGatherWood();
     			break;
     		}
     	}
@@ -116,11 +108,6 @@ public class GameState implements Comparable<GameState> {
     	this.resourceMap = new HashMap<Position, ResourceSimulation>(parent.resourceMap);
     	this.parent = parent;
     	this.action = action;
-    	
-    	moveDuration = parent.moveDuration;
-    	depositDuration = parent.depositDuration;
-    	gatherGoldDuration = parent.gatherGoldDuration;
-    	gatherWoodDuration = parent.gatherWoodDuration;
     }
 
 	/**
