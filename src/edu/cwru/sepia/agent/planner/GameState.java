@@ -231,23 +231,35 @@ public class GameState implements Comparable<GameState> {
     		action = new HarvestAction(peasant, findAdjacentResource(peasant));
     		if (action.preconditionsMet(this)){
     			children.add(action.apply(this));
+    			continue;
     		}
     		action = new DepositAction(peasant);
     		if (action.preconditionsMet(this)){
     			children.add(action.apply(this));
+    			continue;
     		}
     		
     		//Can peasants get on top of resource?
     		//TODO make peasant only go 1 space next to resource
-    		for (ResourceSimulation resource : resourceMap.values()){
-    			if (hasEnough(resource.getResourceType())){
-    				continue;
-    			}
-    			//action = new MoveAction (peasant, resource.getPosition());
-    			action = new MoveAction (peasant, resource.getPosition().getAdjacentPositions().get((int)(4*Math.random())));
+    		if (peasant.isCarrying()){
+    			//go drop off
+    			action = new MoveAction(peasant, townHall.getPosition().getAdjacentPositions().get((int)(4*Math.random())));
     			if (action.preconditionsMet(this)){
     				children.add(action.apply(this));
     			}
+    		}
+    		else{
+    			//harvest
+	    		for (ResourceSimulation resource : resourceMap.values()){
+	    			if (hasEnough(resource.getResourceType())){
+	    				continue;
+	    			}
+	    			//action = new MoveAction (peasant, resource.getPosition());
+	    			action = new MoveAction (peasant, resource.getPosition().getAdjacentPositions().get((int)(4*Math.random())));
+	    			if (action.preconditionsMet(this)){
+	    				children.add(action.apply(this));
+	    			}
+	    		}
     		}
     		
     	}
@@ -303,8 +315,15 @@ public class GameState implements Comparable<GameState> {
     public double heuristic() {
     	
         // TODO: Implement me! there are more factors than just gold and wood
-        //return requiredGold+requiredWood;
-    	return 0;
+    	double resourceRemaining = requiredGold+requiredWood;
+    	double carryingCount = 0;
+    	double distanceFromTownHall = 0;
+    	for(PeasantSimulation peasant : peasantMap.values()){
+    		carryingCount += peasant.getCargo();
+    		distanceFromTownHall += peasant.getPosition().chebyshevDistance(townHall.getPosition());
+    	}
+        return resourceRemaining - carryingCount + distanceFromTownHall;
+    	//return 0;
     }
 
     /**
@@ -338,10 +357,10 @@ public class GameState implements Comparable<GameState> {
      */
     @Override
     public int compareTo(GameState o) {
-    	if (this.getCost()>o.getCost()){
+    	if (this.getCost()+this.heuristic()>o.getCost()+o.heuristic()){
     		return 1;
     	}
-    	else if (this.getCost()<o.getCost()){
+    	else if (this.getCost()+this.heuristic()<o.getCost()+o.heuristic()){
     		return -1;
     	}
         return 0;
@@ -400,9 +419,8 @@ public class GameState implements Comparable<GameState> {
 	 */
 	@Override
 	public String toString() {
-		return "GameState [action=" + action + ", playerNum=" + playerNum + ", requiredGold=" + requiredGold + ", requiredWood=" + requiredWood
-				+ ", buildPeasants=" + buildPeasants + ", mapSizeX=" + mapSizeX + ", mapSizeY=" + mapSizeY
-				+ ", peasantMap=" + peasantMap + ", townHall=" + townHall + ", resourceMap=" + resourceMap + ", parent="
+		return "GameState [action=" + action + ", heuristic="+heuristic() + ", peasantMap=" + peasantMap+ ", requiredGold=" + requiredGold + ", requiredWood=" + requiredWood
+				 + ", resourceMap=" + resourceMap + ", parent="
 				+ parent +  "]";
 	}
 
