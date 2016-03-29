@@ -73,7 +73,7 @@ public class GameState implements Comparable<GameState> {
     	peasantMap = new HashMap<Integer, PeasantSimulation> ();
     	
     	for (UnitView unit : state.getAllUnits()){
-    		switch(unit.getTemplateView().getName()){
+    		switch(unit.getTemplateView().getName().toLowerCase()){
     		case "townhall":
     			townHall = new StructureSimulation(unit);
     			break;
@@ -243,7 +243,8 @@ public class GameState implements Comparable<GameState> {
     			if (hasEnough(resource.getResourceType())){
     				continue;
     			}
-    			action = new MoveAction (peasant, resource.getPosition());
+    			//action = new MoveAction (peasant, resource.getPosition());
+    			action = new MoveAction (peasant, resource.getPosition().getAdjacentPositions().get((int)(4*Math.random())));
     			if (action.preconditionsMet(this)){
     				children.add(action.apply(this));
     			}
