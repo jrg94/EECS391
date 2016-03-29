@@ -28,6 +28,7 @@ public class PEAgent extends Agent {
     // this maps those placeholders to the actual unit IDs.
     private Map<Integer, Integer> peasantIdMap;
     private int townhallId;
+    private Position townhallPosition;
     private int peasantTemplateId;
 
     public PEAgent(int playernum, Stack<StripsAction> plan) {
@@ -45,6 +46,7 @@ public class PEAgent extends Agent {
             String unitType = unit.getTemplateView().getName().toLowerCase();
             if(unitType.equals("townhall")) {
                 townhallId = unitId;
+                townhallPosition = new Position(unit.getXPosition(), unit.getYPosition());
             } else if(unitType.equals("peasant")) {
                 peasantIdMap.put(unitId, unitId);
             }
@@ -92,8 +94,12 @@ public class PEAgent extends Agent {
      */
     @Override
     public Map<Integer, Action> middleStep(State.StateView stateView, History.HistoryView historyView) {
-        // TODO: Implement me!
-        return null;
+    	Map<Integer, Action> sepiaActions = new HashMap<Integer, Action>();
+    	
+    	//TODO does this work for multiple peasants?
+    	Action action = createSepiaAction(plan.pop());
+    	sepiaActions.put(action.getUnitId(), action);
+        return sepiaActions;
     }
 
     /**
@@ -102,6 +108,23 @@ public class PEAgent extends Agent {
      * @return SEPIA representation of same action
      */
     private Action createSepiaAction(StripsAction action) {
+    	
+    	if (action instanceof DepositAction){
+    		DepositAction depositAction = ((DepositAction) action);
+    		PeasantSimulation peasant = depositAction.getPeasant();
+    		return Action.createPrimitiveDeposit(peasant.getUnitId(), peasant.getPosition().getDirection(townhallPosition));
+    	}
+    	else if (action instanceof HarvestAction){
+    		HarvestAction harvestAction = ((HarvestAction)action);
+    		PeasantSimulation peasant = harvestAction.getPeasant();
+    		return Action.createPrimitiveGather(peasant.getUnitId(), peasant.getPosition().getDirection(townhallPosition));
+    	}
+    	else if (action instanceof MoveAction){
+    		MoveAction moveAction = ((MoveAction)action);
+    		PeasantSimulation peasant = moveAction.getPeasant();
+    		return Action.createCompoundMove(peasant.getUnitId(), moveAction.getDestinationPosition().x, moveAction.getDestinationPosition().y);
+    	}
+    	System.out.println("[PEAgent] Invalid StripsAction was entered in createSepiaAction");
         return null;
     }
 
