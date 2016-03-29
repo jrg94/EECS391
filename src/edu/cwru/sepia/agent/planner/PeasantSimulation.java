@@ -17,12 +17,7 @@ public class PeasantSimulation {
 		position = new Position(unit.getXPosition(), unit.getYPosition());
 		cargo = unit.getCargoAmount();
 		cargoType = unit.getCargoType();
-		if (cargoType == null){
-			isCarrying = false;
-		}
-		else{
-			isCarrying = true;
-		}
+		determineIsCarrying(cargoType);
 	}
 	
 	public PeasantSimulation(Position pos, int cargo, ResourceType cargoType, int unitId){
@@ -30,6 +25,10 @@ public class PeasantSimulation {
 		this.cargo = cargo;
 		this.cargoType = cargoType;
 		this.unitId = unitId;
+		determineIsCarrying(cargoType);
+	}
+
+	private void determineIsCarrying(ResourceType cargoType) {
 		if (cargoType == null){
 			isCarrying = false;
 		}
