@@ -117,7 +117,7 @@ public class PEAgent extends Agent {
     	else if (action instanceof HarvestAction){
     		HarvestAction harvestAction = ((HarvestAction)action);
     		PeasantSimulation peasant = harvestAction.getPeasant();
-    		return Action.createPrimitiveGather(peasant.getUnitId(), peasant.getPosition().getDirection(townhallPosition));
+    		return Action.createPrimitiveGather(peasant.getUnitId(), peasant.getPosition().getDirection(harvestAction.getResource().getPosition()));
     	}
     	else if (action instanceof MoveAction){
     		MoveAction moveAction = ((MoveAction)action);
