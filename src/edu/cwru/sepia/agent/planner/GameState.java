@@ -258,7 +258,12 @@ public class GameState implements Comparable<GameState> {
      */
     @Override
     public int compareTo(GameState o) {
-        // TODO: Implement me!
+    	if (this.getCost()>o.getCost()){
+    		return 1;
+    	}
+    	else if (this.getCost()<o.getCost()){
+    		return -1;
+    	}
         return 0;
     }
 
