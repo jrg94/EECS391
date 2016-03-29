@@ -18,10 +18,10 @@ public class PeasantSimulation {
 		cargo = unit.getCargoAmount();
 		cargoType = unit.getCargoType();
 		if (cargoType == null){
-			isCarrying = true;
+			isCarrying = false;
 		}
 		else{
-			isCarrying = false;
+			isCarrying = true;
 		}
 	}
 	
