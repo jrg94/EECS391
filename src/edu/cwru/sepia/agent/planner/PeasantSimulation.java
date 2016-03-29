@@ -31,10 +31,10 @@ public class PeasantSimulation {
 		this.cargoType = cargoType;
 		this.unitId = unitId;
 		if (cargoType == null){
-			isCarrying = true;
+			isCarrying = false;
 		}
 		else{
-			isCarrying = false;
+			isCarrying = true;
 		}
 	}
 	
