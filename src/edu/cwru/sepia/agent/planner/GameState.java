@@ -239,11 +239,9 @@ public class GameState implements Comparable<GameState> {
     			continue;
     		}
     		
-    		//Can peasants get on top of resource?
-    		//TODO make peasant only go 1 space next to resource
     		if (peasant.isCarrying()){
     			//go drop off
-    			action = new MoveAction(peasant, townHall.getPosition().getAdjacentPositions().get((int)(4*Math.random())));
+    			action = new MoveAction(peasant, findClosestAdjacent(townHall.getPosition(), peasant.getPosition()));
     			if (action.preconditionsMet(this)){
     				children.add(action.apply(this));
     			}
@@ -255,7 +253,7 @@ public class GameState implements Comparable<GameState> {
 	    				continue;
 	    			}
 	    			//action = new MoveAction (peasant, resource.getPosition());
-	    			action = new MoveAction (peasant, resource.getPosition().getAdjacentPositions().get((int)(4*Math.random())));
+	    			action = new MoveAction (peasant, findClosestAdjacent(resource.getPosition(), peasant.getPosition()));
 	    			if (action.preconditionsMet(this)){
 	    				children.add(action.apply(this));
 	    			}
@@ -264,6 +262,19 @@ public class GameState implements Comparable<GameState> {
     		
     	}
         return children;
+    }
+    
+    private Position findClosestAdjacent(Position pos, Position peasantPosition){
+    	int min = Integer.MAX_VALUE;
+    	Position minPos = null;
+    	for (Position adjacent : pos.getAdjacentPositions()){
+    		int distance = peasantPosition.chebyshevDistance(adjacent);
+    		if (distance<min){
+    			minPos = adjacent;
+    			min = distance;
+    		}
+    	}
+    	return minPos;
     }
     
     /**
