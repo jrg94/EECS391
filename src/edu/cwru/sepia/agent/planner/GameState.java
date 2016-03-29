@@ -222,8 +222,53 @@ public class GameState implements Comparable<GameState> {
      * @return A list of the possible successor states and their associated actions
      */
     public List<GameState> generateChildren() {
+    	List<GameState> children = new ArrayList<GameState>();
+    	StripsAction action;
+    	for (PeasantSimulation peasant : peasantMap.values()){
+    		
+    		action = new HarvestAction(peasant, findAdjacentResource(peasant));
+    		if (action.preconditionsMet(this)){
+    			children.add(action.apply(this));
+    		}
+    		action = new DepositAction(peasant);
+    		if (action.preconditionsMet(this)){
+    			children.add(action.apply(this));
+    		}
+    		
+    		//TODO add move actions
+    	}
         // TODO: Implement me!
-        return null;
+        return children;
+    }
+    
+    private ResourceSimulation findResource(PeasantSimulation peasant){
+    	double minDistance = Double.MAX_VALUE;
+    	ResourceSimulation nearestResource = null;
+    	for (ResourceSimulation res : resourceMap.values()){
+    		double distance = peasant.getPosition().euclideanDistance(res.getPosition());
+    		if (distance < minDistance){
+    			minDistance = distance;
+    			nearestResource = res;
+    		}
+    	}
+    	return nearestResource;
+    }
+    
+    /**
+     * finds adjacent resources
+     * if it exists return
+     * else return null
+     * @param peasant
+     * @return
+     */
+    private ResourceSimulation findAdjacentResource(PeasantSimulation peasant){
+    	for (Position pos : peasant.getPosition().getAdjacentPositions()){
+    		ResourceSimulation resource = resourceMap.get(pos);
+    		if (resource != null){
+    			return resource;
+    		}
+    	}
+    	return null;
     }
 
     /**
