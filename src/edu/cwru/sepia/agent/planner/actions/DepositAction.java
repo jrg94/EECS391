@@ -45,7 +45,7 @@ public class DepositAction implements StripsAction {
 	 */
 	@Override
 	public int cost() {
-		return 1;
+		return GameState.depositDuration;
 	}
 
 	/**

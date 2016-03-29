@@ -34,8 +34,7 @@ public class MoveAction implements StripsAction{
 	 */
 	@Override
 	public int cost() {
-		// TODO Auto-generated method stub
-		return 5;
+		return GameState.moveDuration*peasant.getPosition().chebyshevDistance(destinationPosition);
 	}
 
 	/**

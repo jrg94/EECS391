@@ -57,6 +57,12 @@ public class HarvestAction implements StripsAction{
 	 */
 	@Override
 	public int cost() {
+		switch(resource.getResourceType()){
+		case GOLD_MINE:
+			return GameState.gatherGoldDuration;
+		case TREE:
+			return GameState.gatherWoodDuration;
+		}
 		return 1;
 	}
 
