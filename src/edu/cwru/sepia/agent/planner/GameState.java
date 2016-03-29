@@ -238,7 +238,7 @@ public class GameState implements Comparable<GameState> {
     			children.add(action.apply(this));
     			continue;
     		}
-    		
+    		//movement actions
     		if (peasant.isCarrying()){
     			//go drop off
     			action = new MoveAction(peasant, findClosestAdjacent(townHall.getPosition(), peasant.getPosition()));
@@ -259,7 +259,6 @@ public class GameState implements Comparable<GameState> {
 	    			}
 	    		}
     		}
-    		
     	}
         return children;
     }
