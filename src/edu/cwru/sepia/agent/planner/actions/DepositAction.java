@@ -40,4 +40,12 @@ public class DepositAction implements StripsAction {
 		return nextGameState;
 	}
 
+	/**
+	 * deposit only takes 1 turn
+	 */
+	@Override
+	public int cost() {
+		return 1;
+	}
+
 }

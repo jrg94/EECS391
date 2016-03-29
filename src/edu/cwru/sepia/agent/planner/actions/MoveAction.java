@@ -29,4 +29,13 @@ public class MoveAction implements StripsAction{
 		return nextGameState;
 	}
 
+	/**
+	 * cost of moving is more than 1
+	 */
+	@Override
+	public int cost() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

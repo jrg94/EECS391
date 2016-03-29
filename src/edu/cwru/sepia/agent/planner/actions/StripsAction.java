@@ -37,4 +37,11 @@ public interface StripsAction {
      * @return State resulting from successful action appliction.
      */
     public GameState apply(GameState state);
+    
+    /**
+     * gives the cost of doing this action
+     * the cost is determined by how many turns this action would take
+     * @return
+     */
+    public int cost();
 }

@@ -47,4 +47,12 @@ public class HarvestAction implements StripsAction{
 		return null;
 	}
 
+	/**
+	 * harvest costs 1 turn
+	 */
+	@Override
+	public int cost() {
+		return 1;
+	}
+
 }
