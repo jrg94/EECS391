@@ -91,7 +91,7 @@ public class PlannerAgent extends Agent {
      * @return The plan or null if no plan is found.
      */
     private Stack<StripsAction> AstarSearch(GameState startState) {
-    	
+    	System.out.println("AstarSearch begins!");
     	// Declare open and closed lists
     	PriorityQueue<GameState> openList = new PriorityQueue<GameState>();
     	HashSet<GameState> closedList = new HashSet<GameState>();
@@ -104,6 +104,7 @@ public class PlannerAgent extends Agent {
     		
     		// Goal test
     		GameState curr = openList.peek();
+    		System.out.println("[AstarSearch] current gameState: " + curr.toString());
     		if (curr.isGoal()) {
     			return buildStripsPlan(curr);
     		}

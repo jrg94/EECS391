@@ -112,6 +112,6 @@ public class PeasantSimulation {
 	
 	@Override
 	public String toString(){
-		return String.format("PeasantSimulation:{id=%d, position=%s, cargoType=%s, cargo=%d}", unitId, position.toString(), cargoType.toString(), cargo);
+		return String.format("PeasantSimulation:{id=%d, position=%s, cargoType=%s, cargo=%d}", unitId, position.toString(), cargoType, cargo);
 	}
 }
