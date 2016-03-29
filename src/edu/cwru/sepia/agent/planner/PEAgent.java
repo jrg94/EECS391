@@ -8,6 +8,7 @@ import edu.cwru.sepia.environment.model.state.ResourceType;
 import edu.cwru.sepia.environment.model.state.State;
 import edu.cwru.sepia.environment.model.state.Template;
 import edu.cwru.sepia.environment.model.state.Unit;
+import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -95,8 +96,15 @@ public class PEAgent extends Agent {
     @Override
     public Map<Integer, Action> middleStep(State.StateView stateView, History.HistoryView historyView) {
     	Map<Integer, Action> sepiaActions = new HashMap<Integer, Action>();
-    	
     	//TODO does this work for multiple peasants?
+    	for (int unitId : peasantIdMap.values()){
+    		Unit.UnitView peasant = stateView.getUnit(unitId);
+    		System.out.println("durative action: " + peasant.getCurrentDurativeAction());
+    		System.out.println("durative progress: " + peasant.getCurrentDurativeProgress());
+    		if (peasant.getCurrentDurativeAction() != null){
+    			System.out.println("durative progress: " + peasant.getCurrentDurativeProgress());
+    		}
+    	}
     	Action action = createSepiaAction(plan.pop());
     	sepiaActions.put(action.getUnitId(), action);
         return sepiaActions;
