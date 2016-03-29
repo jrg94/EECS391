@@ -3,6 +3,7 @@ package edu.cwru.sepia.agent.planner;
 import edu.cwru.sepia.environment.model.state.ResourceNode.ResourceView;
 import edu.cwru.sepia.agent.planner.actions.DepositAction;
 import edu.cwru.sepia.agent.planner.actions.HarvestAction;
+import edu.cwru.sepia.agent.planner.actions.MoveAction;
 import edu.cwru.sepia.agent.planner.actions.StripsAction;
 import edu.cwru.sepia.environment.model.state.State;
 import edu.cwru.sepia.environment.model.state.Unit.UnitView;
@@ -235,23 +236,17 @@ public class GameState implements Comparable<GameState> {
     			children.add(action.apply(this));
     		}
     		
-    		//TODO add move actions
-    	}
-        // TODO: Implement me!
-        return children;
-    }
-    
-    private ResourceSimulation findResource(PeasantSimulation peasant){
-    	double minDistance = Double.MAX_VALUE;
-    	ResourceSimulation nearestResource = null;
-    	for (ResourceSimulation res : resourceMap.values()){
-    		double distance = peasant.getPosition().euclideanDistance(res.getPosition());
-    		if (distance < minDistance){
-    			minDistance = distance;
-    			nearestResource = res;
+    		//Can peasants get on top of resource?
+    		//TODO make peasant only go 1 space next to resource
+    		for (ResourceSimulation resource : resourceMap.values()){
+    			action = new MoveAction (peasant, resource.getPosition());
+    			if (action.preconditionsMet(this)){
+    				children.add(action.apply(this));
+    			}
     		}
+    		
     	}
-    	return nearestResource;
+        return children;
     }
     
     /**
