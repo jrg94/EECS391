@@ -323,7 +323,6 @@ public class GameState implements Comparable<GameState> {
     		distanceFromTownHall += peasant.getPosition().chebyshevDistance(townHall.getPosition());
     	}
         return resourceRemaining - carryingCount + distanceFromTownHall;
-    	//return 0;
     }
 
     /**
