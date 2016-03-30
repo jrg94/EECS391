@@ -278,7 +278,7 @@ public class GameState implements Comparable<GameState> {
     	StripsAction action;
     	for (PeasantSimulation peasant : peasantMap.values()){
     		if (buildPeasants){
-    			action = new BuildPeasantAction(this);
+    			action = new BuildPeasantAction();
     			if (action.preconditionsMet(this)){
     				children.add(action.apply(this));
     			}
