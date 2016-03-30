@@ -384,11 +384,13 @@ public class GameState implements Comparable<GameState> {
     	double resourceRemaining = requiredGold+requiredWood;
     	double carryingCount = 0;
     	double distanceFromTownHall = 0;
+    	double peasantCount = 0;
     	for(PeasantSimulation peasant : peasantMap.values()){
     		carryingCount += peasant.getCargo();
     		distanceFromTownHall += peasant.getPosition().chebyshevDistance(townHall.getPosition());
+    		peasantCount++;
     	}
-        return resourceRemaining - carryingCount + distanceFromTownHall;
+        return resourceRemaining - carryingCount + distanceFromTownHall - peasantCount*600;
     }
 
     /**
