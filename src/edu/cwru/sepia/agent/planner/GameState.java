@@ -297,7 +297,7 @@ public class GameState implements Comparable<GameState> {
     		//movement actions
     		if (peasant.isCarrying()){
     			//go drop off
-    			action = new MoveAction(peasant, findClosestAdjacent(townHall.getPosition(), peasant.getPosition()));
+    			action = new MoveAction(findClosestAdjacent(townHall.getPosition(), peasant.getPosition()));
     			if (action.preconditionsMet(this)){
     				children.add(action.apply(this));
     			}
