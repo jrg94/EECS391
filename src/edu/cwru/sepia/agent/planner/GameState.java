@@ -221,6 +221,41 @@ public class GameState implements Comparable<GameState> {
 	}
 
 	/**
+	 * @return the currentGold
+	 */
+	public int getCurrentGold() {
+		return currentGold;
+	}
+
+	/**
+	 * @param currentGold the currentGold to set
+	 */
+	public void setCurrentGold(int currentGold) {
+		this.currentGold = currentGold;
+	}
+
+	/**
+	 * @return the currentFood
+	 */
+	public int getCurrentFood() {
+		return currentFood;
+	}
+
+	/**
+	 * @param currentFood the currentFood to set
+	 */
+	public void setCurrentFood(int currentFood) {
+		this.currentFood = currentFood;
+	}
+
+	/**
+	 * @return the supplyCap
+	 */
+	public int getSupplyCap() {
+		return supplyCap;
+	}
+
+	/**
      * Unlike in the first A* assignment there are many possible goal states. As long as the wood and gold requirements
      * are met the peasants can be at any location and the capacities of the resource locations can be anything. Use
      * this function to check if the goal conditions are met and return true if they are.
