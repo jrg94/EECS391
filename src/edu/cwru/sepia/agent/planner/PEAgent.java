@@ -147,6 +147,9 @@ public class PEAgent extends Agent {
 			PeasantSimulation peasant = moveAction.getPeasant();
 			return Action.createCompoundMove(peasant.getUnitId(), moveAction.getDestinationPosition().x, moveAction.getDestinationPosition().y);
 		}
+		else if (action instanceof BuildPeasantAction){
+			return Action.createCompoundProduction(townhallId, peasantTemplateId);
+		}
 		System.out.println("[PEAgent] Invalid StripsAction was entered in createSepiaAction");
 		return null;
 	}
