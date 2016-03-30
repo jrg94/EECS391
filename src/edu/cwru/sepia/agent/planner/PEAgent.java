@@ -2,6 +2,7 @@ package edu.cwru.sepia.agent.planner;
 
 import edu.cwru.sepia.action.Action;
 import edu.cwru.sepia.action.ActionResult;
+import edu.cwru.sepia.action.LocatedAction;
 import edu.cwru.sepia.agent.Agent;
 import edu.cwru.sepia.agent.planner.actions.*;
 import edu.cwru.sepia.environment.model.history.History;
@@ -131,6 +132,38 @@ public class PEAgent extends Agent {
 		if (action == null){
 			StripsAction stripsAction = plan.pop(); //If I don't do this SEPIA will magically pop my stack twice...
 			createSepiaActions(stripsAction, stateView, sepiaActions);
+		}
+		
+		/**
+		 * need 2d loop to go through to see if the move command is occupied
+		 * We need to do this because Sepia doesn't give a FAILED feedback 
+		 * when the last move of the compound move cannot be made
+		 * because there is an unit occupying it
+		 */
+		for (Action sepiaAction : sepiaActions.values()){
+			for (int id : peasantIdMap.values()){
+				if (id == sepiaAction.getUnitId()){
+					continue;
+				}
+				if (!(sepiaAction instanceof LocatedAction)){
+					continue;
+				}
+				LocatedAction moveAction = (LocatedAction)sepiaAction;
+				Position targetPosition = new Position (moveAction.getX(), moveAction.getY());
+				
+				Unit.UnitView otherUnit = stateView.getUnit(id);
+				Position otherUnitPosition = new Position(otherUnit.getXPosition(), otherUnit.getYPosition());
+				if (targetPosition.equals(otherUnitPosition)){
+					//we are stuck
+					
+					//does it happen to resource nodes as well? or is it just townhall?
+					Position townhallPosition = new Position (stateView.getUnit(townhallId).getXPosition(), stateView.getUnit(townhallId).getYPosition());
+					MoveAction replacementStripsAction = new MoveAction(townhallPosition);
+					replacementStripsAction.populateDestinationList(townhallPosition, peasantIdMap.size());
+					plan.push(replacementStripsAction);
+					break;
+				}
+			}
 		}
 			
 		return sepiaActions;
