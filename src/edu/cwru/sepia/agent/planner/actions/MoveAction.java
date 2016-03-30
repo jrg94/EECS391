@@ -13,12 +13,14 @@ public class MoveAction implements StripsAction{
 
 	private Position destinationPosition;
 	private Map<Integer, Position> destinationPositionMap;
+	private int cost;
 	
 	private static final int PEASANT_MOVE_DURATION = 16;
 	
 	public MoveAction(Position destinationPosition){
 		this.destinationPosition = destinationPosition;
 		destinationPositionMap = new HashMap<Integer, Position>();
+		cost = 0;
 	}
 	
 	@Override
@@ -53,16 +55,19 @@ public class MoveAction implements StripsAction{
 			PeasantSimulation peasantClone = new PeasantSimulation(gatherPosition, peasant.getCargo(), peasant.getCargoType(), peasant.getUnitId());
 			nextGameState.getPeasantMap().put(peasantClone.getUnitId(), peasantClone);
 			i++;
+			
+			cost += peasant.getPosition().chebyshevDistance(gatherPosition);
 		}
 		return nextGameState;
 	}
 
 	/**
 	 * cost of moving is more than 1
+	 * returns the average chebyshev distance between peasant and the destination
 	 */
 	@Override
 	public int cost() {
-		return peasant.getPosition().chebyshevDistance(destinationPosition);
+		return cost/destinationPositionMap.size();
 	}
 
 	/**
