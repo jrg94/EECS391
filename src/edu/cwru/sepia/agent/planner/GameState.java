@@ -401,12 +401,15 @@ public class GameState implements Comparable<GameState> {
 		if (getClass() != obj.getClass())
 			return false;
 		GameState other = (GameState) obj;
-		if (action == null) {
-			if (other.action != null)
-				return false;
-		} else if (!action.equals(other.action))
-			return false;
 		if (buildPeasants != other.buildPeasants)
+			return false;
+		if (currentFood != other.currentFood)
+			return false;
+		if (currentGold != other.currentGold)
+			return false;
+		if (mapSizeX != other.mapSizeX)
+			return false;
+		if (mapSizeY != other.mapSizeY)
 			return false;
 		if (parent == null) {
 			if (other.parent != null)
@@ -428,6 +431,8 @@ public class GameState implements Comparable<GameState> {
 			if (other.resourceMap != null)
 				return false;
 		} else if (!resourceMap.equals(other.resourceMap))
+			return false;
+		if (supplyCap != other.supplyCap)
 			return false;
 		if (townHall == null) {
 			if (other.townHall != null)
@@ -454,14 +459,18 @@ public class GameState implements Comparable<GameState> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((action == null) ? 0 : action.hashCode());
 		result = prime * result + (buildPeasants ? 1231 : 1237);
+		result = prime * result + currentFood;
+		result = prime * result + currentGold;
+		result = prime * result + mapSizeX;
+		result = prime * result + mapSizeY;
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
 		result = prime * result + ((peasantMap == null) ? 0 : peasantMap.hashCode());
 		result = prime * result + playerNum;
 		result = prime * result + requiredGold;
 		result = prime * result + requiredWood;
 		result = prime * result + ((resourceMap == null) ? 0 : resourceMap.hashCode());
+		result = prime * result + supplyCap;
 		result = prime * result + ((townHall == null) ? 0 : townHall.hashCode());
 		return result;
 	}

@@ -4,6 +4,10 @@ import edu.cwru.sepia.agent.planner.GameState;
 
 public class BuildPeasantAction implements StripsAction{
 
+	private int currentGold;
+	private int currentFood;
+	private int supplyCap;
+	
 	@Override
 	public boolean preconditionsMet(GameState state) {
 		// TODO Auto-generated method stub
