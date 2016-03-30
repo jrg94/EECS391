@@ -120,6 +120,7 @@ public class PEAgent extends Agent {
 				}
 			}
 		}
+		// only pop the plan when all are idle.
 		if (action == null){
 			StripsAction stripsAction = plan.pop(); //If I don't do this SEPIA will magically pop my stack twice...
 			action = createSepiaAction(stripsAction);
@@ -133,28 +134,37 @@ public class PEAgent extends Agent {
 	 * @param action StripsAction
 	 * @return SEPIA representation of same action
 	 */
-	private Action createSepiaAction(StripsAction action) {
+	private void createSepiaAction(StripsAction action, State.StateView stateView, Map<Integer, Action> sepiaActions) {
 
 		if (action instanceof DepositAction){
-			DepositAction depositAction = ((DepositAction) action);
-			PeasantSimulation peasant = depositAction.getPeasant();
-			return Action.createPrimitiveDeposit(peasant.getUnitId(), peasant.getPosition().getDirection(townhallPosition));
+			for (int id : peasantIdMap.values()){
+				UnitView peasant = stateView.getUnit(id);
+				Position peasantPosition = new Position(peasant.getXPosition(), peasant.getYPosition());
+				sepiaActions.put(id, Action.createPrimitiveDeposit(id, peasantPosition.getDirection(townhallPosition)));
+			}
+			return;
 		}
 		else if (action instanceof HarvestAction){
 			HarvestAction harvestAction = ((HarvestAction)action);
-			PeasantSimulation peasant = harvestAction.getPeasant();
-			return Action.createPrimitiveGather(peasant.getUnitId(), peasant.getPosition().getDirection(harvestAction.getResource().getPosition()));
+			for (int id : peasantIdMap.values()){
+				UnitView peasant = stateView.getUnit(id);
+				Position peasantPosition = new Position(peasant.getXPosition(), peasant.getYPosition());
+				sepiaActions.put(id, Action.createPrimitiveGather(id, peasantPosition.getDirection(harvestAction.getResource().getPosition())));
+			}
+			return;
 		}
 		else if (action instanceof MoveAction){
 			MoveAction moveAction = ((MoveAction)action);
-			PeasantSimulation peasant = moveAction.getPeasant();
-			return Action.createCompoundMove(peasant.getUnitId(), moveAction.getDestinationPosition().x, moveAction.getDestinationPosition().y);
+			for (int id : peasantIdMap.values()){
+				Position destinationPosition = moveAction.getDestinationPositionMap().get(id);
+				sepiaActions.put(id, Action.createCompoundMove(id, destinationPosition.x, destinationPosition.y));
+			}
 		}
 		else if (action instanceof BuildPeasantAction){
-			return Action.createCompoundProduction(townhallId, peasantTemplateId);
+			sepiaActions.put(townhallId, Action.createCompoundProduction(townhallId, peasantTemplateId));
+			return;
 		}
 		System.out.println("[PEAgent] Invalid StripsAction was entered in createSepiaAction");
-		return null;
 	}
 
 	@Override

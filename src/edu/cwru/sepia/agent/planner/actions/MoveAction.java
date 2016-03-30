@@ -86,13 +86,6 @@ public class MoveAction implements StripsAction{
 	}
 
 	/**
-	 * @return the destinationPosition
-	 */
-	public Position getDestinationPosition() {
-		return destinationPosition;
-	}
-
-	/**
 	 * @return the destinationPositionMap
 	 */
 	public Map<Integer, Position> getDestinationPositionMap() {
