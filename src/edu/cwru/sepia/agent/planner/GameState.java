@@ -284,12 +284,12 @@ public class GameState implements Comparable<GameState> {
     			}
     		}
     		
-    		action = new HarvestAction(peasant, findAdjacentResource(peasant));
+    		action = new HarvestAction(findAdjacentResource(peasant));
     		if (action.preconditionsMet(this)){
     			children.add(action.apply(this));
     			continue;
     		}
-    		action = new DepositAction(peasant);
+    		action = new DepositAction();
     		if (action.preconditionsMet(this)){
     			children.add(action.apply(this));
     			continue;
