@@ -59,6 +59,7 @@ public class MoveAction implements StripsAction{
 			nextGameState.getPeasantMap().put(peasantClone.getUnitId(), peasantClone);
 			i++;
 			
+			destinationPositionMap.put(peasant.getUnitId(), gatherPosition);
 			cost += peasant.getPosition().chebyshevDistance(gatherPosition);
 		}
 		return nextGameState;

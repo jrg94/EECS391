@@ -25,10 +25,11 @@ public class DepositAction implements StripsAction {
 	public GameState apply(GameState state) {
 		GameState nextGameState = new GameState(state, this);
 		
-		ResourceType holdingType = nextGameState.getPeasantMap().get(0).getCargoType();
+		ResourceType holdingType = null;
 		int holdingAmount = 0;
 		
 		for (PeasantSimulation peasant : nextGameState.getPeasantMap().values()){
+			holdingType = peasant.getCargoType();
 			holdingAmount += peasant.getCargo();
 			PeasantSimulation peasantClone = new PeasantSimulation(peasant.getPosition(), 0, null, peasant.getUnitId());
 			nextGameState.getPeasantMap().put(peasantClone.getUnitId(), peasantClone);
