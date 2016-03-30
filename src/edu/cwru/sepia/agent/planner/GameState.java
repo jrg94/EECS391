@@ -304,26 +304,45 @@ public class GameState implements Comparable<GameState> {
     		}
     		else{
     			//harvest
-    			int minDistance = Integer.MAX_VALUE;
-    			ResourceSimulation closestRes = null;
-	    		for (ResourceSimulation resource : resourceMap.values()){
-	    			if (hasEnough(resource.getResourceType())){
-	    				continue;
-	    			}
-	    			int distance = peasant.getPosition().chebyshevDistance(resource.getPosition());
-	    			if (distance<minDistance){
-	    				closestRes = resource;
-	    			}
-	    		}
-	    		//action = new MoveAction (peasant, resource.getPosition());
-	    		action = new MoveAction (peasant, findClosestAdjacent(closestRes.getPosition(), peasant.getPosition()));
-	    		if (action.preconditionsMet(this)){
-	    			children.add(action.apply(this));
-	    		}
+    			//addOnlyClosestResourcesChildren(children, peasant);
+    			addAllResourcesChildren(children, peasant);
     		}
     	}
         return children;
     }
+
+	private void addOnlyClosestResourcesChildren(List<GameState> children, PeasantSimulation peasant) {
+		StripsAction action;
+		int minDistance = Integer.MAX_VALUE;
+		ResourceSimulation closestRes = null;
+		for (ResourceSimulation resource : resourceMap.values()){
+			if (hasEnough(resource.getResourceType())){
+				continue;
+			}
+			int distance = peasant.getPosition().chebyshevDistance(resource.getPosition());
+			if (distance<minDistance){
+				closestRes = resource;
+			}
+		}
+		//action = new MoveAction (peasant, resource.getPosition());
+		action = new MoveAction (peasant, findClosestAdjacent(closestRes.getPosition(), peasant.getPosition()));
+		if (action.preconditionsMet(this)){
+			children.add(action.apply(this));
+		}
+	}
+	
+	private void addAllResourcesChildren(List<GameState> children, PeasantSimulation peasant){
+		StripsAction action;
+		for (ResourceSimulation resource : resourceMap.values()){
+			if (hasEnough(resource.getResourceType())){
+				continue;
+			}
+			action = new MoveAction(peasant, findClosestAdjacent(resource.getPosition(), peasant.getPosition()));
+			if (action.preconditionsMet(this)){
+				children.add(action.apply(this));
+			}
+		}
+	}
     
     private Position findClosestAdjacent(Position pos, Position peasantPosition){
     	int min = Integer.MAX_VALUE;
