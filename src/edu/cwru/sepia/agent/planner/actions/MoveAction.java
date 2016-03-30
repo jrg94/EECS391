@@ -38,17 +38,20 @@ public class MoveAction implements StripsAction{
 		GameState nextGameState = new GameState(state, this);
 
 		/**
-		 * Sorting approach takes NlogN time compared to 
-		 * trying to find the closest adjacent position for each peasant N^2
+		 * where N is the size of adjacents
+		 * M is the size of peasants
+		 * Sorting approach takes NlogN + M time compared to 
+		 * trying to find the closest adjacent position for each peasant is N*M
+		 * 
+		 * For the case of peasantSize=3, adjacents=8 -> N=8, M=3
+		 * 8log8 + 3 = 8*3 + 3 = 27
+		 * 8*3 = 24
+		 *
+		 * Even though sort is slower (very slightly), it stops peasants from getting on top of each other by finding the 2nd best, 3rd best, ...
 		 */
-		List<Position> closestPositions = destinationPosition.getAdjacentPositions();
-		closestPositions.sort(new Comparator<Position>(){
-			//this sorts the list from smallest distance to greatest
-			@Override
-			public int compare(Position arg0, Position arg1) {
-				return state.getTownHall().getPosition().chebyshevDistance(arg0) - state.getTownHall().getPosition().chebyshevDistance(arg1);
-			}
-		});
+		List<Position> closestPositions = sortClosestPositions(state);
+		
+		
 		int i = 0;
 		for (PeasantSimulation peasant : state.getPeasantMap().values()){
 			Position gatherPosition = new Position(closestPositions.get(i));
@@ -59,6 +62,18 @@ public class MoveAction implements StripsAction{
 			cost += peasant.getPosition().chebyshevDistance(gatherPosition);
 		}
 		return nextGameState;
+	}
+
+	private List<Position> sortClosestPositions(GameState state) {
+		List<Position> closestPositions = destinationPosition.getAdjacentPositions();
+		closestPositions.sort(new Comparator<Position>(){
+			//this sorts the list from smallest distance to greatest
+			@Override
+			public int compare(Position arg0, Position arg1) {
+				return state.getTownHall().getPosition().chebyshevDistance(arg0) - state.getTownHall().getPosition().chebyshevDistance(arg1);
+			}
+		});
+		return closestPositions;
 	}
 
 	/**
@@ -84,4 +99,16 @@ public class MoveAction implements StripsAction{
 		return destinationPositionMap;
 	}
 
+    private Position findClosestAdjacent(Position pos, Position peasantPosition){
+    	int min = Integer.MAX_VALUE;
+    	Position minPos = null;
+    	for (Position adjacent : pos.getAdjacentPositions()){
+    		int distance = peasantPosition.chebyshevDistance(adjacent);
+    		if (distance<min){
+    			minPos = adjacent;
+    			min = distance;
+    		}
+    	}
+    	return minPos;
+    }
 }

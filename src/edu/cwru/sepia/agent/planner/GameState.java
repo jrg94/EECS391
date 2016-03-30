@@ -297,7 +297,7 @@ public class GameState implements Comparable<GameState> {
     		//movement actions
     		if (peasant.isCarrying()){
     			//go drop off
-    			action = new MoveAction(findClosestAdjacent(townHall.getPosition(), peasant.getPosition()));
+    			action = new MoveAction(townHall.getPosition());
     			if (action.preconditionsMet(this)){
     				children.add(action.apply(this));
     			}
@@ -325,7 +325,7 @@ public class GameState implements Comparable<GameState> {
 			}
 		}
 		//action = new MoveAction (peasant, resource.getPosition());
-		action = new MoveAction (peasant, findClosestAdjacent(closestRes.getPosition(), peasant.getPosition()));
+		action = new MoveAction (closestRes.getPosition());
 		if (action.preconditionsMet(this)){
 			children.add(action.apply(this));
 		}
@@ -337,25 +337,12 @@ public class GameState implements Comparable<GameState> {
 			if (hasEnough(resource.getResourceType())){
 				continue;
 			}
-			action = new MoveAction(peasant, findClosestAdjacent(resource.getPosition(), peasant.getPosition()));
+			action = new MoveAction(resource.getPosition());
 			if (action.preconditionsMet(this)){
 				children.add(action.apply(this));
 			}
 		}
 	}
-    
-    private Position findClosestAdjacent(Position pos, Position peasantPosition){
-    	int min = Integer.MAX_VALUE;
-    	Position minPos = null;
-    	for (Position adjacent : pos.getAdjacentPositions()){
-    		int distance = peasantPosition.chebyshevDistance(adjacent);
-    		if (distance<min){
-    			minPos = adjacent;
-    			min = distance;
-    		}
-    	}
-    	return minPos;
-    }
     
     /**
      * finds adjacent resources
