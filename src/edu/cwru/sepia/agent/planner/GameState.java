@@ -282,6 +282,7 @@ public class GameState implements Comparable<GameState> {
     			if (action.preconditionsMet(this)){
     				children.add(action.apply(this));
     			}
+    			continue;
     		}
     		
     		action = new HarvestAction(findAdjacentResource(peasant));
@@ -305,7 +306,7 @@ public class GameState implements Comparable<GameState> {
     		else{
     			//harvest
     			//addOnlyClosestResourcesChildren(children, peasant);
-    			addAllResourcesChildren(children, peasant);
+    			addAllResourcesChildren(children);
     		}
     	}
         return children;
@@ -316,7 +317,7 @@ public class GameState implements Comparable<GameState> {
 		int minDistance = Integer.MAX_VALUE;
 		ResourceSimulation closestRes = null;
 		for (ResourceSimulation resource : resourceMap.values()){
-			if (hasEnough(resource.getResourceType())){
+			if (resourceRequirementMet(resource.getResourceType())){
 				continue;
 			}
 			int distance = peasant.getPosition().chebyshevDistance(resource.getPosition());
@@ -331,10 +332,10 @@ public class GameState implements Comparable<GameState> {
 		}
 	}
 	
-	private void addAllResourcesChildren(List<GameState> children, PeasantSimulation peasant){
+	private void addAllResourcesChildren(List<GameState> children){
 		StripsAction action;
 		for (ResourceSimulation resource : resourceMap.values()){
-			if (hasEnough(resource.getResourceType())){
+			if (resourceRequirementMet(resource.getResourceType()) || isResourceDepleted(resource)){
 				continue;
 			}
 			action = new MoveAction(resource.getPosition());
@@ -366,7 +367,7 @@ public class GameState implements Comparable<GameState> {
      * @param type
      * @return
      */
-    public boolean hasEnough(ResourceNode.Type type){
+    public boolean resourceRequirementMet(ResourceNode.Type type){
     	switch(type){
     	case GOLD_MINE:
     		if (requiredGold<=0){
@@ -380,6 +381,10 @@ public class GameState implements Comparable<GameState> {
 			break;
     	}
     	return false;
+    }
+    
+    private boolean isResourceDepleted(ResourceSimulation resource){
+    	return resource.getResourceRemaining()<=0;
     }
 
     /**
@@ -503,7 +508,7 @@ public class GameState implements Comparable<GameState> {
 	 */
 	@Override
 	public String toString() {
-		return "GameState [action=" + action + ", heuristic="+heuristic() + ", peasantMap=" + peasantMap+ ", requiredGold=" + requiredGold + ", requiredWood=" + requiredWood
+		return "GameState [action=" + action +  ", requiredGold=" + requiredGold + ", requiredWood=" + requiredWood+ ", heuristic="+heuristic() + ", peasantMap=" + peasantMap
 				 + ", resourceMap=" + resourceMap + ", parent="
 				+ parent +  "]";
 	}

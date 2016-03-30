@@ -22,7 +22,7 @@ public class HarvestAction implements StripsAction{
 		if (resource == null){
 			return false;
 		}
-		boolean hasEnough = state.hasEnough(resource.getResourceType());
+		boolean hasEnough = state.resourceRequirementMet(resource.getResourceType());
 		boolean condition = true;
 		for (PeasantSimulation peasant : state.getPeasantMap().values()){
 			condition = condition && peasant.getPosition().isAdjacent(resource.getPosition()) 

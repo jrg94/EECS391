@@ -161,6 +161,7 @@ public class PEAgent extends Agent {
 				Position destinationPosition = moveAction.getDestinationPositionMap().get(id);
 				sepiaActions.put(id, Action.createCompoundMove(id, destinationPosition.x, destinationPosition.y));
 			}
+			return;
 		}
 		else if (action instanceof BuildPeasantAction){
 			sepiaActions.put(townhallId, Action.createCompoundProduction(townhallId, peasantTemplateId));
