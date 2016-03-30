@@ -19,8 +19,7 @@ public class BuildPeasantAction implements StripsAction{
 	
 	@Override
 	public boolean preconditionsMet(GameState state) {
-		// TODO Auto-generated method stub
-		return false;
+		return currentGold>=PEASANT_GOLD_COST && supplyCap-currentFood >= PEASANT_FOOD_CONSUMPTION;
 	}
 
 	@Override
