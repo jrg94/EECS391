@@ -105,12 +105,14 @@ public class PEAgent extends Agent {
 				case INCOMPLETE:
 					action = result.getAction();
 					break;
+				case COMPLETED:
+					break;
 				case INCOMPLETEMAYBESTUCK:
 					System.out.println("[PEAgent] may be stuck, unitID= "+action.getUnitId());
-				case COMPLETED:
 					break;
 				case FAILED:
 					System.out.println("[PEAgent] failed an action");
+					action = result.getAction();
 					break;
 				default:
 					System.out.println("[PEAgent] default case with the feedback: " + result.getFeedback().toString());
@@ -119,7 +121,8 @@ public class PEAgent extends Agent {
 			}
 		}
 		if (action == null){
-			action = createSepiaAction(plan.pop());
+			StripsAction stripsAction = plan.pop(); //If I don't do this SEPIA will magically pop my stack twice...
+			action = createSepiaAction(stripsAction);
 		}
 		sepiaActions.put(action.getUnitId(), action);
 		return sepiaActions;
