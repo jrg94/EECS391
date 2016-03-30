@@ -9,6 +9,8 @@ public class MoveAction implements StripsAction{
 	private PeasantSimulation peasant;
 	private Position destinationPosition;
 	
+	private static final int PEASANT_MOVE_DURATION = 16;
+	
 	public MoveAction(PeasantSimulation peasant, Position destinationPosition){
 		this.peasant = peasant;
 		this.destinationPosition = destinationPosition;

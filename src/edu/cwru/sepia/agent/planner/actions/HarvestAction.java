@@ -11,6 +11,9 @@ public class HarvestAction implements StripsAction{
 	private PeasantSimulation peasant;
 	private ResourceSimulation resource;
 	
+	private static final int PEASANT_GOLD_HARVEST_DURATION = 400;
+	private static final int PEASANT_WOOD_HARVEST_DURATION = 1000;
+	
 	public HarvestAction(PeasantSimulation peasant, ResourceSimulation resource) {
 		this.peasant = peasant;
 		this.resource = resource;

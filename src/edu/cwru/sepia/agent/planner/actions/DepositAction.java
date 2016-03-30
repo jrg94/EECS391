@@ -7,6 +7,7 @@ import edu.cwru.sepia.environment.model.state.ResourceType;
 public class DepositAction implements StripsAction {
 
 	private PeasantSimulation peasant;
+	private static final int PEASANT_DEPOSIT_DURATION = 25;
 	
 	public DepositAction(PeasantSimulation peasant) {
 		this.peasant = peasant;
