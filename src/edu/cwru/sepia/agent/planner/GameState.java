@@ -418,18 +418,22 @@ public class GameState implements Comparable<GameState> {
      * @return The current cost to reach this goal
      */
     public double getCost() {
-    	GameState trav = parent;
+//    	GameState trav = parent;
+//    	if (action == null){
+//    		return 0;
+//    	}
+//    	int costSum = action.cost();
+//    	while (trav != null){
+//    		if (trav.action != null){
+//    			costSum += trav.action.cost();
+//    		}
+//    		trav = trav.parent;
+//    	}
+//        return costSum;
     	if (action == null){
     		return 0;
     	}
-    	int costSum = action.cost();
-    	while (trav != null){
-    		if (trav.action != null){
-    			costSum += trav.action.cost();
-    		}
-    		trav = trav.parent;
-    	}
-        return costSum;
+    	return action.cost();
     }
 
     /**
