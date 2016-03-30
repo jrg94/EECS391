@@ -210,10 +210,6 @@ public class GameState implements Comparable<GameState> {
 		return parent;
 	}
 	
-    public void setParent(GameState parent) {
-    	this.parent = parent;
-    }
-
     /**
 	 * @return the action
 	 */
