@@ -117,7 +117,7 @@ public class PEAgent extends Agent {
 					System.out.println("[PEAgent] may be stuck, unitID= "+action.getUnitId());
 					break;
 				case FAILED:
-					System.out.println("[PEAgent] failed an action");
+					System.out.println("[PEAgent] failed an action, with the action: " + result.getAction());
 					action = result.getAction();
 					sepiaActions.put(action.getUnitId(), action);
 					break;
