@@ -304,15 +304,18 @@ public class GameState implements Comparable<GameState> {
     		}
     		else{
     			//harvest
+    			int minDistance = Integer.MAX_VALUE;
 	    		for (ResourceSimulation resource : resourceMap.values()){
 	    			if (hasEnough(resource.getResourceType())){
 	    				continue;
 	    			}
-	    			//action = new MoveAction (peasant, resource.getPosition());
-	    			action = new MoveAction (peasant, findClosestAdjacent(resource.getPosition(), peasant.getPosition()));
-	    			if (action.preconditionsMet(this)){
-	    				children.add(action.apply(this));
+	    			int distance = peasant.getPosition().chebyshevDistance(resource.getPosition());
+	    			if (distance<minDistance){
 	    			}
+	    		}
+	    		//action = new MoveAction (peasant, resource.getPosition());
+	    		if (action.preconditionsMet(this)){
+	    			children.add(action.apply(this));
 	    		}
     		}
     	}
@@ -390,7 +393,7 @@ public class GameState implements Comparable<GameState> {
     		distanceFromTownHall += peasant.getPosition().chebyshevDistance(townHall.getPosition());
     		peasantCount++;
     	}
-        return resourceRemaining - carryingCount + distanceFromTownHall - peasantCount*600;
+        return resourceRemaining - carryingCount + distanceFromTownHall/peasantCount - peasantCount*800;//TODO get better heuristic
     }
 
     /**
