@@ -103,8 +103,9 @@ public class PlannerAgent extends Agent {
     	while (!openList.isEmpty()) {
     		// Goal test
     		GameState curr = openList.peek();
-    		System.out.println("[AstarSearch] current gameState: " + curr.toString());
+//    		System.out.println("[AstarSearch] current gameState: " + curr.toString());
     		if (curr.isGoal()) {
+    			System.out.println("AstarSearch finishes!");
     			return buildStripsPlan(curr);
     		}
     		
