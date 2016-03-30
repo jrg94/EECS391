@@ -1,6 +1,7 @@
 package edu.cwru.sepia.agent.planner.actions;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -50,8 +51,7 @@ public class MoveAction implements StripsAction{
 		 *
 		 * Even though sort is slower (very slightly), it stops peasants from getting on top of each other by finding the 2nd best, 3rd best, ...
 		 */
-		List<Position> closestPositions = sortClosestPositions(state);
-		
+		List<Position> closestPositions = sortClosestPositions(state.getTownHall().getPosition());
 		
 		int i = 0;
 		for (PeasantSimulation peasant : state.getPeasantMap().values()){
@@ -65,13 +65,26 @@ public class MoveAction implements StripsAction{
 		return nextGameState;
 	}
 
-	private List<Position> sortClosestPositions(GameState state) {
+	/**
+	 * public method for populating closest positions so this can be used outside of state context
+	 * @param townHallPosition
+	 * @param peasantCount
+	 */
+	public void populateDestinationList(Position townHallPosition, int peasantCount){
+		List<Position> closestPositions = sortClosestPositions(townHallPosition);
+		for (int i = 0; i<peasantCount; i++){
+			Position gatherPosition = new Position(closestPositions.get(i));
+			destinationList.add(gatherPosition);
+		}
+	}
+	
+	private List<Position> sortClosestPositions(Position townHallPosition) {
 		List<Position> closestPositions = destinationPosition.getAdjacentPositions();
 		closestPositions.sort(new Comparator<Position>(){
 			//this sorts the list from smallest distance to greatest
 			@Override
 			public int compare(Position arg0, Position arg1) {
-				return state.getTownHall().getPosition().chebyshevDistance(arg0) - state.getTownHall().getPosition().chebyshevDistance(arg1);
+				return townHallPosition.chebyshevDistance(arg0) - townHallPosition.chebyshevDistance(arg1);
 			}
 		});
 		return closestPositions;
