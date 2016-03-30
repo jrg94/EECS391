@@ -108,6 +108,10 @@ public class PEAgent extends Agent {
 					break;
 				case COMPLETED:
 					System.out.println("Completed the action: " + result.getAction());
+					if (result.getAction().getUnitId() == townhallId){ //this is a townhall finishing producing unit
+						//refresh peasantIdMap
+						updatePeasantIdMap(stateView);
+					}
 					break;
 				case INCOMPLETEMAYBESTUCK:
 					System.out.println("[PEAgent] may be stuck, unitID= "+action.getUnitId());
@@ -169,6 +173,16 @@ public class PEAgent extends Agent {
 			return;
 		}
 		System.out.println("[PEAgent] Invalid StripsAction was entered in createSepiaAction");
+	}
+	
+	private void updatePeasantIdMap(State.StateView stateView){
+		for(int unitId : stateView.getUnitIds(playernum)) {
+			Unit.UnitView unit = stateView.getUnit(unitId);
+			String unitType = unit.getTemplateView().getName().toLowerCase();
+			if(unitType.equals("peasant")) {
+				peasantIdMap.put(unitId, unitId);
+			}
+		}
 	}
 
 	@Override
