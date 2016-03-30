@@ -33,6 +33,7 @@ public class DepositAction implements StripsAction {
 		switch(holdingType){
 		case GOLD:
 			nextGameState.setRequiredGold(nextGameState.getRequiredGold() - holdingAmount);
+			nextGameState.setCurrentGold(nextGameState.getCurrentGold()+holdingAmount);
 			break;
 		case WOOD:
 			nextGameState.setRequiredWood(nextGameState.getRequiredWood() - holdingAmount);
