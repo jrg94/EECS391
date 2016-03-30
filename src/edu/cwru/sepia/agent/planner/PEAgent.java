@@ -123,9 +123,11 @@ public class PEAgent extends Agent {
 		// only pop the plan when all are idle.
 		if (action == null){
 			StripsAction stripsAction = plan.pop(); //If I don't do this SEPIA will magically pop my stack twice...
-			action = createSepiaAction(stripsAction);
+			createSepiaActions(stripsAction, stateView, sepiaActions);
 		}
-		sepiaActions.put(action.getUnitId(), action);
+		else{
+			sepiaActions.put(action.getUnitId(), action);
+		}
 		return sepiaActions;
 	}
 
@@ -134,7 +136,7 @@ public class PEAgent extends Agent {
 	 * @param action StripsAction
 	 * @return SEPIA representation of same action
 	 */
-	private void createSepiaAction(StripsAction action, State.StateView stateView, Map<Integer, Action> sepiaActions) {
+	private void createSepiaActions(StripsAction action, State.StateView stateView, Map<Integer, Action> sepiaActions) {
 
 		if (action instanceof DepositAction){
 			for (int id : peasantIdMap.values()){
