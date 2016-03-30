@@ -1,5 +1,6 @@
 package edu.cwru.sepia.agent.planner.actions;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -12,14 +13,14 @@ import edu.cwru.sepia.agent.planner.Position;
 public class MoveAction implements StripsAction{
 
 	private Position destinationPosition;
-	private Map<Integer, Position> destinationPositionMap;
+	private List<Position> destinationList;
 	private int cost;
 	
 	private static final int PEASANT_MOVE_DURATION = 16;
 	
 	public MoveAction(Position destinationPosition){
 		this.destinationPosition = destinationPosition;
-		destinationPositionMap = new HashMap<Integer, Position>();
+		destinationList = new ArrayList<Position>();
 		cost = 0;
 	}
 	
@@ -58,8 +59,7 @@ public class MoveAction implements StripsAction{
 			PeasantSimulation peasantClone = new PeasantSimulation(gatherPosition, peasant.getCargo(), peasant.getCargoType(), peasant.getUnitId());
 			nextGameState.getPeasantMap().put(peasantClone.getUnitId(), peasantClone);
 			i++;
-			
-			destinationPositionMap.put(peasant.getUnitId(), gatherPosition);
+			destinationList.add(gatherPosition);
 			cost += peasant.getPosition().chebyshevDistance(gatherPosition);
 		}
 		return nextGameState;
@@ -83,14 +83,14 @@ public class MoveAction implements StripsAction{
 	 */
 	@Override
 	public int cost() {
-		return cost/destinationPositionMap.size();
+		return cost/destinationList.size();
 	}
 
 	/**
 	 * @return the destinationPositionMap
 	 */
-	public Map<Integer, Position> getDestinationPositionMap() {
-		return destinationPositionMap;
+	public List<Position> getDestinationList() {
+		return destinationList;
 	}
 
     private Position findClosestAdjacent(Position pos, Position peasantPosition){

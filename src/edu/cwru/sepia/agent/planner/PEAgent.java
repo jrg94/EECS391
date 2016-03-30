@@ -162,9 +162,11 @@ public class PEAgent extends Agent {
 		}
 		else if (action instanceof MoveAction){
 			MoveAction moveAction = ((MoveAction)action);
+			int i =0;
 			for (int id : peasantIdMap.values()){
-				Position destinationPosition = moveAction.getDestinationPositionMap().get(id);
+				Position destinationPosition = moveAction.getDestinationList().get(i);
 				sepiaActions.put(id, Action.createCompoundMove(id, destinationPosition.x, destinationPosition.y));
+				i++;
 			}
 			return;
 		}
