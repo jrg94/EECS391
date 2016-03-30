@@ -1,6 +1,7 @@
 package edu.cwru.sepia.agent.planner;
 
 import edu.cwru.sepia.environment.model.state.ResourceNode.ResourceView;
+import edu.cwru.sepia.agent.planner.actions.BuildPeasantAction;
 import edu.cwru.sepia.agent.planner.actions.DepositAction;
 import edu.cwru.sepia.agent.planner.actions.HarvestAction;
 import edu.cwru.sepia.agent.planner.actions.MoveAction;
@@ -276,6 +277,12 @@ public class GameState implements Comparable<GameState> {
     	List<GameState> children = new ArrayList<GameState>();
     	StripsAction action;
     	for (PeasantSimulation peasant : peasantMap.values()){
+    		if (buildPeasants){
+    			action = new BuildPeasantAction(this);
+    			if (action.preconditionsMet(this)){
+    				children.add(action.apply(this));
+    			}
+    		}
     		
     		action = new HarvestAction(peasant, findAdjacentResource(peasant));
     		if (action.preconditionsMet(this)){
