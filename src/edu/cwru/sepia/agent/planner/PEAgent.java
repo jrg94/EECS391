@@ -6,6 +6,8 @@ import edu.cwru.sepia.action.LocatedAction;
 import edu.cwru.sepia.agent.Agent;
 import edu.cwru.sepia.agent.planner.actions.*;
 import edu.cwru.sepia.environment.model.history.History;
+import edu.cwru.sepia.environment.model.state.ResourceNode;
+import edu.cwru.sepia.environment.model.state.ResourceNode.ResourceView;
 import edu.cwru.sepia.environment.model.state.ResourceType;
 import edu.cwru.sepia.environment.model.state.State;
 import edu.cwru.sepia.environment.model.state.Template;
@@ -17,6 +19,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+
+import com.sun.org.apache.xerces.internal.dom.DeferredCDATASectionImpl;
 
 /**
  * This is an outline of the PEAgent. Implement the provided methods. You may add your own methods and members.
@@ -158,8 +162,24 @@ public class PEAgent extends Agent {
 					
 					//does it happen to resource nodes as well? or is it just townhall?
 					Position townhallPosition = new Position (stateView.getUnit(townhallId).getXPosition(), stateView.getUnit(townhallId).getYPosition());
-					MoveAction replacementStripsAction = new MoveAction(townhallPosition);
-					replacementStripsAction.populateDestinationList(townhallPosition, peasantIdMap.size());
+					Position destinationPosition = null;
+					if (targetPosition.isAdjacent(townhallPosition)){
+						destinationPosition = townhallPosition;
+					}
+					else{
+						//it's not town hall
+						for (ResourceView resource : stateView.getAllResourceNodes()){
+							Position resourcePosition = new Position(resource.getXPosition(), resource.getYPosition());
+							if (targetPosition.isAdjacent(resourcePosition)){
+								destinationPosition = resourcePosition;
+							}
+						}
+					}
+					if (destinationPosition == null){
+						System.out.println("replacement plan failed");
+					}
+					MoveAction replacementStripsAction = new MoveAction(destinationPosition);
+					replacementStripsAction.populateDestinationList(destinationPosition, peasantIdMap.size());
 					plan.push(replacementStripsAction);
 					break;
 				}
