@@ -78,7 +78,7 @@ public class MoveAction implements StripsAction{
 		}
 	}
 	
-	private List<Position> sortClosestPositions(Position townHallPosition) {
+	private List<Position> sortClosestPositions(final Position townHallPosition) {
 		List<Position> closestPositions = destinationPosition.getAdjacentPositions();
 		closestPositions.sort(new Comparator<Position>(){
 			//this sorts the list from smallest distance to greatest
