@@ -43,6 +43,7 @@ public class GameState implements Comparable<GameState> {
 	
 	private int goldLeftInMap;
 	private int woodLeftInMap;
+	private int optimalPeasantCount;
 	
 	private int currentGold;
 	private int currentFood;
@@ -114,6 +115,24 @@ public class GameState implements Comparable<GameState> {
     	parent = null;
     	action = null;
     	
+    	int requiredResourceSum = requiredGold + requiredWood;
+    	int minTurns = Integer.MAX_VALUE;
+    	for (int i = 1; i<=supplyCap; i++){
+    		int turnsTaken = (requiredResourceSum/i) + estimatePeasantBuildTurns(i);
+    		if (turnsTaken<minTurns){
+    			optimalPeasantCount = i;
+    		}
+    	}
+    }
+    
+    private int estimatePeasantBuildTurns(int peasantCountGoal){
+    	int RES_PER_TRIP = 100;
+    	final int PEASANT_COST = 400;
+    	int sum = 0;
+    	for (int i = 1; i<peasantCountGoal; i++){
+    		sum += PEASANT_COST/(RES_PER_TRIP*i);
+    	}
+    	return sum;
     }
     
     /**
@@ -290,6 +309,13 @@ public class GameState implements Comparable<GameState> {
 	}
 
 	/**
+	 * @return the optimalPeasantCount
+	 */
+	public int getOptimalPeasantCount() {
+		return optimalPeasantCount;
+	}
+
+	/**
      * Unlike in the first A* assignment there are many possible goal states. As long as the wood and gold requirements
      * are met the peasants can be at any location and the capacities of the resource locations can be anything. Use
      * this function to check if the goal conditions are met and return true if they are.
@@ -315,7 +341,6 @@ public class GameState implements Comparable<GameState> {
 			action = new BuildPeasantAction();
 			if (action.preconditionsMet(this)){
 				children.add(action.apply(this));
-				return children;
 			}
 		}
 		
@@ -375,7 +400,7 @@ public class GameState implements Comparable<GameState> {
 			}
 			// incentive to gather gold to build peasants 
 			if (resource.getResourceType()==ResourceNode.Type.TREE 
-					&& peasantMap.size()<supplyCap){
+					&& peasantMap.size()<optimalPeasantCount){
 				action = new MoveAction(resource.getPosition(), 100);
 			}
 			else{

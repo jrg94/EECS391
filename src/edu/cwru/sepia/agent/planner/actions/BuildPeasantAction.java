@@ -9,6 +9,7 @@ public class BuildPeasantAction implements StripsAction{
 	private static final int PEASANT_GOLD_COST = 400;
 	private static final int PEASANT_BUILD_TIME = 225;
 	private static final int PEASANT_FOOD_CONSUMPTION = 1;
+	private int cost = -1000;
 	
 	@Override
 	public boolean preconditionsMet(GameState state) {
@@ -16,6 +17,10 @@ public class BuildPeasantAction implements StripsAction{
 		int currentFood = state.getCurrentFood();
 		int supplyCap = state.getSupplyCap();
 		boolean isItSaneToBuildPeasant = state.getGoldLeftInMap()+currentGold >= PEASANT_GOLD_COST + state.getRequiredGold();
+		
+		if (currentFood + PEASANT_FOOD_CONSUMPTION > state.getOptimalPeasantCount()){
+			cost = 1000;
+		}
 		return currentGold>=PEASANT_GOLD_COST 
 				&& currentFood + PEASANT_FOOD_CONSUMPTION <= supplyCap 
 				&& isItSaneToBuildPeasant;
@@ -42,7 +47,7 @@ public class BuildPeasantAction implements StripsAction{
 	@Override
 	public int cost() {
 		// TODO Auto-generated method stub
-		return -1000;
+		return cost;
 	}
 
 }
