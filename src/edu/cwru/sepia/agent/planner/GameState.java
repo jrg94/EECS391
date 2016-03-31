@@ -137,13 +137,6 @@ public class GameState implements Comparable<GameState> {
     	return peasantMap;
     }
 
-    /**
-     * @param peasantMap the peasantMap to set
-     */
-    public void setPeasantMap(Map<Integer, PeasantSimulation> peasantMap) {
-    	this.peasantMap = peasantMap;
-    }
-    
     public StructureSimulation getTownHall(){
     	return townHall;
     }
@@ -273,39 +266,39 @@ public class GameState implements Comparable<GameState> {
     public List<GameState> generateChildren() {
     	List<GameState> children = new ArrayList<GameState>();
     	StripsAction action;
-    	for (PeasantSimulation peasant : peasantMap.values()){
-    		if (buildPeasants){
-    			action = new BuildPeasantAction();
-    			if (action.preconditionsMet(this)){
-    				children.add(action.apply(this));
-    				continue;
-    			}
-    		}
-    		
-    		action = new HarvestAction(findAdjacentResource(peasant));
-    		if (action.preconditionsMet(this)){
-    			children.add(action.apply(this));
-    			continue;
-    		}
-    		action = new DepositAction();
-    		if (action.preconditionsMet(this)){
-    			children.add(action.apply(this));
-    			continue;
-    		}
-    		//movement actions
-    		if (peasant.isCarrying()){
-    			//go drop off
-    			action = new MoveAction(townHall.getPosition());
-    			if (action.preconditionsMet(this)){
-    				children.add(action.apply(this));
-    			}
-    		}
-    		else{
-    			//harvest
-    			//addOnlyClosestResourcesChildren(children, peasant);
-    			addAllResourcesChildren(children);
-    		}
-    	}
+    	PeasantSimulation peasant = peasantMap.get(1);
+    	
+		if (buildPeasants){
+			action = new BuildPeasantAction();
+			if (action.preconditionsMet(this)){
+				children.add(action.apply(this));
+				return children;
+			}
+		}
+		
+		action = new HarvestAction(findAdjacentResource(peasant));
+		if (action.preconditionsMet(this)){
+			children.add(action.apply(this));
+			return children;
+		}
+		action = new DepositAction();
+		if (action.preconditionsMet(this)){
+			children.add(action.apply(this));
+			return children;
+		}
+		//movement actions
+		if (peasant.isCarrying()){
+			//go drop off
+			action = new MoveAction(townHall.getPosition());
+			if (action.preconditionsMet(this)){
+				children.add(action.apply(this));
+			}
+		}
+		else{
+			//harvest
+			//addOnlyClosestResourcesChildren(children, peasant);
+			addAllResourcesChildren(children);
+		}
         return children;
     }
 
@@ -405,7 +398,7 @@ public class GameState implements Comparable<GameState> {
     		distanceFromTownHall += peasant.getPosition().chebyshevDistance(townHall.getPosition());
     		peasantCount++;
     	}
-        return 5*requiredGold + requiredWood - carryingCount + distanceFromTownHall/peasantCount - peasantCount*800;//TODO get better heuristic
+        return requiredGold + requiredWood - carryingCount + distanceFromTownHall/peasantCount - peasantCount*400;//TODO get better heuristic
     }
 
     /**
@@ -510,9 +503,10 @@ public class GameState implements Comparable<GameState> {
 	 */
 	@Override
 	public String toString() {
-		return "GameState [action=" + action +  ", requiredGold=" + requiredGold + ", requiredWood=" + requiredWood+ ", heuristic="+heuristic() + ", peasantMap=" + peasantMap
-				 + ", resourceMap=" + resourceMap + ", parent="
-				+ parent +  "]";
+		return "GameState [action=" + action +  ", requiredGold=" + requiredGold + ", requiredWood=" + requiredWood
+		+ ", cost+heuristic="+(heuristic()+getCost())
+		+ ", peasantMap=" + peasantMap
+				 + ", resourceMap=" + resourceMap+  "]";
 	}
 
 	/* (non-Javadoc)
