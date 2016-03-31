@@ -50,6 +50,12 @@ public class HarvestAction implements StripsAction{
 		
 		ResourceSimulation resourceClone = new ResourceSimulation(resource.getPosition(), resource.getResourceRemaining()-totalGatheredAmount, resource.getResourceType());
 		nextGameState.getResourceMap().put(resourceClone.getPosition(), resourceClone);
+		switch(resourceClone.getResourceType()){
+		case GOLD_MINE:
+			nextGameState.setGoldLeftInMap(nextGameState.getGoldLeftInMap() - totalGatheredAmount);
+		case TREE:
+			nextGameState.setWoodLeftInMap(nextGameState.getWoodLeftInMap() - totalGatheredAmount);
+		}
 		return nextGameState;
 	}
 	

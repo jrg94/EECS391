@@ -41,6 +41,9 @@ public class GameState implements Comparable<GameState> {
 	private int requiredGold;
 	private int requiredWood;
 	
+	private int goldLeftInMap;
+	private int woodLeftInMap;
+	
 	private int currentGold;
 	private int currentFood;
 	private int supplyCap;
@@ -96,12 +99,21 @@ public class GameState implements Comparable<GameState> {
     	}
     	resourceMap = new HashMap<Position, ResourceSimulation>();
     	
+    	goldLeftInMap = 0;
+    	woodLeftInMap = 0;
     	for (ResourceView res : state.getAllResourceNodes()){
     		resourceMap.put(new Position(res.getXPosition(), res.getYPosition()), new ResourceSimulation(res));
+    		switch(res.getType()){
+    		case GOLD_MINE:
+    			goldLeftInMap +=res.getAmountRemaining();
+    		case TREE:
+    			woodLeftInMap += res.getAmountRemaining();
+    		}
     	}
     	
     	parent = null;
     	action = null;
+    	
     }
     
     /**
@@ -124,6 +136,9 @@ public class GameState implements Comparable<GameState> {
     	this.currentFood = parent.currentFood;
     	this.currentGold = parent.currentGold;
     	this.supplyCap = parent.supplyCap;
+    	
+    	this.goldLeftInMap = parent.goldLeftInMap;
+    	this.woodLeftInMap = parent.woodLeftInMap;
     }
 
 	/**
@@ -244,6 +259,34 @@ public class GameState implements Comparable<GameState> {
 	 */
 	public int getSupplyCap() {
 		return supplyCap;
+	}
+
+	/**
+	 * @return the goldLeftInMap
+	 */
+	public int getGoldLeftInMap() {
+		return goldLeftInMap;
+	}
+
+	/**
+	 * @param goldLeftInMap the goldLeftInMap to set
+	 */
+	public void setGoldLeftInMap(int goldLeftInMap) {
+		this.goldLeftInMap = goldLeftInMap;
+	}
+
+	/**
+	 * @return the woodLeftInMap
+	 */
+	public int getWoodLeftInMap() {
+		return woodLeftInMap;
+	}
+
+	/**
+	 * @param woodLeftInMap the woodLeftInMap to set
+	 */
+	public void setWoodLeftInMap(int woodLeftInMap) {
+		this.woodLeftInMap = woodLeftInMap;
 	}
 
 	/**
