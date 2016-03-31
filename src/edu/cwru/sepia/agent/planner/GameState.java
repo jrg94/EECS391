@@ -347,6 +347,9 @@ public class GameState implements Comparable<GameState> {
 			action = new BuildPeasantAction();
 			if (action.preconditionsMet(this)){
 				children.add(action.apply(this));
+				if (currentFood + 1 <= optimalPeasantCount){
+					return children;
+				}
 			}
 		}
 		
