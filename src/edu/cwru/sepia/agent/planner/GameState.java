@@ -370,10 +370,19 @@ public class GameState implements Comparable<GameState> {
 		for (ResourceSimulation resource : resourceMap.values()){
 			if (resourceRequirementMet(resource.getResourceType()) 
 					|| isResourceDepleted(resource) 
-					|| (resource.getResourceType()==ResourceNode.Type.TREE && peasantMap.size()<supplyCap && !resourceRequirementMet(Type.GOLD_MINE))){
+					){
 				continue;
 			}
-			action = new MoveAction(resource.getPosition());
+			// incentive to gather gold to build peasants 
+			if (resource.getResourceType()==ResourceNode.Type.TREE 
+					&& peasantMap.size()<supplyCap 
+					&& !resourceRequirementMet(Type.GOLD_MINE)){
+				action = new MoveAction(resource.getPosition(), 100);
+			}
+			else{
+				action = new MoveAction(resource.getPosition());
+			}
+			
 			if (action.preconditionsMet(this)){
 				children.add(action.apply(this));
 			}

@@ -25,6 +25,11 @@ public class MoveAction implements StripsAction{
 		cost = 0;
 	}
 	
+	public MoveAction (Position destinationPosition, int penaltyCost){
+		this(destinationPosition);
+		cost+=penaltyCost;
+	}
+	
 	@Override
 	public boolean preconditionsMet(GameState state) {
 		boolean condition = true;
