@@ -1,6 +1,7 @@
 package edu.cwru.sepia.agent.planner;
 
 import edu.cwru.sepia.environment.model.state.ResourceNode.ResourceView;
+import edu.cwru.sepia.environment.model.state.ResourceNode.Type;
 import edu.cwru.sepia.agent.planner.actions.BuildPeasantAction;
 import edu.cwru.sepia.agent.planner.actions.DepositAction;
 import edu.cwru.sepia.agent.planner.actions.HarvestAction;
@@ -331,7 +332,9 @@ public class GameState implements Comparable<GameState> {
 	private void addAllResourcesChildren(List<GameState> children){
 		StripsAction action;
 		for (ResourceSimulation resource : resourceMap.values()){
-			if (resourceRequirementMet(resource.getResourceType()) || isResourceDepleted(resource)){
+			if (resourceRequirementMet(resource.getResourceType()) 
+					|| isResourceDepleted(resource) 
+					|| (resource.getResourceType()==ResourceNode.Type.TREE && peasantMap.size()<supplyCap && !resourceRequirementMet(Type.GOLD_MINE))){
 				continue;
 			}
 			action = new MoveAction(resource.getPosition());
@@ -394,7 +397,6 @@ public class GameState implements Comparable<GameState> {
     public double heuristic() {
     	
         // TODO: Implement me! there are more factors than just gold and wood
-    	double resourceRemaining = requiredGold+requiredWood;
     	double carryingCount = 0;
     	double distanceFromTownHall = 0;
     	double peasantCount = 0;
@@ -403,7 +405,7 @@ public class GameState implements Comparable<GameState> {
     		distanceFromTownHall += peasant.getPosition().chebyshevDistance(townHall.getPosition());
     		peasantCount++;
     	}
-        return resourceRemaining - carryingCount + distanceFromTownHall/peasantCount - peasantCount*800;//TODO get better heuristic
+        return 5*requiredGold + requiredWood - carryingCount + distanceFromTownHall/peasantCount - peasantCount*800;//TODO get better heuristic
     }
 
     /**
