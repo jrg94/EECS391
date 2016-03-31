@@ -41,7 +41,7 @@ public class HarvestAction implements StripsAction{
 		
 		for (PeasantSimulation peasant : nextGameState.getPeasantMap().values()){
 			
-			int cargoAmount = (resource.getResourceRemaining()>=100) ? 100 : resource.getResourceRemaining();
+			int cargoAmount = (resource.getResourceRemaining() - totalGatheredAmount>=100) ? 100 : resource.getResourceRemaining()-totalGatheredAmount;
 			totalGatheredAmount += cargoAmount;
 			PeasantSimulation peasantClone = new PeasantSimulation(peasant.getPosition(), cargoAmount, resType, peasant.getUnitId());
 			nextGameState.getPeasantMap().put(peasantClone.getUnitId(), peasantClone);
