@@ -115,13 +115,17 @@ public class GameState implements Comparable<GameState> {
     	parent = null;
     	action = null;
     	
-    	int requiredResourceSum = requiredGold + requiredWood;
-    	int minTurns = Integer.MAX_VALUE;
-    	for (int i = 1; i<=supplyCap; i++){
-    		int turnsTaken = (requiredResourceSum/i) + estimatePeasantBuildTurns(i);
-    		if (turnsTaken<minTurns){
-    			optimalPeasantCount = i;
+    	if (buildPeasants){
+    		int requiredResourceSum = requiredGold + requiredWood;
+    		int minTurns = Integer.MAX_VALUE;
+    		for (int i = 1; i<=supplyCap; i++){
+    			int turnsTaken = (requiredResourceSum/(100*i)) + estimatePeasantBuildTurns(i);
+    			if (turnsTaken<minTurns){
+    				minTurns = turnsTaken;
+    				optimalPeasantCount = i;
+    			}
     		}
+    		System.out.println("Optimal peasant count is: " + optimalPeasantCount);
     	}
     }
     
@@ -158,6 +162,8 @@ public class GameState implements Comparable<GameState> {
     	
     	this.goldLeftInMap = parent.goldLeftInMap;
     	this.woodLeftInMap = parent.woodLeftInMap;
+    	
+    	this.optimalPeasantCount = parent.optimalPeasantCount;
     }
 
 	/**
