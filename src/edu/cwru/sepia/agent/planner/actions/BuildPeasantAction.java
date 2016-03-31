@@ -15,7 +15,10 @@ public class BuildPeasantAction implements StripsAction{
 		int currentGold = state.getCurrentGold();
 		int currentFood = state.getCurrentFood();
 		int supplyCap = state.getSupplyCap();
-		return currentGold>=PEASANT_GOLD_COST && currentFood + PEASANT_FOOD_CONSUMPTION <= supplyCap;
+		boolean isItSaneToBuildPeasant = state.getGoldLeftInMap()+currentGold >= PEASANT_GOLD_COST + state.getRequiredGold();
+		return currentGold>=PEASANT_GOLD_COST 
+				&& currentFood + PEASANT_FOOD_CONSUMPTION <= supplyCap 
+				&& isItSaneToBuildPeasant;
 	}
 
 	@Override
