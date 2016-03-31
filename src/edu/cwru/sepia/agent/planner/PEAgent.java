@@ -2,9 +2,12 @@ package edu.cwru.sepia.agent.planner;
 
 import edu.cwru.sepia.action.Action;
 import edu.cwru.sepia.action.ActionResult;
+import edu.cwru.sepia.action.LocatedAction;
 import edu.cwru.sepia.agent.Agent;
 import edu.cwru.sepia.agent.planner.actions.*;
 import edu.cwru.sepia.environment.model.history.History;
+import edu.cwru.sepia.environment.model.state.ResourceNode;
+import edu.cwru.sepia.environment.model.state.ResourceNode.ResourceView;
 import edu.cwru.sepia.environment.model.state.ResourceType;
 import edu.cwru.sepia.environment.model.state.State;
 import edu.cwru.sepia.environment.model.state.Template;
@@ -16,6 +19,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+
+import com.sun.org.apache.xerces.internal.dom.DeferredCDATASectionImpl;
 
 /**
  * This is an outline of the PEAgent. Implement the provided methods. You may add your own methods and members.
@@ -104,15 +109,22 @@ public class PEAgent extends Agent {
 				switch(result.getFeedback()){
 				case INCOMPLETE:
 					action = result.getAction();
+					sepiaActions.put(action.getUnitId(), action);
 					break;
 				case COMPLETED:
+					System.out.println("Completed the action: " + result.getAction());
+					if (result.getAction().getUnitId() == townhallId){ //this is a townhall finishing producing unit
+						//refresh peasantIdMap
+						updatePeasantIdMap(stateView);
+					}
 					break;
 				case INCOMPLETEMAYBESTUCK:
 					System.out.println("[PEAgent] may be stuck, unitID= "+action.getUnitId());
 					break;
 				case FAILED:
-					System.out.println("[PEAgent] failed an action");
+					System.out.println("[PEAgent] failed an action, with the action: " + result.getAction());
 					action = result.getAction();
+					sepiaActions.put(action.getUnitId(), action);
 					break;
 				default:
 					System.out.println("[PEAgent] default case with the feedback: " + result.getFeedback().toString());
@@ -120,11 +132,60 @@ public class PEAgent extends Agent {
 				}
 			}
 		}
+		// only pop the plan when all are idle.
 		if (action == null){
 			StripsAction stripsAction = plan.pop(); //If I don't do this SEPIA will magically pop my stack twice...
-			action = createSepiaAction(stripsAction);
+			createSepiaActions(stripsAction, stateView, sepiaActions);
 		}
-		sepiaActions.put(action.getUnitId(), action);
+		
+		/**
+		 * need 2d loop to go through to see if the move command is occupied
+		 * We need to do this because Sepia doesn't give a FAILED feedback 
+		 * when the last move of the compound move cannot be made
+		 * because there is an unit occupying it
+		 */
+		for (Action sepiaAction : sepiaActions.values()){
+			for (int id : peasantIdMap.values()){
+				if (id == sepiaAction.getUnitId()){
+					continue;
+				}
+				if (!(sepiaAction instanceof LocatedAction)){
+					continue;
+				}
+				LocatedAction moveAction = (LocatedAction)sepiaAction;
+				Position targetPosition = new Position (moveAction.getX(), moveAction.getY());
+				
+				Unit.UnitView otherUnit = stateView.getUnit(id);
+				Position otherUnitPosition = new Position(otherUnit.getXPosition(), otherUnit.getYPosition());
+				if (targetPosition.equals(otherUnitPosition)){
+					//we are stuck
+					
+					//does it happen to resource nodes as well? or is it just townhall?
+					Position townhallPosition = new Position (stateView.getUnit(townhallId).getXPosition(), stateView.getUnit(townhallId).getYPosition());
+					Position destinationPosition = null;
+					if (targetPosition.isAdjacent(townhallPosition)){
+						destinationPosition = townhallPosition;
+					}
+					else{
+						//it's not town hall
+						for (ResourceView resource : stateView.getAllResourceNodes()){
+							Position resourcePosition = new Position(resource.getXPosition(), resource.getYPosition());
+							if (targetPosition.isAdjacent(resourcePosition)){
+								destinationPosition = resourcePosition;
+							}
+						}
+					}
+					if (destinationPosition == null){
+						System.out.println("replacement plan failed");
+					}
+					MoveAction replacementStripsAction = new MoveAction(destinationPosition);
+					replacementStripsAction.populateDestinationList(destinationPosition, peasantIdMap.size());
+					plan.push(replacementStripsAction);
+					break;
+				}
+			}
+		}
+			
 		return sepiaActions;
 	}
 
@@ -133,28 +194,50 @@ public class PEAgent extends Agent {
 	 * @param action StripsAction
 	 * @return SEPIA representation of same action
 	 */
-	private Action createSepiaAction(StripsAction action) {
+	private void createSepiaActions(StripsAction action, State.StateView stateView, Map<Integer, Action> sepiaActions) {
 
 		if (action instanceof DepositAction){
-			DepositAction depositAction = ((DepositAction) action);
-			PeasantSimulation peasant = depositAction.getPeasant();
-			return Action.createPrimitiveDeposit(peasant.getUnitId(), peasant.getPosition().getDirection(townhallPosition));
+			for (int id : peasantIdMap.values()){
+				UnitView peasant = stateView.getUnit(id);
+				Position peasantPosition = new Position(peasant.getXPosition(), peasant.getYPosition());
+				sepiaActions.put(id, Action.createPrimitiveDeposit(id, peasantPosition.getDirection(townhallPosition)));
+			}
+			return;
 		}
 		else if (action instanceof HarvestAction){
 			HarvestAction harvestAction = ((HarvestAction)action);
-			PeasantSimulation peasant = harvestAction.getPeasant();
-			return Action.createPrimitiveGather(peasant.getUnitId(), peasant.getPosition().getDirection(harvestAction.getResource().getPosition()));
+			for (int id : peasantIdMap.values()){
+				UnitView peasant = stateView.getUnit(id);
+				Position peasantPosition = new Position(peasant.getXPosition(), peasant.getYPosition());
+				sepiaActions.put(id, Action.createPrimitiveGather(id, peasantPosition.getDirection(harvestAction.getResource().getPosition())));
+			}
+			return;
 		}
 		else if (action instanceof MoveAction){
 			MoveAction moveAction = ((MoveAction)action);
-			PeasantSimulation peasant = moveAction.getPeasant();
-			return Action.createCompoundMove(peasant.getUnitId(), moveAction.getDestinationPosition().x, moveAction.getDestinationPosition().y);
+			int i =0;
+			for (int id : peasantIdMap.values()){
+				Position destinationPosition = moveAction.getDestinationList().get(i);
+				sepiaActions.put(id, Action.createCompoundMove(id, destinationPosition.x, destinationPosition.y));
+				i++;
+			}
+			return;
 		}
 		else if (action instanceof BuildPeasantAction){
-			return Action.createCompoundProduction(townhallId, peasantTemplateId);
+			sepiaActions.put(townhallId, Action.createCompoundProduction(townhallId, peasantTemplateId));
+			return;
 		}
 		System.out.println("[PEAgent] Invalid StripsAction was entered in createSepiaAction");
-		return null;
+	}
+	
+	private void updatePeasantIdMap(State.StateView stateView){
+		for(int unitId : stateView.getUnitIds(playernum)) {
+			Unit.UnitView unit = stateView.getUnit(unitId);
+			String unitType = unit.getTemplateView().getName().toLowerCase();
+			if(unitType.equals("peasant")) {
+				peasantIdMap.put(unitId, unitId);
+			}
+		}
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package edu.cwru.sepia.agent.planner;
 
 import edu.cwru.sepia.environment.model.state.ResourceNode.ResourceView;
+import edu.cwru.sepia.environment.model.state.ResourceNode.Type;
 import edu.cwru.sepia.agent.planner.actions.BuildPeasantAction;
 import edu.cwru.sepia.agent.planner.actions.DepositAction;
 import edu.cwru.sepia.agent.planner.actions.HarvestAction;
@@ -136,13 +137,6 @@ public class GameState implements Comparable<GameState> {
     	return peasantMap;
     }
 
-    /**
-     * @param peasantMap the peasantMap to set
-     */
-    public void setPeasantMap(Map<Integer, PeasantSimulation> peasantMap) {
-    	this.peasantMap = peasantMap;
-    }
-    
     public StructureSimulation getTownHall(){
     	return townHall;
     }
@@ -210,10 +204,6 @@ public class GameState implements Comparable<GameState> {
 		return parent;
 	}
 	
-    public void setParent(GameState parent) {
-    	this.parent = parent;
-    }
-
     /**
 	 * @return the action
 	 */
@@ -276,38 +266,39 @@ public class GameState implements Comparable<GameState> {
     public List<GameState> generateChildren() {
     	List<GameState> children = new ArrayList<GameState>();
     	StripsAction action;
-    	for (PeasantSimulation peasant : peasantMap.values()){
-    		if (buildPeasants){
-    			action = new BuildPeasantAction();
-    			if (action.preconditionsMet(this)){
-    				children.add(action.apply(this));
-    			}
-    		}
-    		
-    		action = new HarvestAction(peasant, findAdjacentResource(peasant));
-    		if (action.preconditionsMet(this)){
-    			children.add(action.apply(this));
-    			continue;
-    		}
-    		action = new DepositAction(peasant);
-    		if (action.preconditionsMet(this)){
-    			children.add(action.apply(this));
-    			continue;
-    		}
-    		//movement actions
-    		if (peasant.isCarrying()){
-    			//go drop off
-    			action = new MoveAction(peasant, findClosestAdjacent(townHall.getPosition(), peasant.getPosition()));
-    			if (action.preconditionsMet(this)){
-    				children.add(action.apply(this));
-    			}
-    		}
-    		else{
-    			//harvest
-    			//addOnlyClosestResourcesChildren(children, peasant);
-    			addAllResourcesChildren(children, peasant);
-    		}
-    	}
+    	PeasantSimulation peasant = peasantMap.get(1);
+    	
+		if (buildPeasants){
+			action = new BuildPeasantAction();
+			if (action.preconditionsMet(this)){
+				children.add(action.apply(this));
+				return children;
+			}
+		}
+		
+		action = new HarvestAction(findAdjacentResource(peasant));
+		if (action.preconditionsMet(this)){
+			children.add(action.apply(this));
+			return children;
+		}
+		action = new DepositAction();
+		if (action.preconditionsMet(this)){
+			children.add(action.apply(this));
+			return children;
+		}
+		//movement actions
+		if (peasant.isCarrying()){
+			//go drop off
+			action = new MoveAction(townHall.getPosition());
+			if (action.preconditionsMet(this)){
+				children.add(action.apply(this));
+			}
+		}
+		else{
+			//harvest
+			//addOnlyClosestResourcesChildren(children, peasant);
+			addAllResourcesChildren(children);
+		}
         return children;
     }
 
@@ -316,7 +307,7 @@ public class GameState implements Comparable<GameState> {
 		int minDistance = Integer.MAX_VALUE;
 		ResourceSimulation closestRes = null;
 		for (ResourceSimulation resource : resourceMap.values()){
-			if (hasEnough(resource.getResourceType())){
+			if (resourceRequirementMet(resource.getResourceType())){
 				continue;
 			}
 			int distance = peasant.getPosition().chebyshevDistance(resource.getPosition());
@@ -325,37 +316,26 @@ public class GameState implements Comparable<GameState> {
 			}
 		}
 		//action = new MoveAction (peasant, resource.getPosition());
-		action = new MoveAction (peasant, findClosestAdjacent(closestRes.getPosition(), peasant.getPosition()));
+		action = new MoveAction (closestRes.getPosition());
 		if (action.preconditionsMet(this)){
 			children.add(action.apply(this));
 		}
 	}
 	
-	private void addAllResourcesChildren(List<GameState> children, PeasantSimulation peasant){
+	private void addAllResourcesChildren(List<GameState> children){
 		StripsAction action;
 		for (ResourceSimulation resource : resourceMap.values()){
-			if (hasEnough(resource.getResourceType())){
+			if (resourceRequirementMet(resource.getResourceType()) 
+					|| isResourceDepleted(resource) 
+					|| (resource.getResourceType()==ResourceNode.Type.TREE && peasantMap.size()<supplyCap && !resourceRequirementMet(Type.GOLD_MINE))){
 				continue;
 			}
-			action = new MoveAction(peasant, findClosestAdjacent(resource.getPosition(), peasant.getPosition()));
+			action = new MoveAction(resource.getPosition());
 			if (action.preconditionsMet(this)){
 				children.add(action.apply(this));
 			}
 		}
 	}
-    
-    private Position findClosestAdjacent(Position pos, Position peasantPosition){
-    	int min = Integer.MAX_VALUE;
-    	Position minPos = null;
-    	for (Position adjacent : pos.getAdjacentPositions()){
-    		int distance = peasantPosition.chebyshevDistance(adjacent);
-    		if (distance<min){
-    			minPos = adjacent;
-    			min = distance;
-    		}
-    	}
-    	return minPos;
-    }
     
     /**
      * finds adjacent resources
@@ -379,7 +359,7 @@ public class GameState implements Comparable<GameState> {
      * @param type
      * @return
      */
-    public boolean hasEnough(ResourceNode.Type type){
+    public boolean resourceRequirementMet(ResourceNode.Type type){
     	switch(type){
     	case GOLD_MINE:
     		if (requiredGold<=0){
@@ -394,6 +374,10 @@ public class GameState implements Comparable<GameState> {
     	}
     	return false;
     }
+    
+    private boolean isResourceDepleted(ResourceSimulation resource){
+    	return resource.getResourceRemaining()<=0;
+    }
 
     /**
      * Write your heuristic function here. Remember this must be admissible for the properties of A* to hold. If you
@@ -406,7 +390,6 @@ public class GameState implements Comparable<GameState> {
     public double heuristic() {
     	
         // TODO: Implement me! there are more factors than just gold and wood
-    	double resourceRemaining = requiredGold+requiredWood;
     	double carryingCount = 0;
     	double distanceFromTownHall = 0;
     	double peasantCount = 0;
@@ -415,7 +398,7 @@ public class GameState implements Comparable<GameState> {
     		distanceFromTownHall += peasant.getPosition().chebyshevDistance(townHall.getPosition());
     		peasantCount++;
     	}
-        return resourceRemaining - carryingCount + distanceFromTownHall/peasantCount - peasantCount*800;//TODO get better heuristic
+        return requiredGold + requiredWood - carryingCount + distanceFromTownHall/peasantCount - peasantCount*400;//TODO get better heuristic
     }
 
     /**
@@ -426,18 +409,22 @@ public class GameState implements Comparable<GameState> {
      * @return The current cost to reach this goal
      */
     public double getCost() {
-    	GameState trav = parent;
+//    	GameState trav = parent;
+//    	if (action == null){
+//    		return 0;
+//    	}
+//    	int costSum = action.cost();
+//    	while (trav != null){
+//    		if (trav.action != null){
+//    			costSum += trav.action.cost();
+//    		}
+//    		trav = trav.parent;
+//    	}
+//        return costSum;
     	if (action == null){
     		return 0;
     	}
-    	int costSum = action.cost();
-    	while (trav != null){
-    		if (trav.action != null){
-    			costSum += trav.action.cost();
-    		}
-    		trav = trav.parent;
-    	}
-        return costSum;
+    	return action.cost();
     }
 
     /**
@@ -516,9 +503,10 @@ public class GameState implements Comparable<GameState> {
 	 */
 	@Override
 	public String toString() {
-		return "GameState [action=" + action + ", heuristic="+heuristic() + ", peasantMap=" + peasantMap+ ", requiredGold=" + requiredGold + ", requiredWood=" + requiredWood
-				 + ", resourceMap=" + resourceMap + ", parent="
-				+ parent +  "]";
+		return "GameState [action=" + action +  ", requiredGold=" + requiredGold + ", requiredWood=" + requiredWood
+		+ ", cost+heuristic="+(heuristic()+getCost())
+		+ ", peasantMap=" + peasantMap
+				 + ", resourceMap=" + resourceMap+  "]";
 	}
 
 	/* (non-Javadoc)

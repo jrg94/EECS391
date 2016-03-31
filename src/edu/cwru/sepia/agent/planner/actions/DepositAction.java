@@ -1,33 +1,39 @@
 package edu.cwru.sepia.agent.planner.actions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import edu.cwru.sepia.agent.planner.GameState;
 import edu.cwru.sepia.agent.planner.PeasantSimulation;
 import edu.cwru.sepia.environment.model.state.ResourceType;
 
 public class DepositAction implements StripsAction {
 
-	private PeasantSimulation peasant;
 	private static final int PEASANT_DEPOSIT_DURATION = 25;
-	
-	public DepositAction(PeasantSimulation peasant) {
-		this.peasant = peasant;
-	}
 	
 	@Override
 	public boolean preconditionsMet(GameState state) {
-		return peasant.getPosition().isAdjacent(state.getTownHall().getPosition())
-				&& peasant.isCarrying();
+		boolean condition = true;
+		for (PeasantSimulation peasant : state.getPeasantMap().values()){
+			condition = condition && peasant.getPosition().isAdjacent(state.getTownHall().getPosition())
+					&& peasant.isCarrying();
+		}
+		return condition;
 	}
 
 	@Override
 	public GameState apply(GameState state) {
 		GameState nextGameState = new GameState(state, this);
 		
-		ResourceType holdingType = peasant.getCargoType();
-		int holdingAmount = peasant.getCargo();
+		ResourceType holdingType = null;
+		int holdingAmount = 0;
 		
-		PeasantSimulation peasantClone = new PeasantSimulation(peasant.getPosition(), 0, null, peasant.getUnitId());
-		nextGameState.getPeasantMap().put(peasantClone.getUnitId(), peasantClone);
+		for (PeasantSimulation peasant : nextGameState.getPeasantMap().values()){
+			holdingType = peasant.getCargoType();
+			holdingAmount += peasant.getCargo();
+			PeasantSimulation peasantClone = new PeasantSimulation(peasant.getPosition(), 0, null, peasant.getUnitId());
+			nextGameState.getPeasantMap().put(peasantClone.getUnitId(), peasantClone);
+		}
 		
 		// if i get null pointer error here, it's cuz isCarrying doesn't work
 		switch(holdingType){
@@ -48,13 +54,6 @@ public class DepositAction implements StripsAction {
 	@Override
 	public int cost() {
 		return 1;
-	}
-
-	/**
-	 * @return the peasant
-	 */
-	public PeasantSimulation getPeasant() {
-		return peasant;
 	}
 
 }

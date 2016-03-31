@@ -3,8 +3,8 @@
 	<Player Id="0">
 		<AgentClass>
 			<ClassName>edu.cwru.sepia.agent.planner.PlannerAgent</ClassName>
-            <Argument>3000</Argument>
             <Argument>2000</Argument>
+            <Argument>3000</Argument>
             <Argument>true</Argument>
 		</AgentClass>
 	</Player>

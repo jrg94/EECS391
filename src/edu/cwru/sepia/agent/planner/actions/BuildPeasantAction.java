@@ -22,7 +22,8 @@ public class BuildPeasantAction implements StripsAction{
 	public GameState apply(GameState state) {
 		GameState nextGameState = new GameState(state, this);
 		
-		int currentFood = state.getCurrentFood();
+		int currentFood = nextGameState.getCurrentFood();
+		currentFood+= PEASANT_FOOD_CONSUMPTION;
 		//TODO actually get townhall's spawn point
 		Position peasantSpawnPoint = new Position(nextGameState.getTownHall().getPosition().getAdjacentPositions().get((int)(8*Math.random())));
 		PeasantSimulation babyPeasant = new PeasantSimulation(peasantSpawnPoint, 0, null, currentFood);//TODO no clue about the peasant id either lol
@@ -30,7 +31,7 @@ public class BuildPeasantAction implements StripsAction{
 		nextGameState.getPeasantMap().put(babyPeasant.getUnitId(), babyPeasant);
 		nextGameState.setRequiredGold(nextGameState.getRequiredGold() + PEASANT_GOLD_COST);
 		nextGameState.setCurrentGold(nextGameState.getCurrentGold() - PEASANT_GOLD_COST);
-		nextGameState.setCurrentFood(nextGameState.getCurrentFood() + PEASANT_FOOD_CONSUMPTION);
+		nextGameState.setCurrentFood(currentFood);
 
 		return nextGameState;
 	}
@@ -38,7 +39,7 @@ public class BuildPeasantAction implements StripsAction{
 	@Override
 	public int cost() {
 		// TODO Auto-generated method stub
-		return 1;
+		return -1000;
 	}
 
 }
