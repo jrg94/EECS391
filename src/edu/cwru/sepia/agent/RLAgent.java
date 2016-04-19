@@ -153,9 +153,11 @@ public class RLAgent extends Agent {
     @Override
     public Map<Integer, Action> middleStep(State.StateView stateView, History.HistoryView historyView) {
     	
-    	// Get the deathlog
-    	for(DeathLog deathLog: historyView.getDeathLogs(stateView.getTurnNumber() - 1)) {
-    		System.out.println("Player: " + deathLog.getController() + " unit: " + deathLog.getDeadUnitID());
+    	// Get the deathlog (TODO: Make sure turn # starts at 1)
+    	if (stateView.getTurnNumber() != 1) {
+    		for(DeathLog deathLog: historyView.getDeathLogs(stateView.getTurnNumber() - 1)) {
+    			System.out.println("Player: " + deathLog.getController() + " unit: " + deathLog.getDeadUnitID());
+    		}
     	}
     	
         return null;
