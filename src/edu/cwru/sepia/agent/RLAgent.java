@@ -159,6 +159,14 @@ public class RLAgent extends Agent {
     		// Runs through the death logs and removes the dead footmen from their respective lists
     		for(DeathLog deathLog: historyView.getDeathLogs(stateView.getTurnNumber() - 1)) {
     			System.out.println("Player: " + deathLog.getController() + " unit: " + deathLog.getDeadUnitID());
+    			// If the controller of this unit is the enemy, remove the player from the enemy list
+    			if (deathLog.getController() == ENEMY_PLAYERNUM) {
+    				enemyFootmen.remove(deathLog.getDeadUnitID());
+    			}
+    			// Otherwise, remove the unit from the player list (TODO: make sure this properly removes the unit)
+    			else {
+    				myFootmen.remove(deathLog.getDeadUnitID());
+    			}
     		}
     		
     		// Runs through the set of actions to get the results of the previous actions
