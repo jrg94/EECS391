@@ -155,9 +155,17 @@ public class RLAgent extends Agent {
     	
     	// Get the deathlog (TODO: Make sure turn # starts at 1)
     	if (stateView.getTurnNumber() != 1) {
+    		
+    		// Runs through the death logs and removes the dead footmen from their respective lists
     		for(DeathLog deathLog: historyView.getDeathLogs(stateView.getTurnNumber() - 1)) {
     			System.out.println("Player: " + deathLog.getController() + " unit: " + deathLog.getDeadUnitID());
     		}
+    		
+    		// Runs through the set of actions to get the results of the previous actions
+    		Map<Integer, ActionResult> actionResults = historyView.getCommandFeedback(playernum, stateView.getTurnNumber() - 1);
+    	    for(ActionResult result : actionResults.values()) {
+    	     	System.out.println(result.toString());
+    	    }
     	}
     	
         return null;
