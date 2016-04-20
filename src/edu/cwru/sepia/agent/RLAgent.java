@@ -256,6 +256,16 @@ public class RLAgent extends Agent {
      * @return The current reward
      */
     public double calculateReward(State.StateView stateView, History.HistoryView historyView, int footmanId) {
+    	
+    	// Holds the last turn number
+    	int lastTurnNumber = stateView.getTurnNumber() - 1;
+    	
+    	for(DamageLog damageLog : historyView.getDamageLogs(lastTurnNumber)) {
+    	     System.out.println("Defending player: " + damageLog.getDefenderController() + " defending unit: " +
+    	     damageLog.getDefenderID() + " attacking player: " + damageLog.getAttackerController() +
+    	     "attacking unit: " + damageLog.getAttackerID());
+    	}
+    	
         return 0;
     }
 
