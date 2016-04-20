@@ -277,6 +277,11 @@ public class RLAgent extends Agent {
                              History.HistoryView historyView,
                              int attackerId,
                              int defenderId) {
+    	
+    	// w*f(s,a)+w0
+    	// w is a vector of learned weights
+    	// f(s,a) is a vector of state-action features derived from the primitive state
+    	
         return 0;
     }
 
