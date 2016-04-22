@@ -39,7 +39,8 @@ public class RLAgent extends Agent {
      */
     public static final int NUM_FEATURES = 5;
 
-    /** Use this random number generator for your epsilon exploration. When you submit we will
+    /** 
+     * Use this random number generator for your epsilon exploration. When you submit we will
      * change this seed so make sure that your agent works for more than the default seed.
      */
     public final Random random = new Random(12345);
@@ -57,6 +58,11 @@ public class RLAgent extends Agent {
     public final double gamma = 0.9;
     public final double learningRate = .0001;
     public final double epsilon = .02;
+    
+    /**
+     * Reward for a kill
+     */
+    public final double KILL_REWARD = 100;
 
     public RLAgent(int playernum, String[] args) {
         super(playernum);
@@ -269,23 +275,40 @@ public class RLAgent extends Agent {
     	// Holds the last turn number
     	int lastTurnNumber = stateView.getTurnNumber() - 1;
     	
-    	// For each damage view
+    	// For each damage view, accumulate the reward
     	for(DamageLog damageLog : historyView.getDamageLogs(lastTurnNumber)) {
     		
     	     System.out.println("Defending player: " + damageLog.getDefenderController() + " defending unit: " +
     	     damageLog.getDefenderID() + " attacking player: " + damageLog.getAttackerController() +
     	     "attacking unit: " + damageLog.getAttackerID());
     	     
-    	     // Checks who did damage
+    	     // If the enemy did damage
     	     if (damageLog.getDefenderController() == ENEMY_PLAYERNUM) {
     	    	 // Decrement the damage from the reward
     	    	 reward = reward - damageLog.getDamage();
     	     }
-    	     // Player
+    	     // Otherwise, the player did the damage
     	     else {
+    	    	 // Increment the damage to the reward
     	    	 reward = reward + damageLog.getDamage();
     	     }
     	}
+    	
+    	// Runs through the death logs
+		for(DeathLog deathLog: historyView.getDeathLogs(stateView.getTurnNumber() - 1)) {
+			
+			System.out.println("Player: " + deathLog.getController() + " unit: " + deathLog.getDeadUnitID());
+			
+			// If the controller is an enemy
+			if (deathLog.getController() == ENEMY_PLAYERNUM) {
+				// Add the kill reward
+				reward = reward + KILL_REWARD;
+			}
+			// Otherwise, this is friendly
+			else {
+				reward = reward - KILL_REWARD;
+			}
+		}
     	
     	Map<Integer, Action> commandsIssued = historyView.getCommandsIssued(playernum, lastTurnNumber);
         for (Map.Entry<Integer, Action> commandEntry : commandsIssued.entrySet()) {
