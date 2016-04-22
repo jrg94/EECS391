@@ -310,9 +310,14 @@ public class RLAgent extends Agent {
 			}
 		}
     	
+		// Runs through all issued commands
     	Map<Integer, Action> commandsIssued = historyView.getCommandsIssued(playernum, lastTurnNumber);
         for (Map.Entry<Integer, Action> commandEntry : commandsIssued.entrySet()) {
+        	// TODO: figure out what the hell is going on here
+        	
         	System.out.println("Unit " + commandEntry.getKey() + " was command to " + commandEntry.getValue().toString());
+        	
+        	reward = reward - 0.1;
         }
     	
         return reward;
