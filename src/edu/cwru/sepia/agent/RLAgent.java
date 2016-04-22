@@ -257,16 +257,42 @@ public class RLAgent extends Agent {
      */
     public double calculateReward(State.StateView stateView, History.HistoryView historyView, int footmanId) {
     	
+    	// Each action costs the agent -0.1
+    	// Friendly footman hits an enemy for d damage, the reward is +d
+    	// Friendly footman is hit for d damage, the reward is -d
+    	// If an enemy footman dies, the reward is +100
+    	// If a friendly footman dies, the reward is -100
+    	
+    	// Reward accumulator
+    	double reward = 0;
+    	
     	// Holds the last turn number
     	int lastTurnNumber = stateView.getTurnNumber() - 1;
     	
+    	// For each damage view
     	for(DamageLog damageLog : historyView.getDamageLogs(lastTurnNumber)) {
+    		
     	     System.out.println("Defending player: " + damageLog.getDefenderController() + " defending unit: " +
     	     damageLog.getDefenderID() + " attacking player: " + damageLog.getAttackerController() +
     	     "attacking unit: " + damageLog.getAttackerID());
+    	     
+    	     // Checks who did damage
+    	     if (damageLog.getDefenderController() == ENEMY_PLAYERNUM) {
+    	    	 // Decrement the damage from the reward
+    	    	 reward = reward - damageLog.getDamage();
+    	     }
+    	     // Player
+    	     else {
+    	    	 reward = reward + damageLog.getDamage();
+    	     }
     	}
     	
-        return 0;
+    	Map<Integer, Action> commandsIssued = historyView.getCommandsIssued(playernum, lastTurnNumber);
+        for (Map.Entry<Integer, Action> commandEntry : commandsIssued.entrySet()) {
+        	System.out.println("Unit " + commandEntry.getKey() + " was command to " + commandEntry.getValue().toString());
+        }
+    	
+        return reward;
     }
 
     /**
