@@ -346,6 +346,8 @@ public class RLAgent extends Agent {
     	// w is a vector of learned weights
     	// f(s,a) is a vector of state-action features derived from the primitive state
     	
+    	double[] featureVector = calculateFeatureVector(stateView, historyView, attackerId, defenderId);
+    	
         return 0;
     }
 
