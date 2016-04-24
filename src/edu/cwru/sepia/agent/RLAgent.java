@@ -158,7 +158,10 @@ public class RLAgent extends Agent {
      */
     @Override
     public Map<Integer, Action> middleStep(State.StateView stateView, History.HistoryView historyView) {
-    	
+    	Map<Integer, Action> sepiaActions = new HashMap<Integer, Action>();
+    	if (stateView.getTurnNumber() == 1){
+    		//do first turn
+    	}
     	// Get the deathlog (TODO: Make sure turn # starts at 1)
     	if (stateView.getTurnNumber() != 1) {
     		
@@ -177,10 +180,28 @@ public class RLAgent extends Agent {
     		
     		// Runs through the set of actions to get the results of the previous actions
     		Map<Integer, ActionResult> actionResults = historyView.getCommandFeedback(playernum, stateView.getTurnNumber() - 1);
+    		
     	    for(ActionResult result : actionResults.values()) {
-    	     	System.out.println(result.toString());
-    	     	
-    	     	
+    	    	switch(result.getFeedback()){
+    	    	case INCOMPLETE:
+    	    		//Prob means the unit is still walking to the enemy
+    	    		//let the footman keep doing what it's doing
+    	    		break;
+    	    	case FAILED:
+    	    		//Prob means the unit died before the attack could go off
+    	    		System.out.println(String.format("Unit [%d] failed to attack", result.getAction().getUnitId()));
+    	    		break;
+    	    	case COMPLETED:
+    	    		//assign new action
+    	    		
+    	    		break;
+				case INCOMPLETEMAYBESTUCK:
+					System.out.println(String.format("Unit [%d] may be stuck", result.getAction().getUnitId()));
+					break;
+				default:
+					System.out.println(String.format("a case that shouldn't happen (%s) happened with unit [%d]", result.getFeedback().toString(), result.getAction().getUnitId()));
+					break;
+    	    	}
     	    }
     	}
     	
