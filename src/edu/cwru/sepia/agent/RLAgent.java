@@ -241,8 +241,7 @@ public class RLAgent extends Agent {
     	
     	// The episode is over if one of the player lists is empty?
     	if (myFootmen.size() == 0 || enemyFootmen.size() == 0) {
-    		// TODO: calculate actual average weights
-    		printTestData(new ArrayList<Double>());
+    		
     		if (learningMode){
     			learningEpisodeIteration++;
     			if (learningEpisodeIteration == 5){
@@ -255,6 +254,11 @@ public class RLAgent extends Agent {
     				learningMode = true;
     				learningEpisodeIteration = 0;
     			}
+    		}
+    		
+    		if (episodeIteration >= numEpisodes){
+    			System.out.println("Game Over");
+    			printTestData(averageRewardList);
     		}
     	}
 
