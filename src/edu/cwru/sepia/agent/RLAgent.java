@@ -213,12 +213,16 @@ public class RLAgent extends Agent {
     				footmanCumulativeRewardMap.put(unitId, 0d);
     			}
     			footmanCumulativeRewardMap.put(unitId, footmanCumulativeRewardMap.get(unitId)+ discountReward(stateView, historyView, reward));
-    			double averageFootmanReward = footmanCumulativeRewardMap.get(unitId);
-    			weights = updateWeights(weights, oldFeatureMap.get(unitId), averageFootmanReward, stateView, historyView, unitId);
+    			double footmanReward = footmanCumulativeRewardMap.get(unitId);
+    			if (learningMode){
+    				// This way it adds all the footman rewards without having to recalculate it
+    				learningRewardsSum += footmanReward;
+    				weights = updateWeights(weights, oldFeatureMap.get(unitId), footmanReward, stateView, historyView, unitId);
+    			}
     			int defenderId = selectAction(stateView, historyView, unitId);
-    			
-    			//averageRewardList[episodeIteration] += reward;
     			sepiaActions.put(unitId,  Action.createCompoundAttack(unitId, defenderId));
+    			
+
     		}
     		
     		
