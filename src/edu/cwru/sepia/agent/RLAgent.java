@@ -75,6 +75,9 @@ public class RLAgent extends Agent {
     private int learningEpisodeIteration;
     private double learningRewardsSum;
     
+    private int overallWinCount;
+    private double bestReward;
+    
     private final int DURATION_LEARNING_EPISODES = 5;
     private final int DURATION_FREE_PLAY_EPISODES = 10;
     private final boolean VERBOSE = false;
@@ -117,6 +120,8 @@ public class RLAgent extends Agent {
         footmanCumulativeRewardMap = new HashMap<Integer, Double>();
         learningMode = false;
         learningRewardsSum = 0d;
+        overallWinCount = 0;
+        bestReward = Double.MIN_VALUE;
     }
 
     /**
@@ -185,7 +190,7 @@ public class RLAgent extends Agent {
     @Override
     public Map<Integer, Action> middleStep(State.StateView stateView, History.HistoryView historyView) {
     	Map<Integer, Action> sepiaActions = new HashMap<Integer, Action>();
-    	if (stateView.getTurnNumber() == 1){
+    	if (stateView.getTurnNumber() == 0){
     		//do first turn
     		for (Integer unitId : myFootmen){
     			sepiaActions.put(unitId, Action.createCompoundAttack(unitId, selectAction(stateView, historyView, unitId)));
@@ -193,7 +198,7 @@ public class RLAgent extends Agent {
     		return sepiaActions;
     	}
     	// Get the deathlog (TODO: Make sure turn # starts at 1)
-    	if (stateView.getTurnNumber() != 1) {
+    	if (stateView.getTurnNumber() != 0) {
     		
     		// Runs through the death logs and removes corpses from the battlefield
     		for(DeathLog deathLog: historyView.getDeathLogs(stateView.getTurnNumber() - 1)) {
@@ -222,6 +227,8 @@ public class RLAgent extends Agent {
     			if (learningMode){
     				// This way it adds all the footman rewards without having to recalculate it
     				learningRewardsSum += footmanReward;
+    			}
+    			else if (oldFeatureMap.containsKey(unitId)){
     				weights = updateWeights(weights, oldFeatureMap.get(unitId), footmanReward, stateView, historyView, unitId);
     			}
     			int defenderId = selectAction(stateView, historyView, unitId);
@@ -257,8 +264,20 @@ public class RLAgent extends Agent {
     	
     	//if (myFootmen.size() == 0 || enemyFootmen.size() == 0) {
     	overallEpisodeIteration++;
-		int winnerId = myFootmen.size() > enemyFootmen.size() ? 0 : 1;
-		System.out.println(String.format("[Episode: %d] player %d won with remaining: %d vs. %d", overallEpisodeIteration, winnerId, enemyFootmen.size(), myFootmen.size()));
+    	int winnerId = -1;
+    	if (myFootmen.size() > enemyFootmen.size()){
+    		winnerId = 0;
+    		overallWinCount++;
+    	}
+    	else{
+    		winnerId = 1;
+    	}
+		
+		System.out.println(String.format("[Episode: %d] player %d won with remaining: enemyFootmen[%d] vs. myFootmen[%d]"
+				, overallEpisodeIteration
+				, winnerId
+				, enemyFootmen.size(), myFootmen.size()));
+		
 		//TODO reset footmanCumulativeRewardMap?
 		footmanCumulativeRewardMap = new HashMap<Integer, Double>();
 		if (learningMode){
@@ -266,8 +285,14 @@ public class RLAgent extends Agent {
 			//add rewards to averageRewardList
 			
 			if (learningEpisodeIteration == DURATION_LEARNING_EPISODES){
-				averageRewardList.add(learningRewardsSum/DURATION_LEARNING_EPISODES);
+				double learningRewardAverage = learningRewardsSum/DURATION_LEARNING_EPISODES;
+				averageRewardList.add(learningRewardAverage);
 				learningMode = false;
+				if (learningRewardAverage > bestReward){
+					bestReward = learningRewardAverage;
+					// Save your weights
+					saveWeights(weights);
+				}
 			}
 		}
 		else{
@@ -280,14 +305,11 @@ public class RLAgent extends Agent {
 		}
 		
 		if (overallEpisodeIteration >= numEpisodes){
-			System.out.println("Game Over");
+			System.out.println("Win count: " + overallWinCount);
 			printTestData(averageRewardList);
 			System.exit(0);
 		}
-    	//}
 
-        // Save your weights
-        saveWeights(weights);
 
     }
 
@@ -311,7 +333,7 @@ public class RLAgent extends Agent {
     	double newQValue = calcQValue(stateView, historyView, footmanId, defenderId);
     	
     	for (int i = 0; i < oldWeights.length; i++) {
-    		newWeights[i] = oldWeights[i] + learningRate * (totalReward + gamma * newQValue - oldQValue) * oldFeatures[i];
+    		newWeights[i] = oldWeights[i] + learningRate * (totalReward + (gamma * newQValue) - oldQValue) * oldFeatures[i];
     	}
     	
         return newWeights;
