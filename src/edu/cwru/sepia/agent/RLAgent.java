@@ -182,6 +182,7 @@ public class RLAgent extends Agent {
     		Map<Integer, ActionResult> actionResults = historyView.getCommandFeedback(playernum, stateView.getTurnNumber() - 1);
     		
     	    for(ActionResult result : actionResults.values()) {
+    	    	int unitId = result.getAction().getUnitId();
     	    	switch(result.getFeedback()){
     	    	case INCOMPLETE:
     	    		//Prob means the unit is still walking to the enemy
@@ -189,17 +190,17 @@ public class RLAgent extends Agent {
     	    		break;
     	    	case FAILED:
     	    		//Prob means the unit died before the attack could go off
-    	    		System.out.println(String.format("Unit [%d] failed to attack", result.getAction().getUnitId()));
+    	    		System.out.println(String.format("Unit [%d] failed to attack", unitId));
     	    		break;
     	    	case COMPLETED:
     	    		//assign new action
-    	    		
+    	    		sepiaActions.put(unitId, null);
     	    		break;
 				case INCOMPLETEMAYBESTUCK:
-					System.out.println(String.format("Unit [%d] may be stuck", result.getAction().getUnitId()));
+					System.out.println(String.format("Unit [%d] may be stuck", unitId));
 					break;
 				default:
-					System.out.println(String.format("a case that shouldn't happen (%s) happened with unit [%d]", result.getFeedback().toString(), result.getAction().getUnitId()));
+					System.out.println(String.format("a case that shouldn't happen (%s) happened with unit [%d]", result.getFeedback().toString(), unitId));
 					break;
     	    	}
     	    }
