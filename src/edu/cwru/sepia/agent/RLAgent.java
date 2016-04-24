@@ -251,14 +251,11 @@ public class RLAgent extends Agent {
     	// If there is something to attack
     	if (enemyFootmen.size() != 0) {
     		
-    		// If it is the first turn
-    		if (lastTurnNumber == -1) {
-    			// TODO: Run a random action
-    		}
-    		
-    		// Do a random action
-    		else if (random.nextDouble() > 1 - epsilon) {
-    		
+    		// If it is the first turn or we rolled higher that 1 - e
+    		if (lastTurnNumber == -1 || random.nextDouble() > 1 - epsilon) {
+    			double enemyIndex  = random.nextDouble() * enemyFootmen.size();
+    			int enemyID = enemyFootmen.get((int)enemyIndex);
+    			return enemyID;
     		}
     		
     		// Do the recommended action
