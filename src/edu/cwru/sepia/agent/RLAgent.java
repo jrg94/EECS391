@@ -253,24 +253,35 @@ public class RLAgent extends Agent {
     		
     		// If it is the first turn or we rolled higher that 1 - e
     		if (lastTurnNumber == -1 || random.nextDouble() > 1 - epsilon) {
+    			
+    			// Calculate the enemy index and get the enemy id
     			double enemyIndex  = random.nextDouble() * enemyFootmen.size();
     			int enemyID = enemyFootmen.get((int)enemyIndex);
+    			
     			return enemyID;
     		}
     		
     		// Do the recommended action
     		else {
     		
-    			int enemyID = -1;
+    			// Store the current enemyID and calculates its qValue
+    			int enemyID = enemyFootmen.get(0);
+    			double qValue = calcQValue(stateView, historyView, attackerId, enemyID);
     			
     			// Run through the list of enemy footmen
     			for (int i = 0; i < enemyFootmen.size(); i++) {
     				
     				// Store the current enemy id and calculate its q value
     				int tmp = enemyFootmen.get(i);
-    				double qValue = calcQValue(stateView, historyView, attackerId, tmp);
+    				double currQValue = calcQValue(stateView, historyView, attackerId, tmp);
     				
-    				// TODO: decide how to pick the enemy to attack
+    				// If the current qValue is the largest yet
+    				if (currQValue > qValue) {
+    					
+    					// Update some values
+    					qValue = currQValue;
+    					enemyID = enemyFootmen.get(i);
+    				}
     			}
     			
     			return enemyID;
