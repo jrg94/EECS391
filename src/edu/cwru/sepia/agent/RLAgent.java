@@ -258,9 +258,24 @@ public class RLAgent extends Agent {
     		else if (random.nextDouble() > 1 - epsilon) {
     		
     		}
+    		
     		// Do the recommended action
     		else {
     		
+    			int enemyID = -1;
+    			
+    			// Run through the list of enemy footmen
+    			for (int i = 0; i < enemyFootmen.size(); i++) {
+    				
+    				// Store the current enemy id and calculate its q value
+    				int tmp = enemyFootmen.get(i);
+    				double qValue = calcQValue(stateView, historyView, attackerId, tmp);
+    				
+    				// TODO: decide how to pick the enemy to attack
+    			}
+    			
+    			return enemyID;
+    			
     		}
     	}
     	
