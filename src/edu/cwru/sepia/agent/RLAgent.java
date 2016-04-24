@@ -67,9 +67,13 @@ public class RLAgent extends Agent {
     private Map<Integer, double[]> oldFeatureMap;
     
     private List<Double> averageRewardList;
+    private Map<Integer, Double> footmanCumulativeRewardMap;
     
     private int episodeIteration;
-    private Map<Integer, Double> footmanCumulativeRewardMap;
+    private int learningEpisodeIteration;
+    private boolean learningMode;
+    
+    
     
     public RLAgent(int playernum, String[] args) {
         super(playernum);
@@ -104,6 +108,7 @@ public class RLAgent extends Agent {
         episodeIteration = 0;
         
         footmanCumulativeRewardMap = new HashMap<Integer, Double>();
+        learningMode = false;
     }
 
     /**
@@ -206,6 +211,7 @@ public class RLAgent extends Agent {
     			double averageFootmanReward = footmanCumulativeRewardMap.get(unitId);
     			weights = updateWeights(weights, oldFeatureMap.get(unitId), averageFootmanReward, stateView, historyView, unitId);
     			int defenderId = selectAction(stateView, historyView, unitId);
+    			
     			//averageRewardList[episodeIteration] += reward;
     			sepiaActions.put(unitId,  Action.createCompoundAttack(unitId, defenderId));
     		}
@@ -237,6 +243,20 @@ public class RLAgent extends Agent {
     	if (myFootmen.size() == 0 || enemyFootmen.size() == 0) {
     		// TODO: calculate actual average weights
     		printTestData(new ArrayList<Double>());
+    		if (learningMode){
+    			learningEpisodeIteration++;
+    			if (learningEpisodeIteration == 5){
+    				learningMode = false;
+    			}
+    		}
+    		else{
+    			episodeIteration++;
+    			if (episodeIteration % 10 == 0){
+    				learningMode = true;
+    				learningEpisodeIteration = 0;
+    			}
+    			
+    		}
     	}
 
         // Save your weights
