@@ -161,6 +161,10 @@ public class RLAgent extends Agent {
     	Map<Integer, Action> sepiaActions = new HashMap<Integer, Action>();
     	if (stateView.getTurnNumber() == 1){
     		//do first turn
+    		for (Integer unitId : myFootmen){
+    			sepiaActions.put(unitId, Action.createCompoundAttack(unitId, selectAction(stateView, historyView, unitId)));
+    		}
+    		return sepiaActions;
     	}
     	// Get the deathlog (TODO: Make sure turn # starts at 1)
     	if (stateView.getTurnNumber() != 1) {
@@ -208,7 +212,7 @@ public class RLAgent extends Agent {
     	    
     	}
     	
-        return null;
+        return sepiaActions;
     }
 
     /**
