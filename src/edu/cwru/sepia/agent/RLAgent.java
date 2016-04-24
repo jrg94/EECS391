@@ -76,6 +76,7 @@ public class RLAgent extends Agent {
     
     private final int DURATION_LEARNING_EPISODES = 5;
     private final int DURATION_FREE_PLAY_EPISODES = 10;
+    private final boolean VERBOSE = true;
     
     
     
@@ -194,7 +195,9 @@ public class RLAgent extends Agent {
     		
     		// Runs through the death logs and removes corpses from the battlefield
     		for(DeathLog deathLog: historyView.getDeathLogs(stateView.getTurnNumber() - 1)) {
-    			System.out.println(String.format("Unit [%d] belonging to player [%d] died", deathLog.getDeadUnitID(), deathLog.getController()));
+    			if (VERBOSE){
+    				System.out.println(String.format("Unit [%d] belonging to player [%d] died", deathLog.getDeadUnitID(), deathLog.getController()));
+    			}
     			// If the controller of this unit is the enemy, remove the player from the enemy list
     			if (deathLog.getController() == ENEMY_PLAYERNUM) {
     				removeElementFromList(enemyFootmen, deathLog.getDeadUnitID());
@@ -250,6 +253,8 @@ public class RLAgent extends Agent {
     	
     	// The episode is over if one of the player lists is empty?
     	if (myFootmen.size() == 0 || enemyFootmen.size() == 0) {
+    		int winnerId = myFootmen.size() == 0 ? 0 : 1;
+    		System.out.println(String.format("[Episode: %d] player %d won", episodeIteration, winnerId));
     		//TODO reset footmanCumulativeRewardMap?
     		//footmanCumulativeRewardMap = new HashMap<Integer, Double>();
     		if (learningMode){
@@ -415,10 +420,11 @@ public class RLAgent extends Agent {
     	
     	// For each damage view, accumulate the reward
     	for(DamageLog damageLog : historyView.getDamageLogs(lastTurnNumber)) {
-    		
-    	     System.out.println("Defending player: " + damageLog.getDefenderController() + " defending unit: " +
-    	     damageLog.getDefenderID() + " attacking player: " + damageLog.getAttackerController() +
-    	     "attacking unit: " + damageLog.getAttackerID());
+    		if (VERBOSE){
+	    	     System.out.println("Defending player: " + damageLog.getDefenderController() + " defending unit: " +
+	    	     damageLog.getDefenderID() + " attacking player: " + damageLog.getAttackerController() +
+	    	     "attacking unit: " + damageLog.getAttackerID());
+    		}
     	     
     	     // If the enemy did damage
     	     if (damageLog.getDefenderController() == ENEMY_PLAYERNUM) {
@@ -435,7 +441,7 @@ public class RLAgent extends Agent {
     	// Runs through the death logs
 		for(DeathLog deathLog: historyView.getDeathLogs(lastTurnNumber)) {
 			
-			System.out.println("Player: " + deathLog.getController() + " unit: " + deathLog.getDeadUnitID());
+			//System.out.println("Player: " + deathLog.getController() + " unit: " + deathLog.getDeadUnitID());
 			
 			// If the controller is an enemy
 			if (deathLog.getController() == ENEMY_PLAYERNUM) {
@@ -452,8 +458,9 @@ public class RLAgent extends Agent {
     	Map<Integer, Action> commandsIssued = historyView.getCommandsIssued(playernum, lastTurnNumber);
         for (Map.Entry<Integer, Action> commandEntry : commandsIssued.entrySet()) {
         	// TODO: figure out what the hell is going on here
-        	
-        	System.out.println("Unit " + commandEntry.getKey() + " was command to " + commandEntry.getValue().toString());
+        	if (VERBOSE){
+        		System.out.println("Unit " + commandEntry.getKey() + " was command to " + commandEntry.getValue().toString());
+        	}
         	
         	reward = reward - 0.1;
         }
@@ -682,7 +689,7 @@ public class RLAgent extends Agent {
 	    		//let the footman keep doing what it's doing
 	    		break;
 	    	case FAILED:
-	    		System.out.println(String.format("Unit [%d] failed to attack", unitId));
+	    		//System.out.println(String.format("Unit [%d] failed to attack", unitId));
 	    		return true;
 	    	case COMPLETED:
 	    		idleUnits.add(unitId);
