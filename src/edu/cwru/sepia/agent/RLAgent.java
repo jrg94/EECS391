@@ -233,6 +233,16 @@ public class RLAgent extends Agent {
      * @return The enemy footman ID this unit should attack
      */
     public int selectAction(State.StateView stateView, History.HistoryView historyView, int attackerId) {
+    	
+    	// Do a random action
+    	if (random.nextDouble() > 1 - epsilon) {
+    		
+    	}
+    	// Do the recommended action
+    	else {
+    		
+    	}
+    	
         return -1;
     }
 
