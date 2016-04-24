@@ -587,7 +587,17 @@ public class RLAgent extends Agent {
     	}
     	
     	//2. Allied footmen attacking same target
-    	features[2] = historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().filter(dlog -> dlog.getDefenderID()==defenderId).count();
+    	final int gangLimit = 3; //any more than this means the footman has to overextend into enemy lines
+    	long gangCount = historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().filter(dlog -> dlog.getDefenderID()==defenderId).count();
+    	double gangFeature = 0d;
+    	if (gangCount <= 3){
+    		//gangFeature = gangCount/3;
+    		gangFeature = 1/((double)(gangLimit - gangCount + 1));
+    	}
+    	else{
+    		gangFeature = 1/((double)(gangCount - gangLimit + 1));
+    	}
+    	features[2] = gangFeature;
     	//3. Is self being attacked? 
     	//3. change to being attacked by defender?
     	features[3] = historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().
