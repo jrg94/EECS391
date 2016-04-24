@@ -409,9 +409,6 @@ public class RLAgent extends Agent {
     		qValue = qValue + (weights[i] * featureVector[i]);
     	}
     	
-    	// Add w0 to the calculated qValue
-    	qValue = qValue + weights[0];
-    	
         return qValue;
     }
 
@@ -436,6 +433,14 @@ public class RLAgent extends Agent {
                                            History.HistoryView historyView,
                                            int attackerId,
                                            int defenderId) {
+    	/**
+    	 * Features to use
+    	 * 0. just a constant 1 so that w0 can be added in the loop
+    	 * 1. 
+    	 */
+    	double[] features = new double[NUM_FEATURES];
+    	features[0] = 1.0;
+    	
         return null;
     }
 
