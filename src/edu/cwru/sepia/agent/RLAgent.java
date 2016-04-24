@@ -182,36 +182,21 @@ public class RLAgent extends Agent {
     				removeElementFromList(myFootmen, deathLog.getDeadUnitID());
     			}
     		}
-    		
-    		// Runs through the set of actions to get the results of the previous actions
-    		Map<Integer, ActionResult> actionResults = historyView.getCommandFeedback(playernum, stateView.getTurnNumber() - 1);
-    		// Assign new task to idle footmen
-    	    for(ActionResult result : actionResults.values()) {
-    	    	int unitId = result.getAction().getUnitId();
-    	    	switch(result.getFeedback()){
-    	    	case INCOMPLETE:
-    	    		//Prob means the unit is still walking to the enemy
-    	    		//let the footman keep doing what it's doing
-    	    		break;
-    	    	case FAILED:
-    	    		//Prob means the unit died before the attack could go off
-    	    		System.out.println(String.format("Unit [%d] failed to attack", unitId));
-    	    		break;
-    	    	case COMPLETED:
-    	    		//assign new action
-    	    		sepiaActions.put(unitId, Action.createCompoundAttack(unitId, selectAction(stateView, historyView, unitId)));
-    	    		break;
-				case INCOMPLETEMAYBESTUCK:
-					System.out.println(String.format("Unit [%d] may be stuck", unitId));
-					break;
-				default:
-					System.out.println(String.format("a case that shouldn't happen (%s) happened with unit [%d]", result.getFeedback().toString(), unitId));
-					break;
-    	    	}
-    	    }
-    	    
-    	    
     	}
+    	List<Integer> idleUnits = new ArrayList<Integer>();
+    	if (isSignificantEvent(stateView, historyView, idleUnits)){
+    		for (Integer unitId : myFootmen){
+    			int defenderId = selectAction(stateView, historyView, unitId);
+    			
+    			sepiaActions.put(unitId,  Action.createCompoundAttack(unitId, defenderId));
+    		}
+    	}
+    	else{
+    		for (Integer unitId : idleUnits){
+    			sepiaActions.put(unitId, Action.createCompoundAttack(unitId, selectAction(stateView, historyView, unitId)));
+    		}
+    	}
+    	
     	
         return sepiaActions;
     }
