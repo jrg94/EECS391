@@ -234,6 +234,9 @@ public class RLAgent extends Agent {
      */
     public int selectAction(State.StateView stateView, History.HistoryView historyView, int attackerId) {
     	
+    	// Holds the last turn number
+    	int lastTurnNumber = stateView.getTurnNumber() - 1;
+    	
     	// Do a random action
     	if (random.nextDouble() > 1 - epsilon) {
     		
@@ -313,7 +316,7 @@ public class RLAgent extends Agent {
     	}
     	
     	// Runs through the death logs
-		for(DeathLog deathLog: historyView.getDeathLogs(stateView.getTurnNumber() - 1)) {
+		for(DeathLog deathLog: historyView.getDeathLogs(lastTurnNumber)) {
 			
 			System.out.println("Player: " + deathLog.getController() + " unit: " + deathLog.getDeadUnitID());
 			
