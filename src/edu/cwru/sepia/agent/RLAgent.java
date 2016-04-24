@@ -365,10 +365,17 @@ public class RLAgent extends Agent {
     	// f(s,a) is a vector of state-action features derived from the primitive state
     	
     	double[] featureVector = calculateFeatureVector(stateView, historyView, attackerId, defenderId);
+    	double qValue = 0;
     	
+    	// Sum the features by the product of their weights
+    	for (int i = 0; i < weights.length; i++) {
+    		qValue = qValue + (weights[i] * featureVector[i]);
+    	}
     	
+    	// Add w0 to the calculated qValue
+    	qValue = qValue + weights[0];
     	
-        return 0;
+        return qValue;
     }
 
     /**
