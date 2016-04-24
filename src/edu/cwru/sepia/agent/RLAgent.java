@@ -179,6 +179,8 @@ public class RLAgent extends Agent {
     		Map<Integer, ActionResult> actionResults = historyView.getCommandFeedback(playernum, stateView.getTurnNumber() - 1);
     	    for(ActionResult result : actionResults.values()) {
     	     	System.out.println(result.toString());
+    	     	
+    	     	
     	    }
     	}
     	
@@ -195,6 +197,12 @@ public class RLAgent extends Agent {
     public void terminalStep(State.StateView stateView, History.HistoryView historyView) {
 
         // MAKE SURE YOU CALL printTestData after you finish a test episode.
+    	
+    	// The episode is over if one of the player lists is empty?
+    	if (myFootmen.size() == 0 || enemyFootmen.size() == 0) {
+    		// TODO: calculate actual average weights
+    		printTestData(new ArrayList<Double>());
+    	}
 
         // Save your weights
         saveWeights(weights);
@@ -347,6 +355,8 @@ public class RLAgent extends Agent {
     	// f(s,a) is a vector of state-action features derived from the primitive state
     	
     	double[] featureVector = calculateFeatureVector(stateView, historyView, attackerId, defenderId);
+    	
+    	
     	
         return 0;
     }
