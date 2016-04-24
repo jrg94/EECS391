@@ -419,6 +419,9 @@ public class RLAgent extends Agent {
     		qValue = qValue + (weights[i] * featureVector[i]);
     	}
     	
+    	// Add w0 to the calculated qValue
+    	qValue = qValue + weights[0];
+    	
         return qValue;
     }
 
