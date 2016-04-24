@@ -14,6 +14,7 @@ import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class RLAgent extends Agent {
 
@@ -225,10 +226,13 @@ public class RLAgent extends Agent {
     	
     	// Creates a new weights array based on the size of the input array
     	double[] newWeights = new double[oldWeights.length];
+    	double oldQValue = IntStream.range(0, oldWeights.length).mapToDouble(i->oldWeights[i]*oldFeatures[i]).sum();
     	
-    	// For each of the old weights
+    	int defenderId = selectAction(stateView, historyView, footmanId);
+    	double newQValue = calcQValue(stateView, historyView, footmanId, defenderId);
+    	
     	for (int i = 0; i < oldWeights.length; i++) {
-    		// TODO: compute updated weights
+    		newWeights[i] = oldWeights[i] + learningRate * (totalReward + (gamma * newQValue) - oldQValue) * oldFeatures[i];
     	}
     	
         return newWeights;
