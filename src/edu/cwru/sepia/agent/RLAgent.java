@@ -281,7 +281,7 @@ public class RLAgent extends Agent {
     	if (enemyFootmen.size() != 0) {
     		
     		// If it is the first turn or we rolled higher that 1 - e
-    		if (lastTurnNumber == -1 || random.nextDouble() > 1 - epsilon) {
+    		if (lastTurnNumber == 0 || random.nextDouble() > 1 - epsilon) {
     			
     			// Calculate the enemy index and get the enemy id
     			double enemyIndex  = random.nextDouble() * enemyFootmen.size();
