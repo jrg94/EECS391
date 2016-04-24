@@ -69,6 +69,7 @@ public class RLAgent extends Agent {
     private List<Double> averageRewardList;
     private Map<Integer, Double> footmanCumulativeRewardMap;
     
+    private int overallEpisodeIteration;
     private int episodeIteration;
     private boolean learningMode;
     private int learningEpisodeIteration;
@@ -76,7 +77,7 @@ public class RLAgent extends Agent {
     
     private final int DURATION_LEARNING_EPISODES = 5;
     private final int DURATION_FREE_PLAY_EPISODES = 10;
-    private final boolean VERBOSE = true;
+    private final boolean VERBOSE = false;
     
     
     
@@ -110,6 +111,7 @@ public class RLAgent extends Agent {
         
         oldFeatureMap = new HashMap<Integer, double[]>();
         averageRewardList = new LinkedList<Double>();
+        overallEpisodeIteration = 0;
         episodeIteration = 0;
         
         footmanCumulativeRewardMap = new HashMap<Integer, Double>();
@@ -252,34 +254,37 @@ public class RLAgent extends Agent {
         // MAKE SURE YOU CALL printTestData after you finish a test episode.
     	
     	// The episode is over if one of the player lists is empty?
-    	if (myFootmen.size() == 0 || enemyFootmen.size() == 0) {
-    		int winnerId = myFootmen.size() == 0 ? 0 : 1;
-    		System.out.println(String.format("[Episode: %d] player %d won", episodeIteration, winnerId));
-    		//TODO reset footmanCumulativeRewardMap?
-    		//footmanCumulativeRewardMap = new HashMap<Integer, Double>();
-    		if (learningMode){
-    			learningEpisodeIteration++;
-    			//add rewards to averageRewardList
-    			
-    			if (learningEpisodeIteration == DURATION_LEARNING_EPISODES){
-    				averageRewardList.add(learningRewardsSum/DURATION_LEARNING_EPISODES);
-    				learningMode = false;
-    			}
-    		}
-    		else{
-    			episodeIteration++;
-    			if (episodeIteration % DURATION_FREE_PLAY_EPISODES == 0){
-    				learningMode = true;
-    				learningEpisodeIteration = 0;
-    				learningRewardsSum = 0;
-    			}
-    		}
-    		
-    		if (episodeIteration >= numEpisodes){
-    			System.out.println("Game Over");
-    			printTestData(averageRewardList);
-    		}
-    	}
+    	
+    	//if (myFootmen.size() == 0 || enemyFootmen.size() == 0) {
+    	overallEpisodeIteration++;
+		int winnerId = myFootmen.size() > enemyFootmen.size() ? 0 : 1;
+		System.out.println(String.format("[Episode: %d] player %d won with remaining: %d vs. %d", overallEpisodeIteration, winnerId, enemyFootmen.size(), myFootmen.size()));
+		//TODO reset footmanCumulativeRewardMap?
+		footmanCumulativeRewardMap = new HashMap<Integer, Double>();
+		if (learningMode){
+			learningEpisodeIteration++;
+			//add rewards to averageRewardList
+			
+			if (learningEpisodeIteration == DURATION_LEARNING_EPISODES){
+				averageRewardList.add(learningRewardsSum/DURATION_LEARNING_EPISODES);
+				learningMode = false;
+			}
+		}
+		else{
+			episodeIteration++;
+			if (episodeIteration % DURATION_FREE_PLAY_EPISODES == 0){
+				learningMode = true;
+				learningEpisodeIteration = 0;
+				learningRewardsSum = 0;
+			}
+		}
+		
+		if (overallEpisodeIteration >= numEpisodes){
+			System.out.println("Game Over");
+			printTestData(averageRewardList);
+			System.exit(0);
+		}
+    	//}
 
         // Save your weights
         saveWeights(weights);
