@@ -232,7 +232,7 @@ public class RLAgent extends Agent {
     	double newQValue = calcQValue(stateView, historyView, footmanId, defenderId);
     	
     	for (int i = 0; i < oldWeights.length; i++) {
-    		newWeights[i] = oldWeights[i] + learningRate * (totalReward + (gamma * newQValue) - oldQValue) * oldFeatures[i];
+    		newWeights[i] = oldWeights[i] + learningRate * (totalReward + gamma * newQValue - oldQValue) * oldFeatures[i];
     	}
     	
         return newWeights;
