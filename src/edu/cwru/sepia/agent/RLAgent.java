@@ -226,7 +226,7 @@ public class RLAgent extends Agent {
     	
     	// For each of the old weights
     	for (int i = 0; i < oldWeights.length; i++) {
-    		
+    		// TODO: compute updated weights
     	}
     	
         return newWeights;
@@ -248,8 +248,14 @@ public class RLAgent extends Agent {
     	
     	// If there is something to attack
     	if (enemyFootmen.size() != 0) {
+    		
+    		// If it is the first turn
+    		if (lastTurnNumber == -1) {
+    			// TODO: Run a random action
+    		}
+    		
     		// Do a random action
-    		if (random.nextDouble() > 1 - epsilon) {
+    		else if (random.nextDouble() > 1 - epsilon) {
     		
     		}
     		// Do the recommended action
