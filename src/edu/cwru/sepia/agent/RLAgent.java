@@ -64,6 +64,11 @@ public class RLAgent extends Agent {
      */
     public final double KILL_REWARD = 100;
 
+    private Map<Integer, double[]> oldFeatureMap;
+    
+    private List<Double> averageRewardList;
+    
+    private int episodeIteration;
     
     public RLAgent(int playernum, String[] args) {
         super(playernum);
@@ -92,6 +97,10 @@ public class RLAgent extends Agent {
                 weights[i] = random.nextDouble() * 2 - 1;
             }
         }
+        
+        oldFeatureMap = new HashMap<Integer, double[]>();
+        averageRewardList = new LinkedList<Double>();
+        episodeIteration = 0;
     }
 
     /**
@@ -183,9 +192,12 @@ public class RLAgent extends Agent {
     			}
     		}
     	}
-    	List<Integer> idleUnits = new ArrayList<Integer>();
+    	List<Integer> idleUnits = new LinkedList<Integer>();
     	if (isSignificantEvent(stateView, historyView, idleUnits)){
     		for (Integer unitId : myFootmen){
+    			double reward = calculateReward(stateView, historyView, unitId);
+    			
+    			weights = updateWeights(weights, oldFeatureMap.get(unitId), reward, stateView, historyView, unitId);
     			int defenderId = selectAction(stateView, historyView, unitId);
     			
     			sepiaActions.put(unitId,  Action.createCompoundAttack(unitId, defenderId));
@@ -233,10 +245,10 @@ public class RLAgent extends Agent {
      * @param footmanId The footman we are updating the weights for
      * @return The updated weight vector.
      */
-    public double[] updateWeights(double[] oldWeights, double[] oldFeatures, double totalReward, State.StateView stateView, History.HistoryView historyView, int footmanId) {
+    public Double[] updateWeights(Double[] oldWeights, double[] oldFeatures, double totalReward, State.StateView stateView, History.HistoryView historyView, int footmanId) {
     	
     	// Creates a new weights array based on the size of the input array
-    	double[] newWeights = new double[oldWeights.length];
+    	Double[] newWeights = new Double[oldWeights.length];
     	double oldQValue = IntStream.range(0, oldWeights.length).mapToDouble(i->oldWeights[i]*oldFeatures[i]).sum();
     	
     	int defenderId = selectAction(stateView, historyView, footmanId);
@@ -498,8 +510,7 @@ public class RLAgent extends Agent {
     	//3. Is self being attacked? //change to being attacked by defender?
     	features[3] = -historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().filter(dlog -> dlog.getDefenderID()==attackerId).count();
     	
-
-    			
+    	oldFeatureMap.put(attackerId, features);
         return features;
     }
 
@@ -607,6 +618,10 @@ public class RLAgent extends Agent {
     	}
     	//Death is a significant event
     	if (historyView.getDeathLogs(lastTurn).size() > 0){
+    		return true;
+    	}
+    	//friendly unit is hit
+    	if (historyView.getDamageLogs(lastTurn).stream().filter(d->d.getDefenderController()==0).findAny().isPresent()){
     		return true;
     	}
     	
