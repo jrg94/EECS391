@@ -70,8 +70,12 @@ public class RLAgent extends Agent {
     private Map<Integer, Double> footmanCumulativeRewardMap;
     
     private int episodeIteration;
-    private int learningEpisodeIteration;
     private boolean learningMode;
+    private int learningEpisodeIteration;
+    private double learningRewardsSum;
+    
+    private final int DURATION_LEARNING_EPISODES = 5;
+    private final int DURATION_FREE_PLAY_EPISODES = 10;
     
     
     
@@ -109,6 +113,7 @@ public class RLAgent extends Agent {
         
         footmanCumulativeRewardMap = new HashMap<Integer, Double>();
         learningMode = false;
+        learningRewardsSum = 0d;
     }
 
     /**
@@ -241,18 +246,23 @@ public class RLAgent extends Agent {
     	
     	// The episode is over if one of the player lists is empty?
     	if (myFootmen.size() == 0 || enemyFootmen.size() == 0) {
-    		
+    		//TODO reset footmanCumulativeRewardMap?
+    		//footmanCumulativeRewardMap = new HashMap<Integer, Double>();
     		if (learningMode){
     			learningEpisodeIteration++;
-    			if (learningEpisodeIteration == 5){
+    			//add rewards to averageRewardList
+    			
+    			if (learningEpisodeIteration == DURATION_LEARNING_EPISODES){
+    				averageRewardList.add(learningRewardsSum/DURATION_LEARNING_EPISODES);
     				learningMode = false;
     			}
     		}
     		else{
     			episodeIteration++;
-    			if (episodeIteration % 10 == 0){
+    			if (episodeIteration % DURATION_FREE_PLAY_EPISODES == 0){
     				learningMode = true;
     				learningEpisodeIteration = 0;
+    				learningRewardsSum = 0;
     			}
     		}
     		
