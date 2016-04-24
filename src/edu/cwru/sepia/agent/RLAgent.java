@@ -69,6 +69,7 @@ public class RLAgent extends Agent {
     private List<Double> averageRewardList;
     
     private int episodeIteration;
+    private Map<Integer, Double> footmanCumulativeRewardMap;
     
     public RLAgent(int playernum, String[] args) {
         super(playernum);
@@ -101,6 +102,8 @@ public class RLAgent extends Agent {
         oldFeatureMap = new HashMap<Integer, double[]>();
         averageRewardList = new LinkedList<Double>();
         episodeIteration = 0;
+        
+        footmanCumulativeRewardMap = new HashMap<Integer, Double>();
     }
 
     /**
@@ -196,12 +199,18 @@ public class RLAgent extends Agent {
     	if (isSignificantEvent(stateView, historyView, idleUnits)){
     		for (Integer unitId : myFootmen){
     			double reward = calculateReward(stateView, historyView, unitId);
-    			
-    			weights = updateWeights(weights, oldFeatureMap.get(unitId), reward, stateView, historyView, unitId);
+    			if (!footmanCumulativeRewardMap.containsKey(unitId)){
+    				footmanCumulativeRewardMap.put(unitId, 0d);
+    			}
+    			footmanCumulativeRewardMap.put(unitId, footmanCumulativeRewardMap.get(unitId)+ discountReward(stateView, historyView, reward));
+    			double averageFootmanReward = footmanCumulativeRewardMap.get(unitId);
+    			weights = updateWeights(weights, oldFeatureMap.get(unitId), averageFootmanReward, stateView, historyView, unitId);
     			int defenderId = selectAction(stateView, historyView, unitId);
-    			
+    			//averageRewardList[episodeIteration] += reward;
     			sepiaActions.put(unitId,  Action.createCompoundAttack(unitId, defenderId));
     		}
+    		
+    		
     	}
     	else{
     		for (Integer unitId : idleUnits){
@@ -658,4 +667,8 @@ public class RLAgent extends Agent {
     	int index = list.indexOf(element);
     	list.remove(index);
 	}
+    
+    private double discountReward(State.StateView stateView, History.HistoryView historyView, double reward){
+	    return Math.pow(gamma, stateView.getTurnNumber()-1)*reward;
+    }
 }
