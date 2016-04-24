@@ -3,12 +3,14 @@ package edu.cwru.sepia.agent;
 import edu.cwru.sepia.action.Action;
 import edu.cwru.sepia.action.ActionFeedback;
 import edu.cwru.sepia.action.ActionResult;
+import edu.cwru.sepia.action.ActionType;
 import edu.cwru.sepia.action.TargetedAction;
 import edu.cwru.sepia.environment.model.history.DamageLog;
 import edu.cwru.sepia.environment.model.history.DeathLog;
 import edu.cwru.sepia.environment.model.history.History;
 import edu.cwru.sepia.environment.model.state.State;
 import edu.cwru.sepia.environment.model.state.Unit;
+import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
 import java.io.*;
 import java.util.*;
@@ -436,11 +438,33 @@ public class RLAgent extends Agent {
     	/**
     	 * Features to use
     	 * 0. just a constant 1 so that w0 can be added in the loop
-    	 * 1. 
+    	 * 1. inverse of Chebyshev distance
+    	 * 2. Allied footmen attacking same defender //Number of times allied footmen successfully attacked
+    	 * 3. Is self being attacked? //Number of times allied footmen got harmed
+    	 * 4. HP comparison between self and target
     	 */
     	double[] features = new double[NUM_FEATURES];
+    	//0. just a constant 1 so that w0 can be added in the loop
     	features[0] = 1.0;
     	
+    	//1. inverse of Chebyshev distance
+    	UnitView attacker = stateView.getUnit(attackerId);
+    	UnitView defender = stateView.getUnit(defenderId);
+    	Position attackerPosition = new Position(attacker.getXPosition(), attacker.getYPosition());
+    	Position defenderPosition = new Position(defender.getXPosition(), defender.getYPosition());
+    	features[1] = 1.0/(attackerPosition.chebyshevDistance(defenderPosition));
+    	
+    	//2. Allied footmen attacking same target
+    	features[2] = historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().filter(dlog -> dlog.getDefenderID()==defenderId).count();
+    	//3. Is self being attacked?
+    	features[3] = historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().filter(dlog -> dlog.getDefenderID()==attackerId).count();
+    	
+    	//4. HP comparison between self and target
+    	//@TODO or should we do attackerHP/(attackerHP+defenderHP)?
+    	double attackerHP = attacker.getHP();
+    	double defenderHP = defender.getHP();
+    	features[4] = attackerHP/defenderHP;
+    			
         return null;
     }
 
