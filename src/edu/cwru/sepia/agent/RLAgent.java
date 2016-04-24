@@ -220,7 +220,16 @@ public class RLAgent extends Agent {
      * @return The updated weight vector.
      */
     public double[] updateWeights(double[] oldWeights, double[] oldFeatures, double totalReward, State.StateView stateView, History.HistoryView historyView, int footmanId) {
-        return null;
+    	
+    	// Creates a new weights array based on the size of the input array
+    	double[] newWeights = new double[oldWeights.length];
+    	
+    	// For each of the old weights
+    	for (int i = 0; i < oldWeights.length; i++) {
+    		
+    	}
+    	
+        return newWeights;
     }
 
     /**
