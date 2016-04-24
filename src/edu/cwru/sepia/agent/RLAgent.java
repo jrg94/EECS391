@@ -280,6 +280,7 @@ public class RLAgent extends Agent {
 		
 		//TODO reset footmanCumulativeRewardMap?
 		footmanCumulativeRewardMap = new HashMap<Integer, Double>();
+		oldFeatureMap = new HashMap<Integer, double[]>();
 		if (learningMode){
 			learningEpisodeIteration++;
 			//add rewards to averageRewardList
