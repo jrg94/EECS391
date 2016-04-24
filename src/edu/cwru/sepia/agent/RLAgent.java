@@ -237,15 +237,19 @@ public class RLAgent extends Agent {
     	// Holds the last turn number
     	int lastTurnNumber = stateView.getTurnNumber() - 1;
     	
-    	// Do a random action
-    	if (random.nextDouble() > 1 - epsilon) {
+    	// If there is something to attack
+    	if (enemyFootmen.size() != 0) {
+    		// Do a random action
+    		if (random.nextDouble() > 1 - epsilon) {
     		
-    	}
-    	// Do the recommended action
-    	else {
+    		}
+    		// Do the recommended action
+    		else {
     		
+    		}
     	}
     	
+    	// There is nothing to attack
         return -1;
     }
 
