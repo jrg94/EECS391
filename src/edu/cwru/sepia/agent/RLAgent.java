@@ -177,7 +177,6 @@ public class RLAgent extends Agent {
     				myFootmen.remove(deathLog.getDeadUnitID());
     			}
     		}
-    	}
     		
     		// Runs through the set of actions to get the results of the previous actions
     		Map<Integer, ActionResult> actionResults = historyView.getCommandFeedback(playernum, stateView.getTurnNumber() - 1);
