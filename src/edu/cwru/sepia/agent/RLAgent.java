@@ -187,7 +187,7 @@ public class RLAgent extends Agent {
     	// Get the deathlog (TODO: Make sure turn # starts at 1)
     	if (stateView.getTurnNumber() != 1) {
     		
-    		// Runs through the death logs and removes the dead footmen from their respective lists
+    		// Runs through the death logs and removes corpses from the battlefield
     		for(DeathLog deathLog: historyView.getDeathLogs(stateView.getTurnNumber() - 1)) {
     			System.out.println(String.format("Unit [%d] belonging to player [%d] died", deathLog.getDeadUnitID(), deathLog.getController()));
     			// If the controller of this unit is the enemy, remove the player from the enemy list
@@ -255,7 +255,6 @@ public class RLAgent extends Agent {
     				learningMode = true;
     				learningEpisodeIteration = 0;
     			}
-    			
     		}
     	}
 
