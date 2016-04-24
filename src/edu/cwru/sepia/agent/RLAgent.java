@@ -553,8 +553,9 @@ public class RLAgent extends Agent {
     	
     	//2. Allied footmen attacking same target
     	features[2] = historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().filter(dlog -> dlog.getDefenderID()==defenderId).count();
-    	//3. Is self being attacked? //change to being attacked by defender?
-    	features[3] = -historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().filter(dlog -> dlog.getDefenderID()==attackerId).count();
+    	//3. Is self being attacked? 
+    	//3. change to being attacked by defender?
+    	//features[3] = -historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().filter(dlog -> dlog.getDefenderID()==attackerId).count();
     	
     	oldFeatureMap.put(attackerId, features);
         return features;
