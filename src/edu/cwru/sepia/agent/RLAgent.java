@@ -490,20 +490,28 @@ public class RLAgent extends Agent {
     	//1. inverse of Chebyshev distance
     	UnitView attacker = stateView.getUnit(attackerId);
     	UnitView defender = stateView.getUnit(defenderId);
-    	Position attackerPosition = new Position(attacker.getXPosition(), attacker.getYPosition());
-    	Position defenderPosition = new Position(defender.getXPosition(), defender.getYPosition());
-    	features[1] = 1.0/(attackerPosition.chebyshevDistance(defenderPosition));
+    	if (attacker==null || defender == null){
+    		//Is this a bandage fix?
+    		features[1] = 0;
+    	}
+    	else{
+    		Position attackerPosition = new Position(attacker.getXPosition(), attacker.getYPosition());
+    		Position defenderPosition = new Position(defender.getXPosition(), defender.getYPosition());
+    		features[1] = 1.0/(attackerPosition.chebyshevDistance(defenderPosition));
+    		
+        	//4. HP comparison between self and target
+        	//@TODO or should we do attackerHP/(attackerHP+defenderHP)?
+        	double attackerHP = attacker.getHP();
+        	double defenderHP = defender.getHP();
+        	features[4] = attackerHP/defenderHP;
+    	}
     	
     	//2. Allied footmen attacking same target
     	features[2] = historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().filter(dlog -> dlog.getDefenderID()==defenderId).count();
     	//3. Is self being attacked?
     	features[3] = historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().filter(dlog -> dlog.getDefenderID()==attackerId).count();
     	
-    	//4. HP comparison between self and target
-    	//@TODO or should we do attackerHP/(attackerHP+defenderHP)?
-    	double attackerHP = attacker.getHP();
-    	double defenderHP = defender.getHP();
-    	features[4] = attackerHP/defenderHP;
+
     			
         return features;
     }
@@ -604,4 +612,9 @@ public class RLAgent extends Agent {
     public void loadPlayerData(InputStream inputStream) {
 
     }
+    
+    private void removeElementFromList(List<Integer> list, Integer element) {
+    	int index = list.indexOf(element);
+    	list.remove(index);
+	}
 }
