@@ -177,10 +177,11 @@ public class RLAgent extends Agent {
     				myFootmen.remove(deathLog.getDeadUnitID());
     			}
     		}
+    	}
     		
     		// Runs through the set of actions to get the results of the previous actions
     		Map<Integer, ActionResult> actionResults = historyView.getCommandFeedback(playernum, stateView.getTurnNumber() - 1);
-    		
+    		// Assign new task to idle footmen
     	    for(ActionResult result : actionResults.values()) {
     	    	int unitId = result.getAction().getUnitId();
     	    	switch(result.getFeedback()){
@@ -194,7 +195,7 @@ public class RLAgent extends Agent {
     	    		break;
     	    	case COMPLETED:
     	    		//assign new action
-    	    		sepiaActions.put(unitId, null);
+    	    		sepiaActions.put(unitId, Action.createCompoundAttack(unitId, selectAction(stateView, historyView, unitId)));
     	    		break;
 				case INCOMPLETEMAYBESTUCK:
 					System.out.println(String.format("Unit [%d] may be stuck", unitId));
@@ -204,6 +205,8 @@ public class RLAgent extends Agent {
 					break;
     	    	}
     	    }
+    	    
+    	    
     	}
     	
         return null;
