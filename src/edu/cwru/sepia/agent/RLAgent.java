@@ -505,7 +505,7 @@ public class RLAgent extends Agent {
     	double defenderHP = defender.getHP();
     	features[4] = attackerHP/defenderHP;
     			
-        return null;
+        return features;
     }
 
     /**
