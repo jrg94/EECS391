@@ -174,11 +174,11 @@ public class RLAgent extends Agent {
     			System.out.println("Player: " + deathLog.getController() + " unit: " + deathLog.getDeadUnitID());
     			// If the controller of this unit is the enemy, remove the player from the enemy list
     			if (deathLog.getController() == ENEMY_PLAYERNUM) {
-    				enemyFootmen.remove(deathLog.getDeadUnitID());
+    				removeElementFromList(enemyFootmen, deathLog.getDeadUnitID());
     			}
     			// Otherwise, remove the unit from the player list (TODO: make sure this properly removes the unit)
     			else {
-    				myFootmen.remove(deathLog.getDeadUnitID());
+    				removeElementFromList(myFootmen, deathLog.getDeadUnitID());
     			}
     		}
     		
