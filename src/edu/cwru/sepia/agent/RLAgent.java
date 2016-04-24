@@ -64,6 +64,7 @@ public class RLAgent extends Agent {
      */
     public final double KILL_REWARD = 100;
 
+    
     public RLAgent(int playernum, String[] args) {
         super(playernum);
 
@@ -171,7 +172,7 @@ public class RLAgent extends Agent {
     		
     		// Runs through the death logs and removes the dead footmen from their respective lists
     		for(DeathLog deathLog: historyView.getDeathLogs(stateView.getTurnNumber() - 1)) {
-    			System.out.println("Player: " + deathLog.getController() + " unit: " + deathLog.getDeadUnitID());
+    			System.out.println(String.format("Unit [%d] belonging to player [%d] died", deathLog.getDeadUnitID(), deathLog.getController()));
     			// If the controller of this unit is the enemy, remove the player from the enemy list
     			if (deathLog.getController() == ENEMY_PLAYERNUM) {
     				removeElementFromList(enemyFootmen, deathLog.getDeadUnitID());
@@ -492,7 +493,8 @@ public class RLAgent extends Agent {
     	UnitView defender = stateView.getUnit(defenderId);
     	if (attacker==null || defender == null){
     		//Is this a bandage fix?
-    		features[1] = 0;
+    		features[1] = 1;
+    		features[4] = 1;
     	}
     	else{
     		Position attackerPosition = new Position(attacker.getXPosition(), attacker.getYPosition());
@@ -508,8 +510,8 @@ public class RLAgent extends Agent {
     	
     	//2. Allied footmen attacking same target
     	features[2] = historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().filter(dlog -> dlog.getDefenderID()==defenderId).count();
-    	//3. Is self being attacked?
-    	features[3] = historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().filter(dlog -> dlog.getDefenderID()==attackerId).count();
+    	//3. Is self being attacked? //change to being attacked by defender?
+    	features[3] = -historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().filter(dlog -> dlog.getDefenderID()==attackerId).count();
     	
 
     			
@@ -611,6 +613,45 @@ public class RLAgent extends Agent {
     @Override
     public void loadPlayerData(InputStream inputStream) {
 
+    }
+    
+    private boolean isSignificantEvent(State.StateView stateView, History.HistoryView historyView, List<Integer> idleUnits){
+    	int lastTurn = stateView.getTurnNumber() - 1;
+    	if (lastTurn <= 0){
+    		return true;
+    	}
+    	//Death is a significant event
+    	if (historyView.getDeathLogs(lastTurn).size() > 0){
+    		return true;
+    	}
+    	
+		Map<Integer, ActionResult> actionResults = historyView.getCommandFeedback(playernum, stateView.getTurnNumber() - 1);
+	    for(ActionResult result : actionResults.values()) {
+	    	int unitId = result.getAction().getUnitId();
+	    	switch(result.getFeedback()){
+	    	case INCOMPLETE:
+	    		//Prob means the unit is still walking to the enemy
+	    		//let the footman keep doing what it's doing
+	    		break;
+	    	case FAILED:
+	    		System.out.println(String.format("Unit [%d] failed to attack", unitId));
+	    		return true;
+	    	case COMPLETED:
+	    		idleUnits.add(unitId);
+	    		break;
+			case INCOMPLETEMAYBESTUCK:
+				System.out.println(String.format("Unit [%d] may be stuck", unitId));
+				break;
+			case INVALIDUNIT:
+				return true;
+			default:
+				System.out.println(String.format("a case that shouldn't happen (%s) happened with unit [%d]", result.getFeedback().toString(), unitId));
+				break;
+	    	}
+	    }
+	    
+	    return false;
+    	
     }
     
     private void removeElementFromList(List<Integer> list, Integer element) {
