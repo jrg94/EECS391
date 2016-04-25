@@ -715,7 +715,7 @@ public class RLAgent extends Agent {
     		return true;
     	}
     	//friendly unit is hit
-    	if (historyView.getDamageLogs(lastTurn).stream().filter(d->d.getDefenderController()==0).findAny().isPresent()){
+    	if (historyView.getDamageLogs(lastTurn).stream().filter(d->d.getDefenderController()!=ENEMY_PLAYERNUM).findAny().isPresent()){
     		return true;
     	}
     	
