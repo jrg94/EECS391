@@ -282,14 +282,15 @@ public class RLAgent extends Agent {
 				, winnerId
 				, enemyFootmen.size(), myFootmen.size()));
 		
-		//TODO reset footmanCumulativeRewardMap?
+		// TODO: reset footmanCumulativeRewardMap?
 		footmanCumulativeRewardMap = new HashMap<Integer, Double>();
 		oldFeatureMap = new HashMap<Integer, double[]>();
 		
+		// If we're in learning mode
 		if (learningMode){
 			learningEpisodeIteration++;
-			//add rewards to averageRewardList
 			
+			// Add rewards to averageRewardList
 			if (learningEpisodeIteration == DURATION_LEARNING_EPISODES){
 				double learningRewardAverage = learningRewardsSum/DURATION_LEARNING_EPISODES;
 				averageRewardList.add(learningRewardAverage);
