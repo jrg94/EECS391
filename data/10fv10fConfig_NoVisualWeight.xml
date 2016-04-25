@@ -13,6 +13,7 @@
 	<!-- When you have your agent working, you can do the learning without the visual agent.
 	This means you won't have to click start at the end of each episode and things will run a lot faster.
 	To comment it out just wrap the <Player></Player> tags in XML comments -->
+	<!--
 	<Player Id="0">
 		<AgentClass>
 			<ClassName>edu.cwru.sepia.agent.visual.VisualAgent</ClassName>
@@ -20,7 +21,7 @@
 			<Argument>false</Argument>
 		</AgentClass>
 	</Player>
-
+	-->
 
 	<Player Id="1">
 		<AgentClass>
