@@ -263,18 +263,16 @@ public class RLAgent extends Agent {
     public void terminalStep(State.StateView stateView, History.HistoryView historyView) {
 
         // MAKE SURE YOU CALL printTestData after you finish a test episode.
-    	
-    	// The episode is over if one of the player lists is empty?
-    	
-    	//if (myFootmen.size() == 0 || enemyFootmen.size() == 0) {
+    	    	
     	overallEpisodeIteration++;
     	int winnerId = -1;
     	
+    	// If we have more footmen than the enemy
     	if (myFootmen.size() > enemyFootmen.size()){
     		winnerId = 0;
     		overallWinCount++;
     	}
-    	
+    	// Otherwise, we lost
     	else{
     		winnerId = 1;
     	}
