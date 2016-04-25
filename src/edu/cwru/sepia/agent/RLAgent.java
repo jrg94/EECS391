@@ -189,6 +189,7 @@ public class RLAgent extends Agent {
      */
     @Override
     public Map<Integer, Action> middleStep(State.StateView stateView, History.HistoryView historyView) {
+    	
     	Map<Integer, Action> sepiaActions = new HashMap<Integer, Action>();
     	if (stateView.getTurnNumber() == 0){
     		//do first turn
@@ -197,6 +198,7 @@ public class RLAgent extends Agent {
     		}
     		return sepiaActions;
     	}
+    	
     	// Get the deathlog (TODO: Make sure turn # starts at 1)
     	if (stateView.getTurnNumber() != 0) {
     		
@@ -215,36 +217,38 @@ public class RLAgent extends Agent {
     			}
     		}
     	}
+    	
     	List<Integer> idleUnits = new LinkedList<Integer>();
     	if (isSignificantEvent(stateView, historyView, idleUnits)){
     		for (Integer unitId : myFootmen){
     			double reward = calculateReward(stateView, historyView, unitId);
+    			
     			if (!footmanCumulativeRewardMap.containsKey(unitId)){
     				footmanCumulativeRewardMap.put(unitId, 0d);
     			}
+    			
     			footmanCumulativeRewardMap.put(unitId, footmanCumulativeRewardMap.get(unitId)+ discountReward(stateView, historyView, reward));
     			double footmanReward = footmanCumulativeRewardMap.get(unitId);
+    			
     			if (learningMode){
     				// This way it adds all the footman rewards without having to recalculate it
     				learningRewardsSum += footmanReward;
     			}
+    			
     			else if (oldFeatureMap.containsKey(unitId)){
     				weights = updateWeights(weights, oldFeatureMap.get(unitId), footmanReward, stateView, historyView, unitId);
     			}
+    			
     			int defenderId = selectAction(stateView, historyView, unitId);
     			sepiaActions.put(unitId,  Action.createCompoundAttack(unitId, defenderId));
-    			
-
-    		}
-    		
-    		
+    		}	
     	}
+    	
     	else{
     		for (Integer unitId : idleUnits){
     			sepiaActions.put(unitId, Action.createCompoundAttack(unitId, selectAction(stateView, historyView, unitId)));
     		}
     	}
-    	
     	
         return sepiaActions;
     }
@@ -265,10 +269,12 @@ public class RLAgent extends Agent {
     	//if (myFootmen.size() == 0 || enemyFootmen.size() == 0) {
     	overallEpisodeIteration++;
     	int winnerId = -1;
+    	
     	if (myFootmen.size() > enemyFootmen.size()){
     		winnerId = 0;
     		overallWinCount++;
     	}
+    	
     	else{
     		winnerId = 1;
     	}
@@ -281,6 +287,7 @@ public class RLAgent extends Agent {
 		//TODO reset footmanCumulativeRewardMap?
 		footmanCumulativeRewardMap = new HashMap<Integer, Double>();
 		oldFeatureMap = new HashMap<Integer, double[]>();
+		
 		if (learningMode){
 			learningEpisodeIteration++;
 			//add rewards to averageRewardList
@@ -296,6 +303,7 @@ public class RLAgent extends Agent {
 				}
 			}
 		}
+		
 		else{
 			episodeIteration++;
 			if (episodeIteration % DURATION_FREE_PLAY_EPISODES == 0){
@@ -333,6 +341,7 @@ public class RLAgent extends Agent {
     	int defenderId = selectAction(stateView, historyView, footmanId);
     	double newQValue = calcQValue(stateView, historyView, footmanId, defenderId);
     	
+    	// Loops through the old weights and calculates the new weights
     	for (int i = 0; i < oldWeights.length; i++) {
     		newWeights[i] = oldWeights[i] + learningRate * (totalReward + (gamma * newQValue) - oldQValue) * oldFeatures[i];
     	}
@@ -448,6 +457,7 @@ public class RLAgent extends Agent {
     	
     	// For each damage view, accumulate the reward
     	for(DamageLog damageLog : historyView.getDamageLogs(lastTurnNumber)) {
+    		
     		if (VERBOSE){
 	    	     System.out.println("Defending player: " + damageLog.getDefenderController() + " defending unit: " +
 	    	     damageLog.getDefenderID() + " attacking player: " + damageLog.getAttackerController() +
@@ -569,12 +579,14 @@ public class RLAgent extends Agent {
     	//1. inverse of Chebyshev distance
     	UnitView attacker = stateView.getUnit(attackerId);
     	UnitView defender = stateView.getUnit(defenderId);
-    	if (attacker==null || defender == null){
+    	
+    	if (attacker == null || defender == null){
     		//Is this a bandage fix?
     		features[1] = 1;
     		features[4] = 1;
     	}
-    	else{
+    	
+    	else {
     		Position attackerPosition = new Position(attacker.getXPosition(), attacker.getYPosition());
     		Position defenderPosition = new Position(defender.getXPosition(), defender.getYPosition());
     		features[1] = 1.0/(attackerPosition.chebyshevDistance(defenderPosition));
@@ -590,13 +602,16 @@ public class RLAgent extends Agent {
     	final int gangLimit = 3; //any more than this means the footman has to overextend into enemy lines
     	long gangCount = historyView.getDamageLogs(stateView.getTurnNumber()-1).stream().filter(dlog -> dlog.getDefenderID()==defenderId).count();
     	double gangFeature = 0d;
-    	if (gangCount <= 3){
+    	
+    	if (gangCount <= 3) {
     		//gangFeature = gangCount/3;
     		gangFeature = 1/((double)(gangLimit - gangCount + 1));
     	}
-    	else{
+    	
+    	else {
     		gangFeature = 1/((double)(gangCount - gangLimit + 1));
     	}
+    	
     	features[2] = gangFeature;
     	//3. Is self being attacked? 
     	//3. change to being attacked by defender?
