@@ -1,4 +1,6 @@
-Ted Kim (tkk21)
-Jeremy Griffith (jrg170)
+# A Star Path Finding Algorithm
 
-we tested our code and included a JUnit test case file.
+- Ted Kim (tkk21)
+- Jeremy Griffith (jrg170)
+
+We tested our code and included a JUnit test case file.
